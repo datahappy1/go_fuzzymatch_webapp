@@ -10,17 +10,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var requests = []model.FuzzyMatchRequest
-
 func get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message": "get called"}`))
+	// here will be served homepage html
 }
 
 func post(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	r.Body = http.MaxBytesReader(w, r.Body, 1048576)
 	err := r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -29,57 +28,78 @@ func post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmrequest := model.CreateFuzzyMatchRequest(
-		r.FormValue("stringSToMatch"), 
-		r.FormValue("stringsToMatchIn"), 
+		model.SplitFormStringValueToArrayOfStrings(r.FormValue("stringsToMatch")),
+		model.SplitFormStringValueToArrayOfStrings(r.FormValue("stringsToMatchIn")),
 		r.FormValue("mode"))
 	// curl sample request:
-	// curl -d "stringsToMatch=['apple gmbh corp', 'bear']&stringsToMatchIn=['apple inc', 'apple gmbh', 'hair']&mode=deepDive" -X POST http://localhost:8080/api/v1
-	// curl sample response:
-	// {"result": 73 }
-	fmresponse := fm.FuzzyMatch(fmrequest.StringsToMatch, fmrequest.StringsToMatchIn, fmrequest.Mode)
-	w.Write([]byte(fmt.Sprintf(`{"result": %d }`, fmresponse)))
+	// curl -d "stringsToMatch='apple gmbh corp', 'bear'&stringsToMatchIn='apple inc', 'apple gmbh', 'hair'&mode=deepDive" -X POST http://localhost:8080/api/v1/requests/
+	requests = append(requests, fmrequest)
 
+	fmresponse := model.CreateFuzzyMatchResponse(fmrequest.RequestID)
+	//w.Write([]byte(fmt.Sprintf(`{"result": %s }`, fmresponse)))
+	//fmt.Println(requests)
+	//w.Write([]byte(fmt.Sprint(fmresponse.RequestID)))
+	fmt.Fprintf(w, "%+v", fmresponse)
 }
 
-// func params(w http.ResponseWriter, r *http.Request) {
-// 	pathParams := mux.Vars(r)
-// 	w.Header().Set("Content-Type", "application/json")
+func getLazy(w http.ResponseWriter, r *http.Request) {
+	pathParams := mux.Vars(r)
+	w.Header().Set("Content-Type", "application/json")
 
-// 	userID := -1
-// 	var err error
-// 	if val, ok := pathParams["userID"]; ok {
-// 		userID, err = strconv.Atoi(val)
-// 		if err != nil {
-// 			w.WriteHeader(http.StatusInternalServerError)
-// 			w.Write([]byte(`{"message": "need a number"}`))
-// 			return
-// 		}
-// 	}
+	// curl sample request curl -X GET http://localhost:8080/api/v1/requests/66e3a79e-a05e-4d63-856f-5a12ed673965/
 
-// 	commentID := -1
-// 	if val, ok := pathParams["commentID"]; ok {
-// 		commentID, err = strconv.Atoi(val)
-// 		if err != nil {
-// 			w.WriteHeader(http.StatusInternalServerError)
-// 			w.Write([]byte(`{"message": "need a number"}`))
-// 			return
-// 		}
-// 	}
+	requestID := ""
+	//var err error
+	if val, ok := pathParams["requestID"]; ok {
+		requestID = val
+		fmt.Println(requestID)
+		// requestID, err = strconv.Atoi(val)
+		// if err != nil {
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	w.Write([]byte(`{"message": "need a number"}`))
+		// 	return
+		// }
+	}
 
-// 	query := r.URL.Query()
-// 	location := query.Get("location")
+	// first read values from requests variable by requestID and use in fm.FuzzyMatch
+	//result := []string{}
+	var fmResultsResponse model.FuzzyMatchResultsResponse
 
-// 	w.Write([]byte(fmt.Sprintf(`{"userID": %d, "commentID": %d, "location": "%s" }`, userID, commentID, location)))
-// }
+	for i := range requests {
+		fmt.Println(requests[i])
+		if requests[i].RequestID == requestID {
+			res := fm.FuzzyMatch(
+				requests[i].StringsToMatch[0],
+				requests[i].StringsToMatchIn[0],
+				requests[i].Mode)
+
+			fmt.Println(res)
+
+			fmResultsResponse = model.FuzzyMatchResultsResponse{
+				RequestID: requestID,
+				Mode:      requests[i].Mode}
+			// Results:   res} // need to match model.FuzzyMatchResultsResponse
+		}
+	}
+
+	// fmresponse := fm.FuzzyMatch(fmrequest.StringsToMatch, fmrequest.StringsToMatchIn, fmrequest.Mode)
+	fmt.Fprintf(w, "%+v", fmResultsResponse)
+
+	// query := r.URL.Query()
+	// location := query.Get("location")
+
+	// w.Write([]byte(fmt.Sprintf(`{"userID": %d, "commentID": %d, "location": "%s" }`, userID, commentID, location)))
+}
+
+var requests []model.FuzzyMatchRequest
 
 func main() {
 	r := mux.NewRouter()
 
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.HandleFunc("", get).Methods(http.MethodGet)
-	api.HandleFunc("", post).Methods(http.MethodPost)
-
-	// api.HandleFunc("/user/{userID}/comment/{commentID}", params).Methods(http.MethodGet)
+	api.HandleFunc("/requests/{requestID}/", getLazy).Methods(http.MethodGet)
+	api.HandleFunc("/requests/", post).Methods(http.MethodPost)
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

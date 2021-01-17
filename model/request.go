@@ -1,6 +1,8 @@
 package model
 
 import (
+	"strings"
+
 	"github.com/google/uuid"
 )
 
@@ -13,11 +15,16 @@ type FuzzyMatchRequest struct {
 }
 
 // CreateFuzzyMatchRequest returns FuzzyMatchRequest
-func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string, mode string) *FuzzyMatchRequest {
+func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string, mode string) FuzzyMatchRequest {
 	req := FuzzyMatchRequest{
 		RequestID:        uuid.New().String(),
 		StringsToMatch:   stringsToMatch,
 		StringsToMatchIn: stringsToMatchIn,
 		Mode:             mode}
-	return &req
+	return req
+}
+
+// SplitFormStringValueToArrayOfStrings returns array of strings
+func SplitFormStringValueToArrayOfStrings(formValue string) []string {
+	return strings.Split(formValue, ",")
 }
