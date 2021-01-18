@@ -61,28 +61,43 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 		// }
 	}
 
-	// first read values from requests variable by requestID and use in fm.FuzzyMatch
-	//result := []string{}
 	var fmResultsResponse model.FuzzyMatchResultsResponse
 
 	for i := range requests {
-		fmt.Println(requests[i])
 		if requests[i].RequestID == requestID {
-			res := fm.FuzzyMatch(
-				requests[i].StringsToMatch[0],
-				requests[i].StringsToMatchIn[0],
-				requests[i].Mode)
-
-			fmt.Println(res)
 
 			fmResultsResponse = model.FuzzyMatchResultsResponse{
 				RequestID: requestID,
 				Mode:      requests[i].Mode}
-			// Results:   res} // need to match model.FuzzyMatchResultsResponse
+			//Results: []}
+
+			for stringToMatch := 0; stringToMatch < len(requests[i].StringsToMatch); stringToMatch++ {
+
+				for stringToMatchIn := 0; stringToMatchIn < len(requests[i].StringsToMatchIn); stringToMatchIn++ {
+
+					fmresult := fm.FuzzyMatch(
+						requests[i].StringsToMatch[stringToMatch],
+						requests[i].StringsToMatchIn[stringToMatchIn],
+						requests[i].Mode)
+
+					var fuzzyMatchResult model.FuzzyMatchResult
+
+					fuzzyMatchResult = model.FuzzyMatchResult{
+						StringToMatch: requests[i].StringsToMatch[stringToMatch],
+						StringMatched: requests[i].StringsToMatchIn[stringToMatchIn],
+						Result:        fmresult}
+
+					fmResultsResponse.Results = append(fmResultsResponse.Results, fuzzyMatchResult)
+
+				}
+
+			}
+
 		}
 	}
 
 	// fmresponse := fm.FuzzyMatch(fmrequest.StringsToMatch, fmrequest.StringsToMatchIn, fmrequest.Mode)
+
 	fmt.Fprintf(w, "%+v", fmResultsResponse)
 
 	// query := r.URL.Query()
