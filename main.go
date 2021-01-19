@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 
 	fm "github.com/datahappy1/go_fuzzymatch"
 	"github.com/datahappy1/go_fuzzymatch_webapp/model"
@@ -61,44 +62,49 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 		// }
 	}
 
-	var fmResultsResponse model.FuzzyMatchResultsResponse
+	var fuzzyMatchResultsResponse model.FuzzyMatchResultsResponse
 
 	for i := range requests {
 		if requests[i].RequestID == requestID {
 
-			fmResultsResponse = model.FuzzyMatchResultsResponse{
+			fuzzyMatchResultsResponse = model.FuzzyMatchResultsResponse{
 				RequestID: requestID,
 				Mode:      requests[i].Mode}
-			//Results: []}
 
 			for stringToMatch := 0; stringToMatch < len(requests[i].StringsToMatch); stringToMatch++ {
 
+				var auxiliaryMatchResults []model.AuxiliaryMatchResult
+
 				for stringToMatchIn := 0; stringToMatchIn < len(requests[i].StringsToMatchIn); stringToMatchIn++ {
 
-					fmresult := fm.FuzzyMatch(
-						requests[i].StringsToMatch[stringToMatch],
+					auxiliaryMatchResult := model.AuxiliaryMatchResult{
 						requests[i].StringsToMatchIn[stringToMatchIn],
-						requests[i].Mode)
+						fm.FuzzyMatch(
+							requests[i].StringsToMatch[stringToMatch],
+							requests[i].StringsToMatchIn[stringToMatchIn],
+							requests[i].Mode)}
 
-					var fuzzyMatchResult model.FuzzyMatchResult
-
-					fuzzyMatchResult = model.FuzzyMatchResult{
-						StringToMatch: requests[i].StringsToMatch[stringToMatch],
-						StringMatched: requests[i].StringsToMatchIn[stringToMatchIn],
-						Result:        fmresult}
-
-					fmResultsResponse.Results = append(fmResultsResponse.Results, fuzzyMatchResult)
-
+					auxiliaryMatchResults = append(auxiliaryMatchResults, auxiliaryMatchResult)
+					fmt.Println(auxiliaryMatchResults)
 				}
+
+				sort.SliceStable(auxiliaryMatchResults, func(i, j int) bool {
+					return auxiliaryMatchResults[i].Result > auxiliaryMatchResults[j].Result
+				})
+
+				fuzzyMatchResult := model.FuzzyMatchResult{
+					StringToMatch: requests[i].StringsToMatch[stringToMatch],
+					StringMatched: auxiliaryMatchResults[0].StringMatched,
+					Result:        auxiliaryMatchResults[0].Result}
+
+				fuzzyMatchResultsResponse.Results = append(fuzzyMatchResultsResponse.Results, fuzzyMatchResult)
 
 			}
 
 		}
 	}
 
-	// fmresponse := fm.FuzzyMatch(fmrequest.StringsToMatch, fmrequest.StringsToMatchIn, fmrequest.Mode)
-
-	fmt.Fprintf(w, "%+v", fmResultsResponse)
+	fmt.Fprintf(w, "%+v", fuzzyMatchResultsResponse)
 
 	// query := r.URL.Query()
 	// location := query.Get("location")

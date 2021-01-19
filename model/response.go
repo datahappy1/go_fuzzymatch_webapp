@@ -12,6 +12,12 @@ func CreateFuzzyMatchResponse(requestID string) FuzzyMatchResponse {
 	return resp
 }
 
+// AuxiliaryMatchResult returns struct
+type AuxiliaryMatchResult struct {
+	StringMatched string
+	Result        uint16
+}
+
 // FuzzyMatchResult returns struct
 type FuzzyMatchResult struct {
 	StringToMatch string
