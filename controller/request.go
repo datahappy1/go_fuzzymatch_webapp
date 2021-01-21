@@ -1,8 +1,7 @@
-package model
+package controller
 
 import (
 	"strings"
-
 	"github.com/google/uuid"
 )
 
@@ -48,8 +47,5 @@ func safeCommaSplitter(str string, delimiter rune) []string {
 func SplitFormStringValueToSliceOfStrings(formValue string) []string {
 	delimiter := []rune(",")[0]
 	parsedStringsSlice := safeCommaSplitter(formValue, delimiter)
-	//fmt.Println(len(formValue), formValue, parsedStringsSlice, len(parsedStringsSlice))
-
-	//return strings.Split(formValue, ",")
 	return parsedStringsSlice
 }

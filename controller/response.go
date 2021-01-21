@@ -1,4 +1,4 @@
-package model
+package controller
 
 // FuzzyMatchResponse returns struct
 type FuzzyMatchResponse struct {
@@ -27,7 +27,20 @@ type FuzzyMatchResult struct {
 
 // FuzzyMatchResultsResponse returns struct
 type FuzzyMatchResultsResponse struct {
-	RequestID string
-	Mode      string
-	Results   []FuzzyMatchResult
+	RequestID       string
+	Mode            string
+	RequestedOn     string
+	ReturnedAllRows bool
+	Results         []FuzzyMatchResult
+}
+
+// CreateFuzzyMatchResultsResponse returns FuzzyMatchResultsResponse
+func CreateFuzzyMatchResultsResponse(requestID string, mode string, requestedOn string, returnedAllRows bool, results []FuzzyMatchResult) FuzzyMatchResultsResponse {
+	resp := FuzzyMatchResultsResponse{
+		RequestID:       requestID,
+		Mode:            mode,
+		RequestedOn:     requestedOn,
+		ReturnedAllRows: returnedAllRows,
+		Results:         results}
+	return resp
 }
