@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-	"sort"
-
 	fm "github.com/datahappy1/go_fuzzymatch"
 	"github.com/datahappy1/go_fuzzymatch_webapp/model"
 	"github.com/gorilla/mux"
+	"log"
+	"net/http"
+	"sort"
 )
 
 func get(w http.ResponseWriter, r *http.Request) {
@@ -29,8 +28,8 @@ func post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmrequest := model.CreateFuzzyMatchRequest(
-		model.SplitFormStringValueToArrayOfStrings(r.FormValue("stringsToMatch")),
-		model.SplitFormStringValueToArrayOfStrings(r.FormValue("stringsToMatchIn")),
+		model.SplitFormStringValueToSliceOfStrings(r.FormValue("stringsToMatch")),
+		model.SplitFormStringValueToSliceOfStrings(r.FormValue("stringsToMatchIn")),
 		r.FormValue("mode"))
 	// curl sample request:
 	// curl -d "stringsToMatch='apple gmbh corp', 'bear'&stringsToMatchIn='apple inc', 'apple gmbh', 'hair'&mode=deepDive" -X POST http://localhost:8080/api/v1/requests/
@@ -70,22 +69,22 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 			fuzzyMatchResultsResponse = model.FuzzyMatchResultsResponse{
 				RequestID: requestID,
 				Mode:      requests[i].Mode}
-
+			//fmt.Println(requests[i].StringsToMatch)
 			for stringToMatch := 0; stringToMatch < len(requests[i].StringsToMatch); stringToMatch++ {
 
 				var auxiliaryMatchResults []model.AuxiliaryMatchResult
 
 				for stringToMatchIn := 0; stringToMatchIn < len(requests[i].StringsToMatchIn); stringToMatchIn++ {
-
+					//fmt.Println(requests[i].StringsToMatch[stringToMatch], requests[i].StringsToMatchIn[stringToMatchIn])
 					auxiliaryMatchResult := model.AuxiliaryMatchResult{
-						requests[i].StringsToMatchIn[stringToMatchIn],
-						fm.FuzzyMatch(
+						StringMatched: requests[i].StringsToMatchIn[stringToMatchIn],
+						Result: fm.FuzzyMatch(
 							requests[i].StringsToMatch[stringToMatch],
 							requests[i].StringsToMatchIn[stringToMatchIn],
 							requests[i].Mode)}
 
 					auxiliaryMatchResults = append(auxiliaryMatchResults, auxiliaryMatchResult)
-					fmt.Println(auxiliaryMatchResults)
+					//fmt.Println(auxiliaryMatchResults)
 				}
 
 				sort.SliceStable(auxiliaryMatchResults, func(i, j int) bool {
