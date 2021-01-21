@@ -15,14 +15,14 @@ func CreateFuzzyMatchResponse(requestID string) FuzzyMatchResponse {
 // AuxiliaryMatchResult returns struct
 type AuxiliaryMatchResult struct {
 	StringMatched string
-	Result        uint16
+	Result        int
 }
 
 // FuzzyMatchResult returns struct
 type FuzzyMatchResult struct {
 	StringToMatch string
 	StringMatched string
-	Result        uint16
+	Result        int
 }
 
 // FuzzyMatchResultsResponse returns struct

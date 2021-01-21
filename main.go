@@ -69,7 +69,7 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 			fuzzyMatchResultsResponse = model.FuzzyMatchResultsResponse{
 				RequestID: requestID,
 				Mode:      requests[i].Mode}
-			//fmt.Println(requests[i].StringsToMatch)
+
 			for stringToMatch := 0; stringToMatch < len(requests[i].StringsToMatch); stringToMatch++ {
 
 				var auxiliaryMatchResults []model.AuxiliaryMatchResult
@@ -84,7 +84,7 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 							requests[i].Mode)}
 
 					auxiliaryMatchResults = append(auxiliaryMatchResults, auxiliaryMatchResult)
-					//fmt.Println(auxiliaryMatchResults)
+
 				}
 
 				sort.SliceStable(auxiliaryMatchResults, func(i, j int) bool {
