@@ -25,20 +25,18 @@ func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMat
 		RequestedOn:          time.Now().String(),
 		BatchSize:            2,
 		StringsToMatchLength: len(stringsToMatch),
-		ReturnedRows:         0,
-		ReturnedAllRows:      false}
+		ReturnedRows:         0}
 	return dao
 }
 
 // UpdateFuzzyMatchDAO returns FuzzyMatchDAO
-func UpdateFuzzyMatchDAO(requests []FuzzyMatchDAO, requestID string, returnedRows int, returnedAllRows bool) FuzzyMatchDAO {
+func UpdateFuzzyMatchDAO(requests []FuzzyMatchDAO, requestID string, returnedRows int) FuzzyMatchDAO {
 	var dao FuzzyMatchDAO
 	for i := range requests {
 		if requests[i].RequestID == requestID {
 			dao = requests[i]
 
 			dao.ReturnedRows = returnedRows
-			dao.ReturnedAllRows = returnedAllRows
 
 			requests[i] = dao
 

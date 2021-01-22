@@ -68,13 +68,15 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 
 	var fuzzyMatchResultsResponse controller.FuzzyMatchResultsResponse
 	var _retRows int
-	var _retAllRows = false
 
 	for i := range requests {
 		if requests[i].RequestID == requestID {
 
 			if requests[i].StringsToMatchLength <= requests[i].BatchSize || requests[i].ReturnedRows >= requests[i].StringsToMatchLength {
-				_retAllRows = true
+				fuzzyMatchResultsResponse.ReturnedAllRows = true
+				// TODO delete item with func from dao
+				fmt.Fprintf(w, "%+v", fuzzyMatchResultsResponse)
+				break
 			}
 
 			fuzzyMatchResultsResponse = controller.FuzzyMatchResultsResponse{
@@ -126,7 +128,7 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	model.UpdateFuzzyMatchDAO(requests, requestID, _retRows, _retAllRows)
+	model.UpdateFuzzyMatchDAO(requests, requestID, _retRows)
 
 	// TODO convert DAO to Response with CreateFuzzyMatchResultsResponse transf.function
 	fmt.Fprintf(w, "%+v", fuzzyMatchResultsResponse)
