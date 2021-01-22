@@ -67,18 +67,34 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var fuzzyMatchResultsResponse controller.FuzzyMatchResultsResponse
+	var _retRows int
+	var _retAllRows = false
 
 	for i := range requests {
 		if requests[i].RequestID == requestID {
+
+			if requests[i].StringsToMatchLength <= requests[i].BatchSize || requests[i].ReturnedRows >= requests[i].StringsToMatchLength {
+				_retAllRows = true
+			}
 
 			fuzzyMatchResultsResponse = controller.FuzzyMatchResultsResponse{
 				RequestID:   requestID,
 				Mode:        requests[i].Mode,
 				RequestedOn: requests[i].RequestedOn}
 
-			//for stringToMatch := 0; stringToMatch < len(requests[i].StringsToMatch); stringToMatch++ {
-			for stringToMatch := requests[i].ReturnedRows; stringToMatch < requests[i].BatchSize; stringToMatch++ {
+			fmt.Println(">>>", requests[i])
 
+			var upto int
+			if requests[i].ReturnedRows+requests[i].BatchSize >= len(requests[i].StringsToMatchIn) {
+				upto = len(requests[i].StringsToMatchIn)
+			} else {
+				upto = requests[i].ReturnedRows + requests[i].BatchSize
+			}
+
+			//for stringToMatch := 0; stringToMatch < len(requests[i].StringsToMatch); stringToMatch++ {
+			//for stringToMatch := requests[i].ReturnedRows; stringToMatch < requests[i].ReturnedRows + requests[i].BatchSize; stringToMatch++ {
+			for stringToMatch := requests[i].ReturnedRows; stringToMatch < upto; stringToMatch++ {
+				fmt.Println("<><><>", stringToMatch, requests[i].ReturnedRows+requests[i].BatchSize)
 				var auxiliaryMatchResults []controller.AuxiliaryMatchResult
 
 				for stringToMatchIn := 0; stringToMatchIn < len(requests[i].StringsToMatchIn); stringToMatchIn++ {
@@ -104,20 +120,13 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 					Result:        auxiliaryMatchResults[0].Result}
 
 				fuzzyMatchResultsResponse.Results = append(fuzzyMatchResultsResponse.Results, fuzzyMatchResult)
-				requests[i].ReturnedRows += requests[i].BatchSize
 
-				if requests[i].StringsToMatchLength <= requests[i].BatchSize {
-					requests[i].ReturnedAllRows = true
-					fuzzyMatchResultsResponse.ReturnedAllRows = true
-				} else if requests[i].ReturnedRows >= requests[i].StringsToMatchLength {
-					requests[i].ReturnedAllRows = true
-					fuzzyMatchResultsResponse.ReturnedAllRows = true
-				}
-				requests[i].ReturnedAllRows = false
-				fuzzyMatchResultsResponse.ReturnedAllRows = false
+				_retRows = requests[i].ReturnedRows + requests[i].BatchSize
 			}
 		}
 	}
+
+	model.UpdateFuzzyMatchDAO(requests, requestID, _retRows, _retAllRows)
 
 	// TODO convert DAO to Response with CreateFuzzyMatchResultsResponse transf.function
 	fmt.Fprintf(w, "%+v", fuzzyMatchResultsResponse)

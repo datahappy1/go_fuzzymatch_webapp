@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"strings"
 	"github.com/google/uuid"
+	"strings"
 )
 
 // FuzzyMatchRequest returns struct
