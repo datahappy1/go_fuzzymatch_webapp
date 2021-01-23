@@ -12,12 +12,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func get(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	// here will be served homepage html
-}
-
 func post(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -136,9 +130,12 @@ func main() {
 	r := mux.NewRouter()
 
 	api := r.PathPrefix("/api/v1").Subrouter()
-	api.HandleFunc("", get).Methods(http.MethodGet)
 	api.HandleFunc("/requests/{requestID}/", getLazy).Methods(http.MethodGet)
 	api.HandleFunc("/requests/", post).Methods(http.MethodPost)
+
+	static := r.PathPrefix("").Subrouter()
+	fileServer := http.FileServer(http.Dir("./static"))
+	static.Handle("/", http.StripPrefix("/", fileServer))
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

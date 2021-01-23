@@ -1,0 +1,26 @@
+<html>
+
+<body>
+<h1>
+    Fuzzy Matching is alive!
+</h1>
+    <script>
+        async function fetchText() {
+            let response = await fetch('/http://localhost:8080/api/v1/requests/6545d5aa-fb2d-45d8-b95f-9251b22f5cab/');
+
+            console.log(response.status); // 200
+            console.log(response.statusText); // OK
+
+            if (response.status === 200) {
+                let data = await response.text();
+                // handle data
+                console.log(data)
+            }
+        }
+
+        fetchText();
+    </script>
+
+</body>
+
+</html>
