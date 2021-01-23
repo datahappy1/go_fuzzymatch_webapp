@@ -29,22 +29,22 @@ func post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmrequest := controller.CreateFuzzyMatchRequest(
+	fuzzyMatchRequest := controller.CreateFuzzyMatchRequest(
 		controller.SplitFormStringValueToSliceOfStrings(r.FormValue("stringsToMatch")),
 		controller.SplitFormStringValueToSliceOfStrings(r.FormValue("stringsToMatchIn")),
 		r.FormValue("mode"))
 	// curl sample request:
 	// curl -d "stringsToMatch='apple gmbh corp', 'bear'&stringsToMatchIn='apple inc', 'apple gmbh', 'hair'&mode=deepDive" -X POST http://localhost:8080/api/v1/requests/
 
-	fmDAO := model.CreateFuzzyMatchDAO(fmrequest.RequestID, fmrequest.StringsToMatch, fmrequest.StringsToMatchIn, fmrequest.Mode)
+	fuzzyMatchDAO := model.CreateFuzzyMatchDAO(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch, fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode)
 
-	model.RequestsData = append(model.RequestsData, fmDAO)
+	model.RequestsData = append(model.RequestsData, fuzzyMatchDAO)
 
-	fmresponse := controller.CreateFuzzyMatchResponse(fmrequest.RequestID)
+	fuzzyMatchRequestResponse := controller.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
 	//w.Write([]byte(fmt.Sprintf(`{"result": %s }`, fmresponse)))
 	fmt.Println(model.RequestsData)
 	//w.Write([]byte(fmt.Sprint(fmresponse.RequestID)))
-	fmt.Fprintf(w, "%+v", fmresponse)
+	fmt.Fprintf(w, "%+v", fuzzyMatchRequestResponse)
 }
 
 func getLazy(w http.ResponseWriter, r *http.Request) {
@@ -54,72 +54,79 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 	// curl sample request curl -X GET http://localhost:8080/api/v1/requests/66e3a79e-a05e-4d63-856f-5a12ed673965/
 
 	requestID := ""
-	//var err error
 	if val, ok := pathParams["requestID"]; ok {
 		requestID = val
-		fmt.Println(requestID)
-		// requestID, err = strconv.Atoi(val)
-		// if err != nil {
-		// 	w.WriteHeader(http.StatusInternalServerError)
-		// 	w.Write([]byte(`{"message": "need a number"}`))
-		// 	return
-		// }
+		if controller.IsValidUUID(val) == false {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(`{"message": "need a valid request UUID"}`))
+			return
+		}
 	}
 
+	var fuzzyMatchDAO model.FuzzyMatchDAO
+	var fuzzyMatchResults controller.FuzzyMatchResults
 	var fuzzyMatchResultsResponse controller.FuzzyMatchResultsResponse
 	var returnedRowsUpperBound int
 	var returnedAllRows bool
 
 	for i := range model.RequestsData {
 		if model.RequestsData[i].RequestID == requestID {
-
-			fuzzyMatchResultsResponse = controller.FuzzyMatchResultsResponse{
-				RequestID:   requestID,
-				Mode:        model.RequestsData[i].Mode,
-				RequestedOn: model.RequestsData[i].RequestedOn}
-
-			if model.RequestsData[i].ReturnedRows+model.RequestsData[i].BatchSize >= model.RequestsData[i].StringsToMatchLength {
-				returnedRowsUpperBound = model.RequestsData[i].StringsToMatchLength
-				returnedAllRows = true
-			} else {
-				returnedRowsUpperBound = model.RequestsData[i].ReturnedRows + model.RequestsData[i].BatchSize
-				returnedAllRows = false
-			}
-
-			for stringToMatch := model.RequestsData[i].ReturnedRows; stringToMatch < returnedRowsUpperBound; stringToMatch++ {
-				var auxiliaryMatchResults []controller.AuxiliaryMatchResult
-
-				for stringToMatchIn := 0; stringToMatchIn < model.RequestsData[i].StringsToMatchInLength; stringToMatchIn++ {
-					auxiliaryMatchResult := controller.AuxiliaryMatchResult{
-						StringMatched: model.RequestsData[i].StringsToMatchIn[stringToMatchIn],
-						Result: fm.FuzzyMatch(
-							model.RequestsData[i].StringsToMatch[stringToMatch],
-							model.RequestsData[i].StringsToMatchIn[stringToMatchIn],
-							model.RequestsData[i].Mode)}
-
-					auxiliaryMatchResults = append(auxiliaryMatchResults, auxiliaryMatchResult)
-				}
-
-				sort.SliceStable(auxiliaryMatchResults, func(i, j int) bool {
-					return auxiliaryMatchResults[i].Result > auxiliaryMatchResults[j].Result
-				})
-
-				fuzzyMatchResult := controller.FuzzyMatchResult{
-					StringToMatch: model.RequestsData[i].StringsToMatch[stringToMatch],
-					StringMatched: auxiliaryMatchResults[0].StringMatched,
-					Result:        auxiliaryMatchResults[0].Result}
-
-				fuzzyMatchResultsResponse.Results = append(fuzzyMatchResultsResponse.Results, fuzzyMatchResult)
-				fuzzyMatchResultsResponse.ReturnedAllRows = returnedAllRows
-			}
-
-			// TODO convert DAO to Response with CreateFuzzyMatchResultsResponse transf.function
-			if returnedAllRows == true {
-				model.DeleteFuzzyMatchDAOInRequestsData(requestID)
-			} else {
-				model.UpdateFuzzyMatchDAOInRequestsData(requestID, returnedRowsUpperBound)
-			}
+			fuzzyMatchDAO = model.CreateFuzzyMatchDAO(requestID, model.RequestsData[i].StringsToMatch, model.RequestsData[i].StringsToMatchIn, model.RequestsData[i].Mode)
+			break
 		}
+	}
+
+	if fuzzyMatchDAO.RequestID == "" {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(`{"message": "Request not found"}`))
+		return
+	}
+
+	if fuzzyMatchDAO.ReturnedRows+fuzzyMatchDAO.BatchSize >= fuzzyMatchDAO.StringsToMatchLength {
+		returnedRowsUpperBound = fuzzyMatchDAO.StringsToMatchLength
+		returnedAllRows = true
+	} else {
+		returnedRowsUpperBound = fuzzyMatchDAO.ReturnedRows + fuzzyMatchDAO.BatchSize
+		returnedAllRows = false
+	}
+
+	for stringToMatch := fuzzyMatchDAO.ReturnedRows; stringToMatch < returnedRowsUpperBound; stringToMatch++ {
+		var auxiliaryMatchResults []controller.AuxiliaryMatchResult
+
+		for stringToMatchIn := 0; stringToMatchIn < fuzzyMatchDAO.StringsToMatchInLength; stringToMatchIn++ {
+			auxiliaryMatchResult := controller.AuxiliaryMatchResult{
+				StringMatched: fuzzyMatchDAO.StringsToMatchIn[stringToMatchIn],
+				Result: fm.FuzzyMatch(
+					fuzzyMatchDAO.StringsToMatch[stringToMatch],
+					fuzzyMatchDAO.StringsToMatchIn[stringToMatchIn],
+					fuzzyMatchDAO.Mode)}
+
+			auxiliaryMatchResults = append(auxiliaryMatchResults, auxiliaryMatchResult)
+		}
+
+		sort.SliceStable(auxiliaryMatchResults, func(i, j int) bool {
+			return auxiliaryMatchResults[i].Result > auxiliaryMatchResults[j].Result
+		})
+
+		fuzzyMatchResult := controller.FuzzyMatchResult{
+			StringToMatch: fuzzyMatchDAO.StringsToMatch[stringToMatch],
+			StringMatched: auxiliaryMatchResults[0].StringMatched,
+			Result:        auxiliaryMatchResults[0].Result}
+
+		fuzzyMatchResults = append(fuzzyMatchResults, fuzzyMatchResult)
+	}
+
+	fuzzyMatchResultsResponse = controller.FuzzyMatchResultsResponse{
+		RequestID:       requestID,
+		Mode:            fuzzyMatchDAO.Mode,
+		RequestedOn:     fuzzyMatchDAO.RequestedOn,
+		ReturnedAllRows: returnedAllRows,
+		Results:         fuzzyMatchResults}
+
+	if returnedAllRows == true {
+		model.DeleteFuzzyMatchDAOInRequestsData(requestID)
+	} else {
+		model.UpdateFuzzyMatchDAOInRequestsData(requestID, returnedRowsUpperBound)
 	}
 
 	fmt.Fprintf(w, "%+v", fuzzyMatchResultsResponse)

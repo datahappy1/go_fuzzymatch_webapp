@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/google/uuid"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 // FuzzyMatchRequest returns struct
@@ -21,6 +22,12 @@ func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string,
 		StringsToMatchIn: stringsToMatchIn,
 		Mode:             mode}
 	return req
+}
+
+// IsValidUUID returns UUID
+func IsValidUUID(RequestUUID string) bool {
+	_, err := uuid.Parse(RequestUUID)
+	return err == nil
 }
 
 func safeCommaSplitter(str string, delimiter rune) []string {
