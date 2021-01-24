@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"sort"
@@ -15,30 +17,54 @@ import (
 func post(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+
 	r.Body = http.MaxBytesReader(w, r.Body, 1048576)
-	err := r.ParseForm()
+
+	var fuzzyMatchExternalRequest controller.FuzzyMatchExternalRequest
+
+	requestBodyString, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(`{"error": "body not parsed"}`))
-		return
+		log.Println(err)
 	}
 
+	xes := string(requestBodyString[:])
+	fmt.Println("xew", xes)
+	errx := json.Unmarshal(requestBodyString, &fuzzyMatchExternalRequest)
+	if errx != nil {
+		log.Printf("error decoding response: %v", errx)
+		if e, ok := errx.(*json.SyntaxError); ok {
+			log.Printf("syntax error at byte offset %d", e.Offset)
+		}
+		log.Printf("response: %q", requestBodyString)
+	}
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+
+	fmt.Println(fuzzyMatchExternalRequest)
 	fuzzyMatchRequest := controller.CreateFuzzyMatchRequest(
-		controller.SplitFormStringValueToSliceOfStrings(r.FormValue("stringsToMatch")),
-		controller.SplitFormStringValueToSliceOfStrings(r.FormValue("stringsToMatchIn")),
-		r.FormValue("mode"))
+		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatch),
+		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatchIn),
+		fuzzyMatchExternalRequest.Mode)
+
 	// curl sample request:
-	// curl -d "stringsToMatch='apple gmbh corp', 'bear'&stringsToMatchIn='apple inc', 'apple gmbh', 'hair'&mode=deepDive" -X POST http://localhost:8080/api/v1/requests/
+	// https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service
+	// curl -X POST -d "{""stringsToMatch"":""'apple, gmbh','corp'"",""stringsToMatchIn"":""hair"",""mode"":""combined""}" http://localhost:8080/api/v1/requests/
 
-	fuzzyMatchDAO := model.CreateFuzzyMatchDAO(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch, fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode)
-
-	model.RequestsData = append(model.RequestsData, fuzzyMatchDAO)
+	model.CreateFuzzyMatchDAOInRequestsData(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
+		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode)
 
 	fuzzyMatchRequestResponse := controller.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
-	//w.Write([]byte(fmt.Sprintf(`{"result": %s }`, fmresponse)))
-	fmt.Println(model.RequestsData)
-	//w.Write([]byte(fmt.Sprint(fmresponse.RequestID)))
-	fmt.Fprintf(w, "%+v", fuzzyMatchRequestResponse)
+
+	// fmt.Fprintf(w, "%+v", fuzzyMatchRequestResponse)
+	jData, err := json.Marshal(fuzzyMatchRequestResponse)
+	if err != nil {
+		// handle error
+	}
+
+	// fmt.Println(model.RequestsData)
+	w.Write(jData)
+
 }
 
 func getLazy(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +91,8 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 
 	for i := range model.RequestsData {
 		if model.RequestsData[i].RequestID == requestID {
-			fuzzyMatchDAO = model.CreateFuzzyMatchDAO(requestID, model.RequestsData[i].StringsToMatch, model.RequestsData[i].StringsToMatchIn, model.RequestsData[i].Mode)
+			fuzzyMatchDAO = model.CreateFuzzyMatchDAO(requestID, model.RequestsData[i].StringsToMatch,
+				model.RequestsData[i].StringsToMatchIn, model.RequestsData[i].Mode)
 			break
 		}
 	}
@@ -123,7 +150,14 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 		model.UpdateFuzzyMatchDAOInRequestsData(requestID, returnedRowsUpperBound)
 	}
 
-	fmt.Fprintf(w, "%+v", fuzzyMatchResultsResponse)
+	// fmt.Fprintf(w, "%+v", fuzzyMatchResultsResponse)
+	jData, err := json.Marshal(fuzzyMatchResultsResponse)
+	if err != nil {
+		// handle error
+	}
+
+	w.Write(jData)
+
 }
 
 func main() {

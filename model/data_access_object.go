@@ -31,6 +31,14 @@ func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMat
 	return dao
 }
 
+// CreateFuzzyMatchDAOInRequestsData returns FuzzyMatchDAO
+func CreateFuzzyMatchDAOInRequestsData(RequestID string, StringsToMatch []string, StringsToMatchIn []string, Mode string) (string, bool) {
+	dao := CreateFuzzyMatchDAO(RequestID, StringsToMatch, StringsToMatchIn, Mode)
+	RequestsData = append(RequestsData, dao)
+	return "ok", true
+}
+
+
 // UpdateFuzzyMatchDAO returns FuzzyMatchDAO
 func UpdateFuzzyMatchDAO(fuzzyMatchDAO FuzzyMatchDAO, returnedRows int) FuzzyMatchDAO {
 	dao := fuzzyMatchDAO

@@ -6,6 +6,13 @@ import (
 	"github.com/google/uuid"
 )
 
+// FuzzyMatchExternalRequest returns struct
+type FuzzyMatchExternalRequest struct {
+	StringsToMatch string `json:"stringsToMatch"`
+	StringsToMatchIn string `json:"stringsToMatchIn"`
+	Mode string `json:"mode"`
+}
+
 // FuzzyMatchRequest returns struct
 type FuzzyMatchRequest struct {
 	RequestID        string

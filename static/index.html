@@ -1,24 +1,60 @@
 <html>
 
 <body>
-<h1>
-    Fuzzy Matching is alive!
-</h1>
+    <h1>
+        Fuzzy Matching is alive!
+    </h1>
+
     <script>
-        async function fetchText() {
-            let response = await fetch('/http://localhost:8080/api/v1/requests/6545d5aa-fb2d-45d8-b95f-9251b22f5cab/');
+        const BaseUrl = 'http://localhost:8080/api/v1/requests/';
+        function createRequest() {
 
-            console.log(response.status); // 200
-            console.log(response.statusText); // OK
+            const Data = JSON.stringify({
+                stringsToMatch: "apple",
+                stringsToMatchIn: "tree",
+                mode: "combined"
+            });
+            const otherParam = {
+                headers: {
+                    "content-type": "application/json; charset=UTF-8"
+                },
+                body: Data,
+                method: "POST"
+            };
 
-            if (response.status === 200) {
-                let data = await response.text();
-                // handle data
-                console.log(data)
-            }
+            fetch(BaseUrl, otherParam)
+                .then(data => { return data.json() })
+                .then(res => { fetchResults(res["RequestID"]) })
+                .catch(error => console.log(error))
         }
 
-        fetchText();
+        function fetchResults(requestId) {
+            console.log("rid", requestId)
+            const otherParam2 = {
+                headers: {
+                    "content-type": "application/json; charset=UTF-8"
+                },
+                method: "GET"
+            };
+
+            fetch(BaseUrl + requestId + '/', otherParam2)
+                .then(data => { return data.json() })
+                .then(res => { console.log(res) })
+                .catch(error => console.log(error))
+
+            // console.log(BaseUrl + requestId + '/')
+            // console.log(response.status); // 200
+            // console.log(response.statusText); // OK
+
+            // // if (response.status === 200) {
+            // let data = response;
+            // // handle data
+            // console.log(data)
+            // // }
+        }
+
+        createRequest();
+
     </script>
 
 </body>
