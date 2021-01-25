@@ -4,14 +4,19 @@
     <h1>
         Fuzzy Matching is alive!
     </h1>
+    <div id="resultsDiv">
+        <table id="resultsTable">
 
+        </table>
+    </div>
     <script>
         const BaseUrl = 'http://localhost:8080/api/v1/requests/';
+
         function createRequest() {
 
             const Data = JSON.stringify({
-                stringsToMatch: "apple",
-                stringsToMatchIn: "tree",
+                stringsToMatch: "apple, bee, cee",
+                stringsToMatchIn: "tree, fee, freeze, squeeze",
                 mode: "combined"
             });
             const otherParam = {
@@ -29,7 +34,6 @@
         }
 
         function fetchResults(requestId) {
-            console.log("rid", requestId)
             const otherParam2 = {
                 headers: {
                     "content-type": "application/json; charset=UTF-8"
@@ -39,18 +43,35 @@
 
             fetch(BaseUrl + requestId + '/', otherParam2)
                 .then(data => { return data.json() })
-                .then(res => { console.log(res) })
+                .then(res => {
+                    console.log(res)
+                    if (res["ReturnedAllRows"] == true) {
+                        updateResultsTable(res["Results"])
+                    } else {
+                        updateResultsTable(res["Results"])
+                        fetchResults(requestId);
+                    }
+                })
                 .catch(error => console.log(error))
 
-            // console.log(BaseUrl + requestId + '/')
-            // console.log(response.status); // 200
-            // console.log(response.statusText); // OK
+        }
 
-            // // if (response.status === 200) {
-            // let data = response;
-            // // handle data
-            // console.log(data)
-            // // }
+        function updateResultsTable(results) {
+            var htmlResultsTable = '';
+            var container = document.getElementById('resultsTable');
+
+            for (i = 0; i < results.length; i++) {
+                let htmlTableRow = `<tr>
+                            <td>${results[i]["StringToMatch"]}</td>
+                            <td>${results[i]["StringMatched"]}</td>
+                            <td>${results[i]["Result"]}</td>
+                        </tr>`;
+
+                htmlResultsTable += htmlTableRow;
+            }
+
+            container.innerHTML = htmlResultsTable;
+            return
         }
 
         createRequest();
