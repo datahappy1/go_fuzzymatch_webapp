@@ -17,6 +17,9 @@
     <!--<a class="navbar-brand" href="#">
         <img src="" alt="logo">
     </a>-->
+    <a class="navbar-brand" href="#">
+        fuzzymatch.in
+    </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
             aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -24,7 +27,7 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a id="main" class="nav-link" href="#">Home
+                <a id="main" class="nav-link" href="##">Home
                     <span class="sr-only">(current)</span>
                 </a>
             </li>
@@ -44,47 +47,66 @@
 
 <div class="container-fluid">
 
-    <div class="row justify-content-start">
-        <div class="col-4">
-            <label for="mode">Choose mode:</label>
-            <select class="form-select" name="mode" id="mode">
-                <option value="simple">simple</option>
-                <option value="deepDive">deepDive</option>
-                <option value="combined">combined</option>
-            </select>
+    <div class="container pt-5">
+        <div class="row">
+            <div class="col-sm">
+                <label for="mode">Choose mode:</label>
+                <select class="form-select" name="mode" id="mode">
+                    <option value="simple">simple</option>
+                    <option value="deepDive">deepDive</option>
+                    <option value="combined">combined</option>
+                </select>
+            </div>
+            <div class="col-sm">
+                <button class="btn btn-primary" onclick="buttonHandler()" id="submitButton">Get fuzzy!</button>
+
+            </div>
+            <div class="col-sm">
+
+            </div>
         </div>
-    </div>
 
-    <div class="row justify-content-center">
-        <div class="col-4">
-
-            <label for="stringsToMatch">Strings to match:</label>
-            <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"></textarea>
-        </div>
-        <div class="col-4">
-            <label for="stringsToMatchIn">Strings to match in:</label>
-            <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="10" cols="50"></textarea>
-
-        </div>
-        <div class="col-4">
-            <div id="resultsDiv">
-                <table id="resultsTable">
-
-                </table>
+        <div class="row">
+            <div class="col-sm">
+                <label for="formControlRange">Return results above </label>
+                <input type="range" class="form-control-range" id="formControlRange">
             </div>
         </div>
 
     </div>
 
-    <div class="row justify-content-end">
-        <div class="col-4">
-            <button class="btn btn-primary" onclick="buttonHandler()" id="submitButton">Get fuzzy!</button>
-        </div>
-        <div class="col-4">
-        </div>
-        <div class="col-4">
+    <div class="container pt-5">
+        <div class="row">
+            <div class="col-sm">
+                <label for="stringsToMatch">Strings to match:</label>
+                <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="20" cols="50"></textarea>
+
+            </div>
+            <div class="col-sm">
+                <label for="stringsToMatchIn">Strings to match in:</label>
+                <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="20"
+                          cols="50"></textarea>
+
+            </div>
+            <div class="col-sm">
+                <label for="resultsTable">Results:</label>
+                <table class="table table-bordered" id="resultsTable">
+                    <thead>
+                    <tr>
+                        <th scope="col">Input</th>
+                        <th scope="col">Best Match</th>
+                        <th scope="col">Result</th>
+                    </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
+
 </div>
 
 <script>
@@ -149,13 +171,13 @@
     }
 
     function clearResultsTable() {
-        let container = document.getElementById('resultsTable');
+        let container = document.getElementById('resultsTableBody');
         container.innerHTML = '';
     }
 
     function updateResultsTable(results) {
         let htmlResultsTable = '';
-        let container = document.getElementById('resultsTable');
+        let container = document.getElementById('resultsTableBody');
 
         for (let i = 0; i < results.length; i++) {
             let htmlTableRow = `<tr>
@@ -177,6 +199,19 @@
 
 </script>
 
+<script>
+    const url = window.location.href;
+
+    const els = document.querySelectorAll(".dropdown-menu a");
+    for (let i = 0, l = els.length; i < l; i++) {
+        let el = els[i];
+        if (el.href === url) {
+            el.classList.add("active");
+            let parent = el.closest(".main-nav"); // add this class for the top level "li" to get easy the parent
+            parent.classList.add("active");
+        }
+    }
+</script>
 </body>
 
 </html>
