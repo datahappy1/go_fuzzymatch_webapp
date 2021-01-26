@@ -8,6 +8,23 @@
 <h1>
     Fuzzy Matching is alive!
 </h1>
+<div id="setupDiv">
+
+    <label for="stringsToMatch">Strings to match:</label>
+    <textarea id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"></textarea>
+
+    <label for="stringsToMatchIn">Strings to match in:</label>
+    <textarea id="stringsToMatchIn" name="stringsToMatchIn" rows="10" cols="50"></textarea>
+
+    <label for="mode">Choose mode:</label>
+    <select name="mode" id="mode">
+        <option value="simple">simple</option>
+        <option value="deepDive">deepDive</option>
+        <option value="combined">combined</option>
+    </select>
+
+    <button onclick="buttonHandler()">Get fuzzy!</button>
+</div>
 <div id="resultsDiv">
     <table id="resultsTable">
 
@@ -17,11 +34,19 @@
     const BaseUrl = 'http://localhost:8080/api/v1/requests/';
 
     function createRequest() {
+        let inputStringsToMatch = document.getElementById("stringsToMatch").value;
+        let inputStringsToMatchIn = document.getElementById("stringsToMatchIn").value;
+        let inputMode = document.getElementById("mode").value;
+
+        console.log(inputStringsToMatch, inputStringsToMatchIn, inputMode)
 
         const Data = JSON.stringify({
-            stringsToMatch: "apple, bee, cee",
-            stringsToMatchIn: "tree, fee, freeze, squeeze",
-            mode: "combined"
+            // stringsToMatch: "apple, bee, cee",
+            // stringsToMatchIn: "tree, fee, freeze, squeeze",
+            // mode: "combined"
+            stringsToMatch: inputStringsToMatch,
+            stringsToMatchIn: inputStringsToMatchIn,
+            mode: inputMode
         });
         const otherParam = {
             headers: {
@@ -66,11 +91,16 @@
 
     }
 
-    function updateResultsTable(results) {
-        var htmlResultsTable = '';
-        var container = document.getElementById('resultsTable');
+    function clearResultsTable() {
+        let container = document.getElementById('resultsTable');
+        container.innerHTML = '';
+    }
 
-        for (i = 0; i < results.length; i++) {
+    function updateResultsTable(results) {
+        let htmlResultsTable = '';
+        let container = document.getElementById('resultsTable');
+
+        for (let i = 0; i < results.length; i++) {
             let htmlTableRow = `<tr>
                             <td>${results[i]["StringToMatch"]}</td>
                             <td>${results[i]["StringMatched"]}</td>
@@ -83,7 +113,10 @@
         container.innerHTML += htmlResultsTable;
     }
 
-    createRequest();
+    function buttonHandler() {
+        clearResultsTable();
+        createRequest();
+    }
 
 </script>
 
