@@ -9,8 +9,8 @@ import (
 	"sort"
 
 	fm "github.com/datahappy1/go_fuzzymatch"
-	"github.com/datahappy1/go_fuzzymatch_webapp/controller"
-	"github.com/datahappy1/go_fuzzymatch_webapp/model"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/controller"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 	"github.com/gorilla/mux"
 )
 
@@ -104,7 +104,6 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 				model.RequestsData[i].StringsToMatchIn,
 				model.RequestsData[i].Mode,
 				model.RequestsData[i].ReturnedRows)
-			fmt.Println("hah", fuzzyMatchDAO)
 			break
 		}
 	}
@@ -118,15 +117,10 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 	if fuzzyMatchDAO.ReturnedRows+fuzzyMatchDAO.BatchSize >= fuzzyMatchDAO.StringsToMatchLength {
 		returnedRowsUpperBound = fuzzyMatchDAO.StringsToMatchLength
 		returnedAllRows = true
-		fmt.Println("kuk")
 	} else {
 		returnedRowsUpperBound = fuzzyMatchDAO.ReturnedRows + fuzzyMatchDAO.BatchSize
 		returnedAllRows = false
-		fmt.Println("buk")
 	}
-
-	fmt.Println(returnedAllRows, returnedRowsUpperBound)
-	fmt.Println(model.RequestsData)
 
 	for stringToMatch := fuzzyMatchDAO.ReturnedRows; stringToMatch < returnedRowsUpperBound; stringToMatch++ {
 		var auxiliaryMatchResults []controller.AuxiliaryMatchResult
@@ -184,9 +178,10 @@ func main() {
 	api.HandleFunc("/requests/{requestID}/", getLazy).Methods(http.MethodGet)
 	api.HandleFunc("/requests/", post).Methods(http.MethodPost)
 
-	static := r.PathPrefix("").Subrouter()
-	fileServer := http.FileServer(http.Dir("./static"))
-	static.Handle("/", http.StripPrefix("/", fileServer))
+	ui := r.PathPrefix("/").Subrouter()
+	fileServerStaticRoot := http.FileServer(http.Dir("./ui/static/"))
+	ui.PathPrefix("/").Handler(fileServerStaticRoot)
+	ui.PathPrefix("/js/").Handler(fileServerStaticRoot)
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
