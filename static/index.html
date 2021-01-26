@@ -1,82 +1,91 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fuzzy Matching</title>
+</head>
 <body>
-    <h1>
-        Fuzzy Matching is alive!
-    </h1>
-    <div id="resultsDiv">
-        <table id="resultsTable">
+<h1>
+    Fuzzy Matching is alive!
+</h1>
+<div id="resultsDiv">
+    <table id="resultsTable">
 
-        </table>
-    </div>
-    <script>
-        const BaseUrl = 'http://localhost:8080/api/v1/requests/';
+    </table>
+</div>
+<script>
+    const BaseUrl = 'http://localhost:8080/api/v1/requests/';
 
-        function createRequest() {
+    function createRequest() {
 
-            const Data = JSON.stringify({
-                stringsToMatch: "apple, bee, cee",
-                stringsToMatchIn: "tree, fee, freeze, squeeze",
-                mode: "combined"
-            });
-            const otherParam = {
-                headers: {
-                    "content-type": "application/json; charset=UTF-8"
-                },
-                body: Data,
-                method: "POST"
-            };
+        const Data = JSON.stringify({
+            stringsToMatch: "apple, bee, cee",
+            stringsToMatchIn: "tree, fee, freeze, squeeze",
+            mode: "combined"
+        });
+        const otherParam = {
+            headers: {
+                "content-type": "application/json; charset=UTF-8"
+            },
+            body: Data,
+            method: "POST"
+        };
 
-            fetch(BaseUrl, otherParam)
-                .then(data => { return data.json() })
-                .then(res => { fetchResults(res["RequestID"]) })
-                .catch(error => console.log(error))
-        }
+        fetch(BaseUrl, otherParam)
+            .then(data => {
+                return data.json()
+            })
+            .then(res => {
+                fetchResults(res["RequestID"])
+            })
+            .catch(error => console.log(error))
+    }
 
-        function fetchResults(requestId) {
-            const otherParam2 = {
-                headers: {
-                    "content-type": "application/json; charset=UTF-8"
-                },
-                method: "GET"
-            };
+    function fetchResults(requestId) {
+        const otherParam2 = {
+            headers: {
+                "content-type": "application/json; charset=UTF-8"
+            },
+            method: "GET"
+        };
 
-            fetch(BaseUrl + requestId + '/', otherParam2)
-                .then(data => { return data.json() })
-                .then(res => {
-                    console.log(res)
-                    if (res["ReturnedAllRows"] == true) {
-                        updateResultsTable(res["Results"])
-                    } else {
-                        updateResultsTable(res["Results"])
-                        fetchResults(requestId);
-                    }
-                })
-                .catch(error => console.log(error))
+        fetch(BaseUrl + requestId + '/', otherParam2)
+            .then(data => {
+                return data.json()
+            })
+            .then(res => {
+                console.log(res)
+                if (res["ReturnedAllRows"] === true) {
+                    updateResultsTable(res["Results"])
+                } else {
+                    updateResultsTable(res["Results"]);
+                    fetchResults(requestId);
+                }
+            })
+            .catch(error => console.log(error))
 
-        }
+    }
 
-        function updateResultsTable(results) {
-            var htmlResultsTable = '';
-            var container = document.getElementById('resultsTable');
+    function updateResultsTable(results) {
+        var htmlResultsTable = '';
+        var container = document.getElementById('resultsTable');
 
-            for (i = 0; i < results.length; i++) {
-                let htmlTableRow = `<tr>
+        for (i = 0; i < results.length; i++) {
+            let htmlTableRow = `<tr>
                             <td>${results[i]["StringToMatch"]}</td>
                             <td>${results[i]["StringMatched"]}</td>
                             <td>${results[i]["Result"]}</td>
                         </tr>`;
 
-                htmlResultsTable += htmlTableRow;
-            }
-
-            container.innerHTML = htmlResultsTable;
-            return
+            htmlResultsTable += htmlTableRow;
         }
 
-        createRequest();
+        container.innerHTML += htmlResultsTable;
+    }
 
-    </script>
+    createRequest();
+
+</script>
 
 </body>
 

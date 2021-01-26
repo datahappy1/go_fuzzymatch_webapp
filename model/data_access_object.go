@@ -2,6 +2,8 @@ package model
 
 import "time"
 
+var batchSize = 20
+
 // FuzzyMatchDAO returns struct
 type FuzzyMatchDAO struct {
 	RequestID              string
@@ -17,23 +19,24 @@ type FuzzyMatchDAO struct {
 }
 
 // CreateFuzzyMatchDAO returns FuzzyMatchDAO
-func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMatchIn []string, mode string) FuzzyMatchDAO {
+func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMatchIn []string,
+	mode string, returnedRows int) FuzzyMatchDAO {
 	dao := FuzzyMatchDAO{
 		RequestID:              requestID,
 		StringsToMatch:         stringsToMatch,
 		StringsToMatchIn:       stringsToMatchIn,
 		Mode:                   mode,
 		RequestedOn:            time.Now().String(),
-		BatchSize:              2,
+		BatchSize:              batchSize,
 		StringsToMatchLength:   len(stringsToMatch),
 		StringsToMatchInLength: len(stringsToMatchIn),
-		ReturnedRows:           0}
+		ReturnedRows:           returnedRows}
 	return dao
 }
 
 // CreateFuzzyMatchDAOInRequestsData returns FuzzyMatchDAO
 func CreateFuzzyMatchDAOInRequestsData(RequestID string, StringsToMatch []string, StringsToMatchIn []string, Mode string) (string, bool) {
-	dao := CreateFuzzyMatchDAO(RequestID, StringsToMatch, StringsToMatchIn, Mode)
+	dao := CreateFuzzyMatchDAO(RequestID, StringsToMatch, StringsToMatchIn, Mode, 0)
 	RequestsData = append(RequestsData, dao)
 	return "ok", true
 }

@@ -51,6 +51,14 @@ func post(w http.ResponseWriter, r *http.Request) {
 	// https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service
 	// curl -X POST -d "{""stringsToMatch"":""'apple, gmbh','corp'"",""stringsToMatchIn"":""hair"",""mode"":""combined""}" http://localhost:8080/api/v1/requests/
 
+	//	curl --location --request POST 'http://localhost:8080/api/v1/requests/' \
+	//	--header 'Content-Type: text/plain' \
+	//	--data-raw '{
+	//	"stringsToMatch": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.",
+	//		"stringsToMatchIn": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.'\''",
+	//		"mode": "combined"
+	//}'
+
 	model.CreateFuzzyMatchDAOInRequestsData(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
 		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode)
 
@@ -91,8 +99,12 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 
 	for i := range model.RequestsData {
 		if model.RequestsData[i].RequestID == requestID {
-			fuzzyMatchDAO = model.CreateFuzzyMatchDAO(requestID, model.RequestsData[i].StringsToMatch,
-				model.RequestsData[i].StringsToMatchIn, model.RequestsData[i].Mode)
+			fuzzyMatchDAO = model.CreateFuzzyMatchDAO(requestID,
+				model.RequestsData[i].StringsToMatch,
+				model.RequestsData[i].StringsToMatchIn,
+				model.RequestsData[i].Mode,
+				model.RequestsData[i].ReturnedRows)
+			fmt.Println("hah", fuzzyMatchDAO)
 			break
 		}
 	}
@@ -106,10 +118,15 @@ func getLazy(w http.ResponseWriter, r *http.Request) {
 	if fuzzyMatchDAO.ReturnedRows+fuzzyMatchDAO.BatchSize >= fuzzyMatchDAO.StringsToMatchLength {
 		returnedRowsUpperBound = fuzzyMatchDAO.StringsToMatchLength
 		returnedAllRows = true
+		fmt.Println("kuk")
 	} else {
 		returnedRowsUpperBound = fuzzyMatchDAO.ReturnedRows + fuzzyMatchDAO.BatchSize
 		returnedAllRows = false
+		fmt.Println("buk")
 	}
+
+	fmt.Println(returnedAllRows, returnedRowsUpperBound)
+	fmt.Println(model.RequestsData)
 
 	for stringToMatch := fuzzyMatchDAO.ReturnedRows; stringToMatch < returnedRowsUpperBound; stringToMatch++ {
 		var auxiliaryMatchResults []controller.AuxiliaryMatchResult
