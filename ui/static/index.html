@@ -14,137 +14,148 @@
 
 <body>
 
-    <!-- Navigation start-->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-        <!--<a class="navbar-brand" href="#">
-        <img src="" alt="logo">
-    </a>-->
-        <a class="navbar-brand" href="#">
-            fuzzymatch.in
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+<!-- Navigation start-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <!--<a class="navbar-brand" href="#">
+    <img src="" alt="logo">
+</a>-->
+    <a class="navbar-brand" href="#">
+        fuzzymatch.in
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
             aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a id="main" class="nav-link" href="#">Home
-                        <span class="sr-only">(current)</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a id="api_docs" class="nav-link" href="/api_documentation/">
-                        API Docs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a id="contact" class="nav-link" href="https://datahappy.wordpress.com/contact/" target="_blank">
-                        Contact
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <!-- Navigation end-->
-
-    <!-- Body Container start-->
-    <div class="container-fluid bg-light text-dark">
-
-        <div class="container pt-3 bg-white text-dark">
-            <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert" style="display:none;">
-                Mandatory fields not filled
-            </div>
-
-            <div class="row">
-                <div class="col-sm">
-                    <label for="mode">Choose mode:</label>
-                    <select class="form-select" name="mode" id="mode">
-                        <option value="simple">simple</option>
-                        <option value="deepDive">deepDive</option>
-                        <option value="combined">combined</option>
-                    </select>
-                </div>
-                <div class="col-sm">
-                </div>
-                <div class="col-sm">
-                    <button class="btn btn-primary float-right" onclick="buttonHandler()" id="submitButton">Get
-                        fuzzy!</button>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm">
-                    <label for="formControlRange" id="labelformControlRange">Return results above match result</label>
-                    <output id="amount" name="amount" for="rangeInput">85</output>
-                    <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="60" max="100"
-                        value="85" oninput="amount.value=rangeInput.value">
-                </div>
-            </div>
-
-        </div>
-
-        <div class="container pt-3 bg-white text-dark">
-            <div class="row">
-                <div class="col-sm">
-                    <label for="stringsToMatch">Strings to match:</label>
-                    <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="20" cols="50"
-                        placeholder="Comma separated list of strings to evaluate comes in here. Use single quotes to quote commas in case the string contains a comma, for example: &#039;address line, city&#039;."></textarea>
-
-                </div>
-                <div class="col-sm">
-                    <label for="stringsToMatchIn">Strings to match in:</label>
-                    <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="20" cols="50"
-                        placeholder="Comma separated list of strings to match in comes in here. Use single quotes to quote commas in case the string contains a comma, for example: &#039;address line, city&#039;."></textarea>
-
-                </div>
-                <div class="col-sm">
-                    <label for="resultsTable">Results:</label>
-                    <button type="button" class="btn btn-secondary btn-sm float-right">Copy to clipboard</button>
-                    <table class="table table-bordered" id="resultsTable">
-                        <thead>
-                            <tr>
-                                <th scope="col">Input String</th>
-                                <th scope="col">Best Match</th>
-                                <th scope="col">Match Result</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultsTableBody">
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </div>
-
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a id="main" class="nav-link" href="#">Home
+                    <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="api_docs" class="nav-link" href="/api_documentation/">
+                    API Docs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="contact" class="nav-link" href="https://datahappy.wordpress.com/contact/" target="_blank">
+                    Contact
+                </a>
+            </li>
+        </ul>
     </div>
-    <!-- BodyContainer end-->
+</nav>
+<!-- Navigation end-->
 
-    <script type="text/javascript" src="/js/dom_manipulation.js"></script>
-    <script type="text/javascript" src="/js/fetch_api.js"></script>
-    <script>
-        function buttonHandler() {
-            if (isValidMandatoryComponents() === false) {
-                toggleMissingMandatoryComponentsAlert(action = "show");
-                return
-            }
-            toggleMissingMandatoryComponentsAlert(action = "hide");
+<!-- Body Container start-->
+<div class="container-fluid">
 
-            clearResultsTable();
-            createRequestStartFetchingChain();
+    <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert" style="display:none;">
+        Mandatory fields not filled
+    </div>
+
+    <div class="row pt-3">
+        <div class="col-sm">
+            <label for="mode">Choose mode:</label>
+            <select class="form-select" name="mode" id="mode">
+                <option value="simple">simple</option>
+                <option value="deepDive">deepDive</option>
+                <option value="combined">combined</option>
+            </select>
+        </div>
+        <div class="col-sm">
+        </div>
+        <div class="col-sm">
+            <button class="btn btn-primary float-right" onclick="buttonHandler()" id="submitButton">Get
+                fuzzy!
+            </button>
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="col-sm">
+            <label for="formControlRange" id="labelformControlRange">Return results above match result</label>
+            <output id="amount" name="amount" for="rangeInput">85</output>
+            <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="60" max="100"
+                   value="85" oninput="amount.value=rangeInput.value">
+        </div>
+    </div>
+
+
+    <div class="row pt-3">
+        <div class="col-sm">
+            <label for="stringsToMatch">Strings to match:</label>
+            <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"
+                      placeholder="Comma separated list of strings to evaluate comes in here. Use single quotes to quote commas in case the string contains a comma, for example: &#039;address line, city&#039;."></textarea>
+
+        </div>
+        <div class="col-sm">
+            <label for="stringsToMatchIn">Strings to match in:</label>
+            <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="10" cols="50"
+                      placeholder="Comma separated list of strings to match in comes in here. Use single quotes to quote commas in case the string contains a comma, for example: &#039;address line, city&#039;."></textarea>
+
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="col-sm">
+            <label for="resultsTable">Results:</label>
+            <button type="button" class="btn btn-warning btn-sm float-right">Clear results</button>
+            <button type="button" class="btn btn-secondary btn-sm float-right">Copy to clipboard</button>
+            <table class="table table-bordered" id="resultsTable">
+                <thead>
+                <tr>
+                    <th scope="col">Input String</th>
+                    <th scope="col">Best Match</th>
+                    <th scope="col">Match Result</th>
+                </tr>
+                </thead>
+                <tbody id="resultsTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="row pt-3">
+        <div class="col-sm">
+        </div>
+        <div class="col-sm">
+        </div>
+        <div class="col-sm">
+        </div>
+    </div>
+
+
+</div>
+<!-- BodyContainer end-->
+
+<script type="text/javascript" src="/js/dom_manipulation.js"></script>
+<script type="text/javascript" src="/js/fetch_api.js"></script>
+<script>
+    function buttonHandler() {
+        if (isValidMandatoryComponents() === false) {
+            toggleMissingMandatoryComponentsAlert("show");
+            return
         }
-    </script>
+        toggleMissingMandatoryComponentsAlert("hide");
 
-    <script>
-        const url = window.location.href;
-        const els = document.querySelectorAll(".navbar a");
-        console.log(url, els)
+        clearResultsTable();
+        createRequestStartFetchingChain();
+    }
+</script>
 
-        if (els.href === url) {
-            els.classList.add("active");
-        }
+<script>
+    const url = window.location.href;
+    const els = document.querySelectorAll(".navbar a");
+    console.log(url, els)
 
-    </script>
+    if (els.href === url) {
+        els.classList.add("active");
+    }
+
+</script>
 </body>
 
 </html>
