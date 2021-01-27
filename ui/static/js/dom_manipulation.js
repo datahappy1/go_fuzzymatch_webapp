@@ -20,6 +20,30 @@ function updateResultsTable(results) {
     container.innerHTML += htmlResultsTable;
 }
 
+function getRangeInputSliderValue() {
+    let sliderElement = document.getElementById("rangeInput");
+    return sliderElement.value
+}
+
+function filterResultsTable() {
+    let input, table, tr, td, i, cellValue;
+    input = getRangeInputSliderValue();
+    table = document.getElementById("resultsTable");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[2];
+        if (td) {
+            cellValue = td.textContent || td.innerText;
+            if (cellValue >= input) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+
 function isValidMandatoryComponents() {
     let stringsToMatchTextarea = document.getElementById("stringsToMatch");
     let stringsToMatchInTextarea = document.getElementById("stringsToMatchIn");

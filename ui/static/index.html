@@ -50,11 +50,13 @@
 
 <!-- Body Container start-->
 <div class="container-fluid">
-
+<!-- Alerts start-->
     <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert" style="display:none;">
         Mandatory fields not filled
     </div>
+<!-- Alerts end-->
 
+<!-- Setup start-->
     <div class="row pt-3">
         <div class="col-sm">
             <h2>Match setup:</h2>
@@ -77,7 +79,6 @@
             </button>
         </div>
     </div>
-
     <div class="row pt-3">
         <div class="col-sm">
             <label for="stringsToMatch">Strings to match:</label>
@@ -92,7 +93,9 @@
 
         </div>
     </div>
+<!-- Setup end-->
 
+<!-- Results start-->
     <div class="row pt-3">
         <div class="col-sm">
             <h2>Match results:</h2>
@@ -103,15 +106,18 @@
             <label for="formControlRange" id="labelformControlRange">Filter for results above match result</label>
             <output id="amount" name="amount" for="rangeInput">85</output>
             <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="60" max="100"
-                   value="85" oninput="amount.value=rangeInput.value">
+                   value="85" oninput="amount.value=rangeInput.value" onchange="filterResultsTable();">
         </div>
     </div>
     <div class="row pt-3">
         <div class="col-sm">
             <div class="btn-group" role="group" aria-label="Basic outlined example">
-                <button type="button" class="btn btn-outline-primary">Apply filter to results</button>
-                <button type="button" class="btn btn-outline-primary">Copy results to clipboard</button>
-                <button type="button" class="btn btn-outline-primary">Clear results filter</button>
+                <button type="button" class="btn btn-outline-primary">
+                    Copy results to clipboard</button>
+                <button type="button" class="btn btn-outline-primary">
+                    Download results as .csv file</button>
+                <button type="button" class="btn btn-outline-primary" onclick="clearResultsTable();">
+                    Clear results</button>
             </div>
         </div>
     </div>
@@ -131,12 +137,14 @@
             </table>
         </div>
     </div>
-
+<!-- Results end-->
 </div>
 <!-- BodyContainer end-->
 
 <script type="text/javascript" src="/js/dom_manipulation.js"></script>
 <script type="text/javascript" src="/js/fetch_api.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
+
 <script>
     function buttonHandler() {
         if (isValidMandatoryComponents() === false) {
