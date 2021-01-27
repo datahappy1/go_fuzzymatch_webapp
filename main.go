@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -27,21 +26,17 @@ func post(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	xes := string(requestBodyString[:])
-	fmt.Println("xew", xes)
-	errx := json.Unmarshal(requestBodyString, &fuzzyMatchExternalRequest)
-	if errx != nil {
-		log.Printf("error decoding response: %v", errx)
-		if e, ok := errx.(*json.SyntaxError); ok {
+	//rawRequestBody := string(requestBodyString[:])
+	err = json.Unmarshal(requestBodyString, &fuzzyMatchExternalRequest)
+	if err != nil {
+		log.Printf("error decoding response: %v", err)
+		if e, ok := err.(*json.SyntaxError); ok {
 			log.Printf("syntax error at byte offset %d", e.Offset)
 		}
 		log.Printf("response: %q", requestBodyString)
 	}
-	// if err != nil {
-	// 	log.Println(err)
-	// }
 
-	fmt.Println(fuzzyMatchExternalRequest)
+	//fmt.Println(fuzzyMatchExternalRequest)
 	fuzzyMatchRequest := controller.CreateFuzzyMatchRequest(
 		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatch),
 		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatchIn),
@@ -49,8 +44,10 @@ func post(w http.ResponseWriter, r *http.Request) {
 
 	// curl sample request:
 	// https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service
+	// Windows cmd:
 	// curl -X POST -d "{""stringsToMatch"":""'apple, gmbh','corp'"",""stringsToMatchIn"":""hair"",""mode"":""combined""}" http://localhost:8080/api/v1/requests/
 
+	// *Nix terminal:
 	//	curl --location --request POST 'http://localhost:8080/api/v1/requests/' \
 	//	--header 'Content-Type: text/plain' \
 	//	--data-raw '{
@@ -70,7 +67,6 @@ func post(w http.ResponseWriter, r *http.Request) {
 		// handle error
 	}
 
-	// fmt.Println(model.RequestsData)
 	w.Write(jData)
 
 }

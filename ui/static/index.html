@@ -57,6 +57,11 @@
 
     <div class="row pt-3">
         <div class="col-sm">
+            <h2>Match Setup:</h2>
+        </div>
+    </div>
+    <div class="row pt-3">
+        <div class="col-sm">
             <label for="mode">Choose mode:</label>
             <select class="form-select" name="mode" id="mode">
                 <option value="simple">simple</option>
@@ -75,16 +80,6 @@
 
     <div class="row pt-3">
         <div class="col-sm">
-            <label for="formControlRange" id="labelformControlRange">Return results above match result</label>
-            <output id="amount" name="amount" for="rangeInput">85</output>
-            <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="60" max="100"
-                   value="85" oninput="amount.value=rangeInput.value">
-        </div>
-    </div>
-
-
-    <div class="row pt-3">
-        <div class="col-sm">
             <label for="stringsToMatch">Strings to match:</label>
             <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"
                       placeholder="Comma separated list of strings to evaluate comes in here. Use single quotes to quote commas in case the string contains a comma, for example: &#039;address line, city&#039;."></textarea>
@@ -100,9 +95,29 @@
 
     <div class="row pt-3">
         <div class="col-sm">
-            <label for="resultsTable">Results:</label>
-            <button type="button" class="btn btn-warning btn-sm float-right">Clear results</button>
-            <button type="button" class="btn btn-secondary btn-sm float-right">Copy to clipboard</button>
+            <h2>Match Results:</h2>
+        </div>
+    </div>
+    <div class="row pt-3">
+        <div class="col-sm">
+            <label for="formControlRange" id="labelformControlRange">Filter for results above match result</label>
+            <output id="amount" name="amount" for="rangeInput">85</output>
+            <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="60" max="100"
+                   value="85" oninput="amount.value=rangeInput.value">
+        </div>
+    </div>
+    <div class="row pt-3">
+        <div class="col-sm">
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                <button type="button" class="btn btn-outline-primary">Apply filter to results</button>
+                <button type="button" class="btn btn-outline-primary">Copy results to clipboard</button>
+                <button type="button" class="btn btn-outline-primary">Clear results</button>
+            </div>
+        </div>
+    </div>
+    <div class="row pt-3">
+        <div class="col-sm">
+            <label for="resultsTable">Results table:</label>
             <table class="table table-bordered" id="resultsTable">
                 <thead>
                 <tr>
@@ -116,17 +131,6 @@
             </table>
         </div>
     </div>
-
-
-    <div class="row pt-3">
-        <div class="col-sm">
-        </div>
-        <div class="col-sm">
-        </div>
-        <div class="col-sm">
-        </div>
-    </div>
-
 
 </div>
 <!-- BodyContainer end-->
