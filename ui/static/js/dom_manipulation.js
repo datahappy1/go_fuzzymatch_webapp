@@ -25,6 +25,7 @@ function getRangeInputSliderValue() {
     return sliderElement.value
 }
 
+// https://www.w3schools.com/howto/howto_js_filter_table.asp
 function filterResultsTable() {
     let input, table, tr, td, i, cellValue;
     input = getRangeInputSliderValue();
