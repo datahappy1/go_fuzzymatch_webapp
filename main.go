@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -36,7 +37,10 @@ func post(w http.ResponseWriter, r *http.Request) {
 		log.Printf("response: %q", requestBodyString)
 	}
 
-	//fmt.Println(fuzzyMatchExternalRequest)
+	fmt.Println(fuzzyMatchExternalRequest)
+	fmt.Println(fuzzyMatchExternalRequest.StringsToMatch)
+	fmt.Println(fuzzyMatchExternalRequest.StringsToMatchIn)
+
 	fuzzyMatchRequest := controller.CreateFuzzyMatchRequest(
 		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatch),
 		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatchIn),
