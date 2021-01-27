@@ -43,7 +43,7 @@ function fetchResults(requestId) {
             return data.json()
         })
         .then(res => {
-            console.log(res)
+            console.log(res);
             if (res["ReturnedAllRows"] === true) {
                 updateResultsTable(res["Results"])
             } else {

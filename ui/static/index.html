@@ -51,11 +51,11 @@
     <!-- Body Container start-->
     <div class="container-fluid bg-light text-dark">
 
-        <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert" style="display:none;">
-            Mandatory fields not filled
-        </div>
+        <div class="container pt-3 bg-white text-dark">
+            <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert" style="display:none;">
+                Mandatory fields not filled
+            </div>
 
-        <div class="container pt-5 bg-white text-dark">
             <div class="row">
                 <div class="col-sm">
                     <label for="mode">Choose mode:</label>
@@ -84,7 +84,7 @@
 
         </div>
 
-        <div class="container pt-5 bg-white text-dark">
+        <div class="container pt-3 bg-white text-dark">
             <div class="row">
                 <div class="col-sm">
                     <label for="stringsToMatch">Strings to match:</label>
@@ -100,6 +100,7 @@
                 </div>
                 <div class="col-sm">
                     <label for="resultsTable">Results:</label>
+                    <button type="button" class="btn btn-secondary btn-sm float-right">Copy to clipboard</button>
                     <table class="table table-bordered" id="resultsTable">
                         <thead>
                             <tr>

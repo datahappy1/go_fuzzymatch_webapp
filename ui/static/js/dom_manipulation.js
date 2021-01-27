@@ -24,9 +24,7 @@ function isValidMandatoryComponents() {
     let stringsToMatchTextarea = document.getElementById("stringsToMatch");
     let stringsToMatchInTextarea = document.getElementById("stringsToMatchIn");
 
-    if (stringsToMatchTextarea.value.length === 0 || stringsToMatchInTextarea.value.length === 0) {
-        return false
-    } return true
+    return !(stringsToMatchTextarea.value.length === 0 || stringsToMatchInTextarea.value.length === 0);
 }
 
 function toggleMissingMandatoryComponentsAlert(action) {
