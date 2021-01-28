@@ -46,6 +46,12 @@ function downloadResultsTableAsCsv(filename) {
     downloadCSV(csv.join("\n"), filename);
 }
 
+function clearTextarea(textareaname) {
+    let textareaElement = document.getElementById(textareaname)
+
+    textareaElement.value = "";
+}
+
 function clearResultsTable() {
     let container = document.getElementById('resultsTableBody');
 
@@ -128,4 +134,17 @@ function toggleSubmitButtonWhileLoadingResults(action) {
 
 function jumpToAnchor(anchor) {
     window.location.href = "#" + anchor;
+}
+
+function showResults() {
+    let resultsDivElement = document.getElementById("resultsDiv");
+
+    resultsDivElement.style.display = "block";
+}
+
+function toggleBackendServiceErrorAlert(errorMessage) {
+    let backendServiceErrorDivComponent = document.getElementById("backendServiceErrorAlert");
+
+    backendServiceErrorDivComponent.innerHTML += errorMessage;
+    backendServiceErrorDivComponent.style.display = "block";
 }

@@ -1,5 +1,12 @@
 const BaseUrl = 'http://localhost:8080/api/v1/requests/';
 
+function handleErrors(response) {
+    if (!response.ok) {
+        toggleBackendServiceErrorAlert(response.statusText);
+    }
+    return response;
+}
+
 function createRequestStartFetchingChain() {
     const inputStringsToMatch = document.getElementById("stringsToMatch").value;
     const inputStringsToMatchIn = document.getElementById("stringsToMatchIn").value;
@@ -18,16 +25,17 @@ function createRequestStartFetchingChain() {
         method: "POST"
     };
 
-    toggleSubmitButtonWhileLoadingResults("hide");
-
     fetch(BaseUrl, otherParam)
+        .then(handleErrors)
         .then(data => {
-            return data.json()
+            return data.json();
         })
         .then(res => {
             fetchResults(res["RequestID"]);
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+            console.log(error);
+        })
 }
 
 function fetchResults(requestId) {
@@ -39,6 +47,7 @@ function fetchResults(requestId) {
     };
 
     fetch(BaseUrl + requestId + '/', otherParam)
+        .then(handleErrors)
         .then(data => {
             return data.json()
         })
@@ -53,6 +62,8 @@ function fetchResults(requestId) {
                 fetchResults(requestId);
             }
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+            console.log(error);
+        })
 
 }
