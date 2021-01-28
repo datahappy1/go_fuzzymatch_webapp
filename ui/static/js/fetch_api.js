@@ -25,7 +25,7 @@ function createRequestStartFetchingChain() {
             return data.json()
         })
         .then(res => {
-            fetchResults(res["RequestID"])
+            fetchResults(res["RequestID"]);
         })
         .catch(error => console.log(error))
 }
@@ -46,9 +46,10 @@ function fetchResults(requestId) {
             if (res["ReturnedAllRows"] === true) {
                 updateResultsTable(res["Results"]);
                 toggleSubmitButtonWhileLoadingResults("show");
+                jumpToAnchor("results");
             } else {
-                updateResultsTable(res["Results"]);
                 toggleSubmitButtonWhileLoadingResults("hide");
+                updateResultsTable(res["Results"]);
                 fetchResults(requestId);
             }
         })

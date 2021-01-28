@@ -125,3 +125,7 @@ function toggleSubmitButtonWhileLoadingResults(action) {
         submitButtonSpinnerElement.style.display = "block";
     }
 }
+
+function jumpToAnchor(anchor) {
+    window.location.href = "#" + anchor;
+}
