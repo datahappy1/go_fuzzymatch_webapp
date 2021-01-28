@@ -1,5 +1,5 @@
 function copyResultsTableToClipboard() {
-    var clipboard = new ClipboardJS('.btn');
+    let clipboard = new ClipboardJS('.btn');
 
     clipboard.on('success', function (e) {
         console.info('Action:', e.action);
@@ -16,32 +16,28 @@ function copyResultsTableToClipboard() {
 }
 
 function downloadCSV(csv, filename) {
-    var csvFile;
-    var downloadLink;
+    let csvFile;
+    let downloadLink;
 
     csvFile = new Blob([csv], {type: "text/csv"});
 
     downloadLink = document.createElement("a");
-
     downloadLink.download = filename;
-
     downloadLink.href = window.URL.createObjectURL(csvFile);
-
     downloadLink.style.display = "none";
 
     document.body.appendChild(downloadLink);
-
     downloadLink.click();
 }
 
 function downloadResultsTableAsCsv(filename) {
-    var csv = [];
-    var rows = document.querySelectorAll("table tr");
+    let csv = [];
+    let rows = document.querySelectorAll("table tr");
 
-    for (var i = 0; i < rows.length; i++) {
-        var row = [], cols = rows[i].querySelectorAll("td, th");
+    for (let i = 0; i < rows.length; i++) {
+        let row = [], cols = rows[i].querySelectorAll("td, th");
 
-        for (var j = 0; j < cols.length; j++)
+        for (let j = 0; j < cols.length; j++)
             row.push(cols[j].innerText);
 
         csv.push(row.join(","));
@@ -117,9 +113,15 @@ function toggleMissingMandatoryComponentsAlert(action) {
     }
 }
 
-function updateProgressBar(value) {
-    let progressBarElement = document.getElementById('progressBar');
+function toggleSubmitButtonWhileLoadingResults(action) {
+    let submitButtonElement = document.getElementById("submitButton");
+    let submitButtonSpinnerElement = document.getElementById("submitButtonSpinner");
 
-    progressBarElement.setAttribute('aria-valuenow',value);
-    progressBarElement.setAttribute('style','width:'+Number(value)+'%');
+    if (action === "show") {
+        submitButtonElement.disabled = false;
+        submitButtonSpinnerElement.style.display = "none";
+    } else if (action === "hide") {
+        submitButtonElement.disabled = true;
+        submitButtonSpinnerElement.style.display = "block";
+    }
 }

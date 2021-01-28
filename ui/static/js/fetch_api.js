@@ -5,8 +5,6 @@ function createRequestStartFetchingChain() {
     const inputStringsToMatchIn = document.getElementById("stringsToMatchIn").value;
     const inputMode = document.getElementById("mode").value;
 
-    //console.log(inputStringsToMatch, inputStringsToMatchIn, inputMode)
-
     const Data = JSON.stringify({
         stringsToMatch: inputStringsToMatch,
         stringsToMatchIn: inputStringsToMatchIn,
@@ -19,6 +17,8 @@ function createRequestStartFetchingChain() {
         body: Data,
         method: "POST"
     };
+
+    toggleSubmitButtonWhileLoadingResults("hide");
 
     fetch(BaseUrl, otherParam)
         .then(data => {
@@ -43,14 +43,12 @@ function fetchResults(requestId) {
             return data.json()
         })
         .then(res => {
-            // console.log(res);
-            //console.log(res["Results"].length / inputStringsToMatch.length)
-            //updateProgressBar(res["Results"].length / inputStringsToMatch.length);
-
             if (res["ReturnedAllRows"] === true) {
                 updateResultsTable(res["Results"]);
+                toggleSubmitButtonWhileLoadingResults("show");
             } else {
                 updateResultsTable(res["Results"]);
+                toggleSubmitButtonWhileLoadingResults("hide");
                 fetchResults(requestId);
             }
         })

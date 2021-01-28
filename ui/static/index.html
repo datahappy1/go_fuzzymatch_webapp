@@ -14,187 +14,188 @@
 
 <body>
 
-    <!-- Navigation start-->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-        <!--<a class="navbar-brand" href="#">
-    <img src="" alt="logo">
+<!-- Navigation start-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <!--<a class="navbar-brand" href="#">
+<img src="" alt="logo">
 </a>-->
-        <a class="navbar-brand" href="#">
-            fuzzymatching
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+    <a class="navbar-brand" href="#">
+        fuzzymatching
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
             aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a id="main" class="nav-link" href="#">Home
-                        <span class="sr-only">(current)</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a id="api_docs" class="nav-link" href="/api_documentation/">
-                        API Docs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a id="contact" class="nav-link" href="https://datahappy.wordpress.com/contact/" target="_blank">
-                        Contact
-                    </a>
-                </li>
-            </ul>
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a id="main" class="nav-link" href="#">Home
+                    <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="api_docs" class="nav-link" href="/api_documentation/">
+                    API Docs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="contact" class="nav-link" href="https://datahappy.wordpress.com/contact/" target="_blank">
+                    Contact
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!-- Navigation end-->
+
+<!-- Body Container start-->
+<div class="container-fluid">
+    <!-- Top container start -->
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <!-- Alerts start-->
+        <div class="row pt-2">
+            <div class="col-sm">
+                <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert"
+                     style="display:none;">
+                    Mandatory fields not filled
+                </div>
+            </div>
         </div>
-    </nav>
-    <!-- Navigation end-->
+        <!-- Alerts end-->
 
-
-    <div class="container-fluid">
-        <!-- Body Container start-->
-        <div class="shadow-sm p-3 mb-5 bg-white rounded">
-            <!-- Alerts start-->
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert"
-                        style="display:none;">
-                        Mandatory fields not filled
-                    </div>
-                </div>
+        <!-- Setup start-->
+        <div class="row pt-2">
+            <div class="col-sm">
+                <h3>Match setup:</h3>
             </div>
-            <!-- Alerts end-->
+        </div>
 
-            <!-- Progress bar start -->
-            <div class="progress" ><!--</div>style="display:none; ">-->
-                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                id = "progressBar" 
-                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-              </div>
-            <!-- Progress bar end-->
-
-            <!-- Setup start-->
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <h3>Match setup:</h3>
-                </div>
+        <div class="row pt-2">
+            <div class="col-sm">
+                <label for="mode">Choose mode:</label>
+                <select class="form-control form-control-sm" name="mode" id="mode">
+                    <option value="simple">simple</option>
+                    <option value="deepDive">deepDive</option>
+                    <option value="combined">combined</option>
+                </select>
             </div>
-
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <label for="mode">Choose mode:</label>
-                    <select class="form-control form-control-sm" name="mode" id="mode">
-                        <option value="simple">simple</option>
-                        <option value="deepDive">deepDive</option>
-                        <option value="combined">combined</option>
-                    </select>
-                </div>
-                <div class="col-sm">
-                </div>
+            <div class="col-sm">
             </div>
+        </div>
 
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <label for="stringsToMatch">Strings to match:</label>
-                    <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"
-                        placeholder="Comma separated list of strings to evaluate comes in here. Use single quotes to quote commas in case the string contains a comma, for example: &#039;address line, city&#039;."
-                        maxlength="10000"></textarea>
+        <div class="row pt-2">
+            <div class="col-sm">
+                <label for="stringsToMatch">Strings to match:</label>
+                <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"
+                          placeholder="Comma separated list of strings to evaluate comes in here. Use single quotes to quote commas in case the string contains a comma, for example: &#039;address line, city&#039;."
+                          maxlength="10000"></textarea>
 
-                </div>
-                <div class="col-sm">
-                    <label for="stringsToMatchIn">Strings to match in:</label>
-                    <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="10" cols="50"
-                        placeholder="Comma separated list of strings to match in comes in here. Use single quotes to quote commas in case the string contains a comma, for example: &#039;address line, city&#039;."
-                        maxlength="10000"></textarea>
-
-                </div>
             </div>
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <button class="btn btn-primary" onclick="buttonHandler()" id="submitButton">Match!
+            <div class="col-sm">
+                <label for="stringsToMatchIn">Strings to match in:</label>
+                <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="10" cols="50"
+                          placeholder="Comma separated list of strings to match in comes in here. Use single quotes to quote commas in case the string contains a comma, for example: &#039;address line, city&#039;."
+                          maxlength="10000"></textarea>
+
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-sm">
+                <button class="btn btn-primary" onclick="buttonHandler()" id="submitButton">Match!
+                    <span class="spinner-border spinner-border-sm" id="submitButtonSpinner" role="status"
+                          aria-hidden="true" style="display:none;"></span>
+                </button>
+            </div>
+        </div>
+        <!-- Setup end-->
+    </div>
+    <!-- Top container end -->
+
+    <!-- Bottom container start -->
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <!-- Results start-->
+        <div class="row pt-2">
+            <div class="col-sm">
+                <h3>Match results:</h3>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-sm">
+                <label for="formControlRange" id="labelformControlRange">Filter for results above match
+                    result</label>
+                <output id="amount" name="amount" for="rangeInput">80</output>
+                <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="0" max="100"
+                       value="80" oninput="amount.value=rangeInput.value" onchange="filterResultsTable();">
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-sm">
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button type="button" class="btn btn-outline-primary"
+                            id="copyResultsTableToClipboardButton" data-clipboard-target="#resultsTable"
+                            onclick="copyResultsTableToClipboard();">
+                        Copy results to clipboard
+                    </button>
+                    <button type="button" class="btn btn-outline-primary"
+                            id="downloadResultsTableAsCsv"
+                            onclick="downloadResultsTableAsCsv('fuzzy_match_results.csv')">
+                        Download results as .csv file
+                    </button>
+                    <button type="button" class="btn btn-outline-primary"
+                            id="clearResultsTable" onclick="clearResultsTable();">
+                        Clear results
                     </button>
                 </div>
             </div>
-            <!-- Setup end-->
         </div>
-
-        <div class="shadow-sm p-3 mb-5 bg-white rounded">
-            <!-- Results start-->
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <h3>Match results:</h3>
-                </div>
+        <div class="row pt-2">
+            <div class="col-sm">
+                <label for="resultsTable">Results table:</label>
+                <table class="table table-sm" id="resultsTable">
+                    <thead>
+                    <tr>
+                        <th scope="col">Input String</th>
+                        <th scope="col">Best Match</th>
+                        <th scope="col">Match Result</th>
+                    </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                    </tbody>
+                </table>
             </div>
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <label for="formControlRange" id="labelformControlRange">Filter for results above match
-                        result</label>
-                    <output id="amount" name="amount" for="rangeInput">80</output>
-                    <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="0" max="100"
-                        value="80" oninput="amount.value=rangeInput.value" onchange="filterResultsTable();">
-                </div>
-            </div>
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        <button type="button" class="btn btn-outline-primary" 
-                        id="copyResultsTableToClipboardButton" data-clipboard-target="#resultsTable" onclick="copyResultsTableToClipboard();">
-                            Copy results to clipboard</button>
-                        <button type="button" class="btn btn-outline-primary" 
-                        id="downloadResultsTableAsCsv" onclick="downloadResultsTableAsCsv('fuzzy_match_results.csv')">
-                            Download results as .csv file</button>
-                        <button type="button" class="btn btn-outline-primary" 
-                        id="clearResultsTable" onclick="clearResultsTable();">
-                            Clear results</button>
-                    </div>
-                </div>
-            </div>
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <label for="resultsTable">Results table:</label>
-                    <table class="table table-sm" id="resultsTable">
-                        <thead>
-                            <tr>
-                                <th scope="col">Input String</th>
-                                <th scope="col">Best Match</th>
-                                <th scope="col">Match Result</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultsTableBody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- Results end-->
         </div>
-
+        <!-- Results end-->
     </div>
-    <!-- BodyContainer end-->
+    <!-- Bottom container end -->
+</div>
+<!-- BodyContainer end-->
 
-    <script type="text/javascript" src="/js/dom_manipulation.js"></script>
-    <script type="text/javascript" src="/js/fetch_api.js"></script>
-    <script type="text/javascript" src="/js/external/clipboard.js/2.0.6/clipboard.min.js"></script>
-    <script>
-        function buttonHandler() {
-            if (isValidMandatoryComponents() === false) {
-                toggleMissingMandatoryComponentsAlert("show");
-                return
-            }
-            toggleMissingMandatoryComponentsAlert("hide");
-
-            clearResultsTable();
-            createRequestStartFetchingChain();
+<script type="text/javascript" src="/js/dom_manipulation.js"></script>
+<script type="text/javascript" src="/js/fetch_api.js"></script>
+<script type="text/javascript" src="/js/external/clipboard.js/2.0.6/clipboard.min.js"></script>
+<script>
+    function buttonHandler() {
+        if (isValidMandatoryComponents() === false) {
+            toggleMissingMandatoryComponentsAlert("show");
+            return
         }
-    </script>
+        toggleMissingMandatoryComponentsAlert("hide");
 
-    <script>
-        const url = window.location.href;
-        const els = document.querySelectorAll(".navbar a");
-        console.log(url, els)
+        clearResultsTable();
+        createRequestStartFetchingChain();
+    }
+</script>
 
-        if (els.href === url) {
-            els.classList.add("active");
-        }
+<script>
+    const url = window.location.href;
+    const els = document.querySelectorAll(".navbar a");
+    console.log(url, els)
 
-    </script>
+    if (els.href === url) {
+        els.classList.add("active");
+    }
+
+</script>
 </body>
 
 </html>
