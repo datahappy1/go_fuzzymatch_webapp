@@ -102,13 +102,6 @@ function filterResultsTable() {
     }
 }
 
-function isValidMandatoryComponents() {
-    let stringsToMatchTextarea = document.getElementById("stringsToMatch");
-    let stringsToMatchInTextarea = document.getElementById("stringsToMatchIn");
-
-    return !(stringsToMatchTextarea.value.length === 0 || stringsToMatchInTextarea.value.length === 0);
-}
-
 function toggleMissingMandatoryComponentsAlert(action) {
     let mandatoryFieldsDivComponent = document.getElementById("mandatoryFieldsNotFilledAlert");
 
