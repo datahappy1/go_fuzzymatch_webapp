@@ -102,6 +102,13 @@ function filterResultsTable() {
     }
 }
 
+function updateMissingMandatoryComponentsAlert(components) {
+    let mandatoryFieldsDivComponent = document.getElementById("mandatoryFieldsNotFilledAlert");
+
+    mandatoryFieldsDivComponent.innerHTML = "Mandatory fields not filled: " + components;
+
+}
+
 function toggleMissingMandatoryComponentsAlert(action) {
     let mandatoryFieldsDivComponent = document.getElementById("mandatoryFieldsNotFilledAlert");
 
@@ -125,6 +132,23 @@ function toggleSubmitButtonWhileLoadingResults(action) {
     }
 }
 
+function updateBackendServiceErrorAlert(errorMessage) {
+    let backendServiceErrorDivComponent = document.getElementById("backendServiceErrorAlert");
+
+    backendServiceErrorDivComponent.innerHTML = "Backend service error: " + errorMessage;
+    backendServiceErrorDivComponent.style.display = "block";
+}
+
+function toggleBackendServiceErrorAlert(action) {
+    let backendServiceErrorDivComponent = document.getElementById("backendServiceErrorAlert");
+
+    if (action === "show") {
+        backendServiceErrorDivComponent.style.display = "block";
+    } else if (action === "hide") {
+        backendServiceErrorDivComponent.style.display = "none";
+    }
+}
+
 function jumpToAnchor(anchor) {
     window.location.href = "#" + anchor;
 }
@@ -133,11 +157,4 @@ function showResults() {
     let resultsDivElement = document.getElementById("resultsDiv");
 
     resultsDivElement.style.display = "block";
-}
-
-function toggleBackendServiceErrorAlert(errorMessage) {
-    let backendServiceErrorDivComponent = document.getElementById("backendServiceErrorAlert");
-
-    backendServiceErrorDivComponent.innerHTML += errorMessage;
-    backendServiceErrorDivComponent.style.display = "block";
 }

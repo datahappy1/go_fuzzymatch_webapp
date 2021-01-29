@@ -2,7 +2,10 @@ const BaseUrl = 'http://localhost:8080/api/v1/requests/';
 
 function handleErrors(response) {
     if (!response.ok) {
-        toggleBackendServiceErrorAlert(response.statusText);
+        updateBackendServiceErrorAlert(response.statusText)
+        toggleBackendServiceErrorAlert("show");
+    } else {
+        toggleBackendServiceErrorAlert("hide");
     }
     return response;
 }

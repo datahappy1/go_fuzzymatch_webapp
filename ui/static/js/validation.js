@@ -1,19 +1,23 @@
-const mandatoryInputIDs = ['stringsToMatch', 'stringsToMatchIn'];
+const mandatoryInputComponents = [
+    {'componentId': 'stringsToMatch', 'componentNameForAlertMessage': '"strings to match" textarea'},
+    {'componentId': 'stringsToMatchIn', 'componentNameForAlertMessage': '"strings to match in" textarea'}
+];
 
-function isValidMandatoryComponent(element) {
-    let validatedComponent = document.getElementById(element);
+function isValidMandatoryComponent(elementId) {
+    let validatedComponent = document.getElementById(elementId);
 
     return !(validatedComponent.value.length === 0);
 }
 
 function validateMandatoryInputs() {
-    let validationResult = "";
+    let missingMandatoryInputComponents = [];
 
-    for (let i = 0; i < mandatoryInputIDs.length; i++) {
-        if (isValidMandatoryComponent(mandatoryInputIDs[i]) === false) {
-            validationResult += mandatoryInputIDs[i]
+    mandatoryInputComponents.map(item => {
+        if (isValidMandatoryComponent(item.componentId) === false) {
+            missingMandatoryInputComponents.push(item.componentNameForAlertMessage);
         }
-    }
 
-    return validationResult;
+    });
+
+    return missingMandatoryInputComponents;
 }
