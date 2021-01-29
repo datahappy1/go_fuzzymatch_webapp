@@ -1,8 +1,12 @@
 function submitButtonHandler() {
 
-    if (!validateInput()) {
+    let inputValidationErrors = getInputValidationErrors();
+
+    if (inputValidationErrors.length > 0) {
+        processInputError(inputValidationErrors);
         return
     }
+    processInputPass();
 
     clearResultsTable();
 

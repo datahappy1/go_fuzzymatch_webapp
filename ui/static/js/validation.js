@@ -31,14 +31,11 @@ function processInputPass() {
     toggleMissingMandatoryComponentsAlert("hide");
 }
 
-function validateInput() {
+function getInputValidationErrors() {
     let missingMandatoryInputs = getMissingMandatoryInputs();
 
     if (missingMandatoryInputs.length > 0) {
-        processInputError(missingMandatoryInputs);
-        return false
-    } else {
-        processInputPass();
-        return true
+        return missingMandatoryInputs
     }
+    return []
 }
