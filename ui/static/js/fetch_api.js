@@ -1,11 +1,19 @@
 const BaseUrl = 'http://localhost:8080/api/v1/requests/';
 
+function processBackendServiceError(message) {
+    updateBackendServiceErrorAlert(message);
+    toggleBackendServiceErrorAlert("show");
+}
+
+function processBackendServicePass() {
+    toggleBackendServiceErrorAlert("hide");
+}
+
 function handleErrors(response) {
     if (!response.ok) {
-        updateBackendServiceErrorAlert(response.statusText)
-        toggleBackendServiceErrorAlert("show");
+        processBackendServiceError(response.statusText);
     } else {
-        toggleBackendServiceErrorAlert("hide");
+        processBackendServicePass();
     }
     return response;
 }
@@ -58,7 +66,6 @@ function fetchResults(requestId) {
             if (res["ReturnedAllRows"] === true) {
                 updateResultsTable(res["Results"]);
                 toggleSubmitButtonWhileLoadingResults("show");
-                jumpToAnchor("results");
             } else {
                 toggleSubmitButtonWhileLoadingResults("hide");
                 updateResultsTable(res["Results"]);

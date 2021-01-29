@@ -9,7 +9,7 @@ function isValidMandatoryComponent(elementId) {
     return !(validatedComponent.value.length === 0);
 }
 
-function validateMandatoryInputs() {
+function getMissingMandatoryInputs() {
     let missingMandatoryInputComponents = [];
 
     mandatoryInputComponents.map(item => {
@@ -20,4 +20,25 @@ function validateMandatoryInputs() {
     });
 
     return missingMandatoryInputComponents;
+}
+
+function processInputError(message) {
+    updateMissingMandatoryComponentsAlert(message);
+    toggleMissingMandatoryComponentsAlert("show");
+}
+
+function processInputPass() {
+    toggleMissingMandatoryComponentsAlert("hide");
+}
+
+function validateInput() {
+    let missingMandatoryInputs = getMissingMandatoryInputs();
+
+    if (missingMandatoryInputs.length > 0) {
+        processInputError(missingMandatoryInputs);
+        return false
+    } else {
+        processInputPass();
+        return true
+    }
 }
