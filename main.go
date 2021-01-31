@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"sort"
 
-	fm "github.com/datahappy1/go_fuzzymatch"
+	fm "github.com/datahappy1/go_fuzzymatch/pkg"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/controller"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 	"github.com/gorilla/mux"
