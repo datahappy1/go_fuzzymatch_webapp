@@ -153,7 +153,7 @@ function jumpToAnchor(anchor) {
     window.location.href = "#" + anchor;
 }
 
-function showResults() {
+function showResultsTable() {
     let resultsDivElement = document.getElementById("resultsDiv");
 
     resultsDivElement.style.display = "block";

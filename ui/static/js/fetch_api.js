@@ -1,4 +1,4 @@
-const BaseUrl = 'http://localhost:8080/api/v1/requests/';
+const BaseUrl = 'http://localhost:8080/api/v1/requestsd/';
 
 function processBackendServiceError(message) {
     updateBackendServiceErrorAlert(message);
@@ -9,16 +9,18 @@ function processBackendServicePass() {
     toggleBackendServiceErrorAlert("hide");
 }
 
-function handleErrors(response) {
-    if (!response.ok) {
-        processBackendServiceError(response.statusText);
-    } else {
-        processBackendServicePass();
-    }
-    return response;
+function processBackendServiceFetchingDataStart() {
+    toggleSubmitButtonWhileLoadingResults("hide");
+    clearResultsTable();
+    showResultsTable();
 }
 
-function createRequestStartFetchingChain() {
+function processBackendServiceFetchingDataEnd() {
+    toggleSubmitButtonWhileLoadingResults("show");
+    jumpToAnchor("results");
+}
+
+async function _fetch_post_new_request() {
     const inputStringsToMatch = document.getElementById("stringsToMatch").value;
     const inputStringsToMatchIn = document.getElementById("stringsToMatchIn").value;
     const inputMode = document.getElementById("mode").value;
@@ -36,20 +38,28 @@ function createRequestStartFetchingChain() {
         method: "POST"
     };
 
-    fetch(BaseUrl, otherParam)
-        .then(handleErrors)
-        .then(data => {
-            return data.json();
-        })
-        .then(res => {
-            fetchResults(res["RequestID"]);
-        })
-        .catch(error => {
-            console.log(error);
-        })
+    const fetchResult = await fetch(BaseUrl, otherParam);
+    //https://stackoverflow.com/questions/38235715/fetch-reject-promise-and-catch-the-error-if-status-is-not-ok
+
+    console.log(fetchResult);
+
+    if (fetchResult.ok) {
+        return await fetchResult.json();
+    }
+
+    const responseError = {
+        type: 'Error',
+        message: fetchResult.url,
+        data: fetchResult.statusText,
+        code: fetchResult.status,
+    };
+
+    let error = new Error();
+    error = {...error, ...responseError};
+    throw (error);
 }
 
-function fetchResults(requestId) {
+async function _fetch_get_lazy_response_results(requestId) {
     const otherParam = {
         headers: {
             "content-type": "application/json; charset=UTF-8"
@@ -57,23 +67,33 @@ function fetchResults(requestId) {
         method: "GET"
     };
 
-    fetch(BaseUrl + requestId + '/', otherParam)
-        .then(handleErrors)
-        .then(data => {
-            return data.json()
-        })
-        .then(res => {
-            if (res["ReturnedAllRows"] === true) {
-                updateResultsTable(res["Results"]);
-                toggleSubmitButtonWhileLoadingResults("show");
-            } else {
-                toggleSubmitButtonWhileLoadingResults("hide");
-                updateResultsTable(res["Results"]);
-                fetchResults(requestId);
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        })
+    const fetchResult = await fetch(BaseUrl + requestId + '/', otherParam);
+    const getRequestResult = await fetchResult.json();
 
+    if (fetchResult.ok) {
+        return getRequestResult;
+    }
+
+    const responseError = {
+        type: 'Error',
+        message: getRequestResult.message || 'Something went wrong',
+        data: getRequestResult.data || '',
+        code: getRequestResult.code || '',
+    };
+
+    let error = new Error();
+    error = {...error, ...responseError};
+    throw (error);
+}
+
+async function _update_results_table_with_fetched_data(requestId) {
+    let results = await _fetch_get_lazy_response_results(requestId);
+
+    if (results["ReturnedAllRows"] === true) {
+        updateResultsTable(results["Results"]);
+
+    } else {
+        updateResultsTable(results["Results"]);
+        await _update_results_table_with_fetched_data(requestId);
+    }
 }
