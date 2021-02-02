@@ -41,8 +41,7 @@ func CreateFuzzyMatchDAOInRequestsData(RequestID string, StringsToMatch []string
 	return "ok", true
 }
 
-// UpdateFuzzyMatchDAO returns FuzzyMatchDAO
-func UpdateFuzzyMatchDAO(fuzzyMatchDAO FuzzyMatchDAO, returnedRows int) FuzzyMatchDAO {
+func updateFuzzyMatchDAO(fuzzyMatchDAO FuzzyMatchDAO, returnedRows int) FuzzyMatchDAO {
 	dao := fuzzyMatchDAO
 	dao.ReturnedRows = returnedRows
 	return dao
@@ -52,7 +51,7 @@ func UpdateFuzzyMatchDAO(fuzzyMatchDAO FuzzyMatchDAO, returnedRows int) FuzzyMat
 func UpdateFuzzyMatchDAOInRequestsData(requestID string, returnedRows int) (string, bool) {
 	for i := range RequestsData {
 		if RequestsData[i].RequestID == requestID {
-			RequestsData[i] = UpdateFuzzyMatchDAO(RequestsData[i], returnedRows)
+			RequestsData[i] = updateFuzzyMatchDAO(RequestsData[i], returnedRows)
 			break
 		}
 	}

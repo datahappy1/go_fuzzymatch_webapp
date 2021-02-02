@@ -1,21 +1,18 @@
-const BaseUrl = 'http://localhost:8080/api/v1/requestsd/';
+const BaseUrl = 'http://localhost:8080/api/v1/requests/';
 
-function processBackendServiceError(message) {
+function DOMUpdateOnBackendServiceError(message) {
     updateBackendServiceErrorAlert(message);
     toggleBackendServiceErrorAlert("show");
+    toggleSubmitButtonWhileLoadingResults("show");
 }
 
-function processBackendServicePass() {
-    toggleBackendServiceErrorAlert("hide");
-}
-
-function processBackendServiceFetchingDataStart() {
+function DOMUpdateOnBackendServiceFetchingDataStart() {
     toggleSubmitButtonWhileLoadingResults("hide");
     clearResultsTable();
     showResultsTable();
 }
 
-function processBackendServiceFetchingDataEnd() {
+function DOMUpdateOnBackendServiceFetchingDataEnd() {
     toggleSubmitButtonWhileLoadingResults("show");
     jumpToAnchor("results");
 }
@@ -39,9 +36,6 @@ async function _fetch_post_new_request() {
     };
 
     const fetchResult = await fetch(BaseUrl, otherParam);
-    //https://stackoverflow.com/questions/38235715/fetch-reject-promise-and-catch-the-error-if-status-is-not-ok
-
-    console.log(fetchResult);
 
     if (fetchResult.ok) {
         return await fetchResult.json();
@@ -49,8 +43,8 @@ async function _fetch_post_new_request() {
 
     const responseError = {
         type: 'Error',
-        message: fetchResult.url,
-        data: fetchResult.statusText,
+        message: fetchResult.statusText,
+        data: fetchResult.url,
         code: fetchResult.status,
     };
 
@@ -68,17 +62,16 @@ async function _fetch_get_lazy_response_results(requestId) {
     };
 
     const fetchResult = await fetch(BaseUrl + requestId + '/', otherParam);
-    const getRequestResult = await fetchResult.json();
 
     if (fetchResult.ok) {
-        return getRequestResult;
+        return await fetchResult.json();
     }
 
     const responseError = {
         type: 'Error',
-        message: getRequestResult.message || 'Something went wrong',
-        data: getRequestResult.data || '',
-        code: getRequestResult.code || '',
+        message: fetchResult.statusText,
+        data: fetchResult.url,
+        code: fetchResult.status,
     };
 
     let error = new Error();

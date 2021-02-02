@@ -22,13 +22,9 @@ function getMissingMandatoryInputs() {
     return missingMandatoryInputComponents;
 }
 
-function processInputError(message) {
+function DOMUpdateOnInputError(message) {
     updateMissingMandatoryComponentsAlert(message);
     toggleMissingMandatoryComponentsAlert("show");
-}
-
-function processInputPass() {
-    toggleMissingMandatoryComponentsAlert("hide");
 }
 
 function getInputValidationErrors() {

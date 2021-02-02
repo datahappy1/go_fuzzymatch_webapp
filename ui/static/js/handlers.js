@@ -1,33 +1,31 @@
 function submitButtonHandler() {
 
     async function createRequestStartFetchingChain() {
-        let inputValidationErrors = getInputValidationErrors();
+        hidePreviousErrors();
 
+        let inputValidationErrors = getInputValidationErrors();
         if (inputValidationErrors.length > 0) {
-            processInputError(inputValidationErrors);
-            return
+            DOMUpdateOnInputError(inputValidationErrors);
+            return;
         }
-        processInputPass();
 
         let requestId = null;
         try {
-            const ObjectId = await _fetch_post_new_request();
-            requestId = ObjectId.get("RequestID");
+            const objectId = await _fetch_post_new_request();
+            requestId = objectId["RequestID"];
         } catch (e) {
-            processBackendServiceError(e.message);
+            DOMUpdateOnBackendServiceError(JSON.stringify(e));
             return;
         }
-        processBackendServicePass();
 
-        processBackendServiceFetchingDataStart();
+        DOMUpdateOnBackendServiceFetchingDataStart();
         try {
             await _update_results_table_with_fetched_data(requestId);
         } catch (e) {
-            processBackendServiceError(e);
+            DOMUpdateOnBackendServiceError(JSON.stringify(e));
             return;
         }
-        processBackendServicePass();
-        processBackendServiceFetchingDataEnd();
+        DOMUpdateOnBackendServiceFetchingDataEnd();
 
     }
 

@@ -158,3 +158,9 @@ function showResultsTable() {
 
     resultsDivElement.style.display = "block";
 }
+
+function hidePreviousErrors() {
+    toggleMissingMandatoryComponentsAlert("hide");
+    toggleBackendServiceErrorAlert("hide");
+    toggleSubmitButtonWhileLoadingResults("show");
+}
