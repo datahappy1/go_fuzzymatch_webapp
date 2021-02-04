@@ -1,8 +1,11 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 var batchSize = 20
+var activeRequestsCount = 1000
 
 // FuzzyMatchDAO returns struct
 type FuzzyMatchDAO struct {
@@ -11,6 +14,7 @@ type FuzzyMatchDAO struct {
 	StringsToMatchIn       []string
 	Mode                   string
 	RequestedOn            string
+	RequestedFromIP        string
 	BatchSize              int
 	StringsToMatchLength   int
 	StringsToMatchInLength int
@@ -20,13 +24,14 @@ type FuzzyMatchDAO struct {
 
 // CreateFuzzyMatchDAO returns FuzzyMatchDAO
 func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMatchIn []string,
-	mode string, returnedRows int) FuzzyMatchDAO {
+	mode string, requestedFromIP string, returnedRows int) FuzzyMatchDAO {
 	dao := FuzzyMatchDAO{
 		RequestID:              requestID,
 		StringsToMatch:         stringsToMatch,
 		StringsToMatchIn:       stringsToMatchIn,
 		Mode:                   mode,
 		RequestedOn:            time.Now().String(),
+		RequestedFromIP:        requestedFromIP,
 		BatchSize:              batchSize,
 		StringsToMatchLength:   len(stringsToMatch),
 		StringsToMatchInLength: len(stringsToMatchIn),
@@ -35,8 +40,9 @@ func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMat
 }
 
 // CreateFuzzyMatchDAOInRequestsData returns FuzzyMatchDAO
-func CreateFuzzyMatchDAOInRequestsData(RequestID string, StringsToMatch []string, StringsToMatchIn []string, Mode string) (string, bool) {
-	dao := CreateFuzzyMatchDAO(RequestID, StringsToMatch, StringsToMatchIn, Mode, 0)
+func CreateFuzzyMatchDAOInRequestsData(RequestID string, StringsToMatch []string, StringsToMatchIn []string,
+	Mode string, RequestedFromIP string) (string, bool) {
+	dao := CreateFuzzyMatchDAO(RequestID, StringsToMatch, StringsToMatchIn, Mode, RequestedFromIP, 0)
 	RequestsData = append(RequestsData, dao)
 	return "ok", true
 }
@@ -69,6 +75,24 @@ func DeleteFuzzyMatchDAOInRequestsData(requestID string) (string, bool) {
 		}
 	}
 	return "ok", true
+}
+
+// EvaluateRequestRatePerIP returns bool
+func EvaluateRequestRatePerIP(ip string) (bool, string) {
+	for i := range RequestsData {
+		if RequestsData[i].RequestedFromIP == ip {
+			return true, RequestsData[i].RequestID
+		}
+	}
+	return false, ""
+}
+
+// EvaluateRequestCount returns bool
+func EvaluateRequestCount() bool {
+	if len(RequestsData) > activeRequestsCount {
+		return false
+	}
+	return true
 }
 
 // RequestsData returns []FuzzyMatchDAO

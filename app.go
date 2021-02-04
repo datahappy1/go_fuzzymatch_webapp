@@ -2,14 +2,10 @@ package main
 
 import (
 	//"database/sql"
-
-	//"github.com/gorilla/mux"
-	//"log"
-	//"net/http"
-
 	//_ "github.com/lib/pq"
 
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -46,14 +42,6 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
-	//a.Router.HandleFunc("/users", a.getUsers).Methods("GET")
-	//a.Router.HandleFunc("/user", a.createUser).Methods("POST")
-	//a.Router.HandleFunc("/user/{id:[0-9]+}", a.getUser).Methods("GET")
-	//a.Router.HandleFunc("/user/{id:[0-9]+}", a.updateUser).Methods("PUT")
-	//a.Router.HandleFunc("/user/{id:[0-9]+}", a.deleteUser).Methods("DELETE")
-
-	//r := mux.NewRouter()
-
 	api := a.Router.PathPrefix("/api/v1").Subrouter()
 	api.HandleFunc("/requests/{requestID}/", a.getLazy).Methods(http.MethodGet)
 	api.HandleFunc("/requests/", a.post).Methods(http.MethodPost)
@@ -66,36 +54,53 @@ func (a *App) initializeRoutes() {
 }
 
 func (a *App) post(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-
+	// TODO status for too large request
 	r.Body = http.MaxBytesReader(w, r.Body, 1048576)
+
+	if model.EvaluateRequestCount() == false {
+		respondWithError(w, http.StatusTooManyRequests, errors.New("too many overall requests in flight, try later"))
+		return
+	}
+
+	requestedFromIP, err := controller.GetIP(r)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, errors.New("cannot determine IP address"))
+		return
+	}
+
+	isTooManyRequestRatePerIP, inFlightRequestID := model.EvaluateRequestRatePerIP(requestedFromIP)
+	if isTooManyRequestRatePerIP == true {
+		respondWithError(w, http.StatusTooManyRequests, errors.New(fmt.Sprintf("too many requests from IP address in flight, "+
+			"collect previous request %s data first", inFlightRequestID)))
+		return
+	}
 
 	var fuzzyMatchExternalRequest controller.FuzzyMatchExternalRequest
 
 	requestBodyString, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Println(err)
+		respondWithError(w, http.StatusNotAcceptable, errors.New("cannot read request body"))
+		return
 	}
 
 	//rawRequestBody := string(requestBodyString[:])
 	err = json.Unmarshal(requestBodyString, &fuzzyMatchExternalRequest)
 	if err != nil {
+
 		log.Printf("error decoding response: %v", err)
 		if e, ok := err.(*json.SyntaxError); ok {
 			log.Printf("syntax error at byte offset %d", e.Offset)
 		}
 		log.Printf("response: %q", requestBodyString)
-	}
 
-	fmt.Println(fuzzyMatchExternalRequest)
-	fmt.Println(fuzzyMatchExternalRequest.StringsToMatch)
-	fmt.Println(fuzzyMatchExternalRequest.StringsToMatchIn)
+		respondWithError(w, http.StatusInternalServerError, errors.New("error decoding request data"))
+		return
+	}
 
 	fuzzyMatchRequest := controller.CreateFuzzyMatchRequest(
 		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatch),
 		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatchIn),
-		fuzzyMatchExternalRequest.Mode)
+		fuzzyMatchExternalRequest.Mode, requestedFromIP)
 
 	// curl sample request:
 	// https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service
@@ -112,32 +117,25 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	//}'
 
 	model.CreateFuzzyMatchDAOInRequestsData(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
-		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode)
+		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP)
 
 	fuzzyMatchRequestResponse := controller.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
 
-	// fmt.Fprintf(w, "%+v", fuzzyMatchRequestResponse)
-	jData, err := json.Marshal(fuzzyMatchRequestResponse)
-	if err != nil {
-		// handle error
-	}
-
-	w.Write(jData)
+	respondWithJSON(w, http.StatusOK, fuzzyMatchRequestResponse)
 
 }
 
 func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	pathParams := mux.Vars(r)
-	w.Header().Set("Content-Type", "application/json")
 
-	// curl sample request curl -X GET http://localhost:8080/api/v1/requests/66e3a79e-a05e-4d63-856f-5a12ed673965/
+	// curl sample request
+	// curl -X GET http://localhost:8080/api/v1/requests/66e3a79e-a05e-4d63-856f-5a12ed673965/
 
 	requestID := ""
 	if val, ok := pathParams["requestID"]; ok {
 		requestID = val
 		if controller.IsValidUUID(val) == false {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(`{"message": "need a valid request UUID"}`))
+			respondWithError(w, http.StatusInternalServerError, errors.New("need a valid UUID for request ID"))
 			return
 		}
 	}
@@ -154,14 +152,14 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 				model.RequestsData[i].StringsToMatch,
 				model.RequestsData[i].StringsToMatchIn,
 				model.RequestsData[i].Mode,
+				model.RequestsData[i].RequestedFromIP,
 				model.RequestsData[i].ReturnedRows)
 			break
 		}
 	}
 
 	if fuzzyMatchDAO.RequestID == "" {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Request not found"}`))
+		respondWithError(w, http.StatusNotFound, errors.New("request not found"))
 		return
 	}
 
@@ -212,12 +210,19 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 		model.UpdateFuzzyMatchDAOInRequestsData(requestID, returnedRowsUpperBound)
 	}
 
-	// fmt.Fprintf(w, "%+v", fuzzyMatchResultsResponse)
-	jData, err := json.Marshal(fuzzyMatchResultsResponse)
-	if err != nil {
-		// handle error
-	}
+	respondWithJSON(w, http.StatusOK, fuzzyMatchResultsResponse)
+}
 
-	w.Write(jData)
+func respondWithError(w http.ResponseWriter, code int, message error) {
+	respondWithJSON(w, code, map[string]string{"error": message.Error()})
+}
+
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+
+	response, _ := json.Marshal(payload)
+	// TODO handle write response error
+	w.Write(response)
 
 }

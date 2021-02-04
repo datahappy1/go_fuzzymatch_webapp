@@ -8,9 +8,9 @@ import (
 
 // FuzzyMatchExternalRequest returns struct
 type FuzzyMatchExternalRequest struct {
-	StringsToMatch string `json:"stringsToMatch"`
+	StringsToMatch   string `json:"stringsToMatch"`
 	StringsToMatchIn string `json:"stringsToMatchIn"`
-	Mode string `json:"mode"`
+	Mode             string `json:"mode"`
 }
 
 // FuzzyMatchRequest returns struct
@@ -19,15 +19,18 @@ type FuzzyMatchRequest struct {
 	StringsToMatch   []string
 	StringsToMatchIn []string
 	Mode             string
+	RequestedFromIP  string
 }
 
 // CreateFuzzyMatchRequest returns FuzzyMatchRequest
-func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string, mode string) FuzzyMatchRequest {
+func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string, mode string,
+	requestedFromIP string) FuzzyMatchRequest {
 	req := FuzzyMatchRequest{
 		RequestID:        uuid.New().String(),
 		StringsToMatch:   stringsToMatch,
 		StringsToMatchIn: stringsToMatchIn,
-		Mode:             mode}
+		Mode:             mode,
+		RequestedFromIP:  requestedFromIP}
 	return req
 }
 
