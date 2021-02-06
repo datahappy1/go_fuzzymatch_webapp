@@ -31,3 +31,23 @@ function submitButtonHandler() {
 
     createRequestStartFetchingChain().catch();
 }
+
+function showApiDocumentationHandler() {
+
+    async function prepareApiDocumentationContent() {
+        let ApiDocumentationMarkdownContent = null;
+        try {
+            ApiDocumentationMarkdownContent = await _fetch_api_documentation_markdown();
+        }
+        catch (e) {
+            DOMUpdateOnLoadDocumentationError(JSON.stringify(e));
+            return;
+        }
+
+        let ApiDocumentationHtmlContent = convertMarkdownToHtml(ApiDocumentationMarkdownContent);
+
+        updateApiDocumentationDiv(ApiDocumentationHtmlContent);
+    }
+
+    prepareApiDocumentationContent().catch();
+}

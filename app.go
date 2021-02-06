@@ -163,7 +163,7 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if fuzzyMatchDAO.ReturnedRows+fuzzyMatchDAO.BatchSize >= fuzzyMatchDAO.StringsToMatchLength {
+	if fuzzyMatchDAO.ReturnedRows + fuzzyMatchDAO.BatchSize >= fuzzyMatchDAO.StringsToMatchLength {
 		returnedRowsUpperBound = fuzzyMatchDAO.StringsToMatchLength
 		returnedAllRows = true
 	} else {

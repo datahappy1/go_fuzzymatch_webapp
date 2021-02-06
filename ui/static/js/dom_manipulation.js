@@ -149,6 +149,23 @@ function toggleBackendServiceErrorAlert(action) {
     }
 }
 
+function updateLoadDocumentationErrorAlert(errorMessage) {
+    let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
+
+    loadDocumentationErrorAlertComponent.innerHTML = "Load Documentation error: " + errorMessage;
+    loadDocumentationErrorAlertComponent.style.display = "block";
+}
+
+function toggleLoadDocumentationErrorAlert(action) {
+    let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
+
+    if (action === "show") {
+        loadDocumentationErrorAlertComponent.style.display = "block";
+    } else if (action === "hide") {
+        loadDocumentationErrorAlertComponent.style.display = "none";
+    }
+}
+
 function jumpToAnchor(anchor) {
     window.location.href = "#" + anchor;
 }
@@ -163,4 +180,17 @@ function hidePreviousErrors() {
     toggleMissingMandatoryComponentsAlert("hide");
     toggleBackendServiceErrorAlert("hide");
     toggleSubmitButtonWhileLoadingResults("show");
+}
+
+function convertMarkdownToHtml(inputText) {
+    let converter = new showdown.Converter();
+    let html = converter.makeHtml(inputText);
+
+    return html
+}
+
+function updateApiDocumentationDiv(content) {
+    let apiDocumentationDivElement = document.getElementById("apiDocumentationDiv");
+
+    apiDocumentationDivElement.innerHTML = content;
 }

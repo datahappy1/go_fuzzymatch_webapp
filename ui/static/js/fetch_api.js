@@ -1,4 +1,5 @@
-const BaseUrl = 'http://localhost:8080/api/v1/requests/';
+const BaseApiRequestsUrl = 'http://localhost:8080/api/v1/requests/';
+const ApiDocumentationMarkdownFileLocation = 'http://localhost:8080/api_documentation.md'
 
 function DOMUpdateOnBackendServiceError(message) {
     updateBackendServiceErrorAlert(message);
@@ -15,6 +16,11 @@ function DOMUpdateOnBackendServiceFetchingDataStart() {
 function DOMUpdateOnBackendServiceFetchingDataEnd() {
     toggleSubmitButtonWhileLoadingResults("show");
     jumpToAnchor("results");
+}
+
+function DOMUpdateOnLoadDocumentationError(message) {
+    updateLoadDocumentationErrorAlert(message);
+    toggleLoadDocumentationErrorAlert("show");
 }
 
 async function _fetch_post_new_request() {
@@ -35,7 +41,7 @@ async function _fetch_post_new_request() {
         method: "POST"
     };
 
-    const fetchResult = await fetch(BaseUrl, otherParam);
+    const fetchResult = await fetch(BaseApiRequestsUrl, otherParam);
 
     if (fetchResult.ok) {
         return await fetchResult.json();
@@ -61,7 +67,7 @@ async function _fetch_get_lazy_response_results(requestId) {
         method: "GET"
     };
 
-    const fetchResult = await fetch(BaseUrl + requestId + '/', otherParam);
+    const fetchResult = await fetch(BaseApiRequestsUrl + requestId + '/', otherParam);
 
     if (fetchResult.ok) {
         return await fetchResult.json();
@@ -89,4 +95,24 @@ async function _update_results_table_with_fetched_data(requestId) {
         updateResultsTable(results["Results"]);
         await _update_results_table_with_fetched_data(requestId);
     }
+}
+
+async function _fetch_api_documentation_markdown() {
+    const fetchResult = await fetch(ApiDocumentationMarkdownFileLocation, )
+
+    if (fetchResult.ok) {
+        return await fetchResult.text();
+    }
+
+    const responseError = {
+        type: 'Error',
+        message: fetchResult.statusText,
+        data: fetchResult.url,
+        code: fetchResult.status,
+    };
+
+    let error = new Error();
+    error = {...error, ...responseError};
+    throw (error);
+
 }
