@@ -32,14 +32,12 @@ function submitButtonHandler() {
     createRequestStartFetchingChain().catch();
 }
 
-function showApiDocumentationHandler() {
-
+function _loadAPIDocumentationPage() {
     async function prepareApiDocumentationContent() {
         let ApiDocumentationMarkdownContent = null;
         try {
-            ApiDocumentationMarkdownContent = await _fetch_api_documentation_markdown();
-        }
-        catch (e) {
+            ApiDocumentationMarkdownContent = await _fetch_api_documentation_markdown().then();
+        } catch (e) {
             DOMUpdateOnLoadDocumentationError(JSON.stringify(e));
             return;
         }
@@ -47,7 +45,15 @@ function showApiDocumentationHandler() {
         let ApiDocumentationHtmlContent = convertMarkdownToHtml(ApiDocumentationMarkdownContent);
 
         updateApiDocumentationDiv(ApiDocumentationHtmlContent);
+
     }
 
     prepareApiDocumentationContent().catch();
+
 }
+
+function windowOnLoadHandler() {
+    _loadAPIDocumentationPage();
+}
+
+window.onload = windowOnLoadHandler();

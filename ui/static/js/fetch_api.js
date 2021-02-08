@@ -1,5 +1,5 @@
 const BaseApiRequestsUrl = 'http://localhost:8080/api/v1/requests/';
-const ApiDocumentationMarkdownFileLocation = 'http://localhost:8080/api_documentation.md'
+const ApiDocumentationMarkdownFileLocation = 'http://localhost:8080/api_documentation.md';
 
 function DOMUpdateOnBackendServiceError(message) {
     updateBackendServiceErrorAlert(message);
@@ -47,14 +47,12 @@ async function _fetch_post_new_request() {
         return await fetchResult.json();
     }
 
-    const responseError = {
+    throw {
         type: 'Error',
         message: fetchResult.statusText,
         data: fetchResult.url,
         code: fetchResult.status,
     };
-
-    throw responseError;
 }
 
 async function _fetch_get_lazy_response_results(requestId) {
@@ -71,14 +69,12 @@ async function _fetch_get_lazy_response_results(requestId) {
         return await fetchResult.json();
     }
 
-    const responseError = {
+    throw {
         type: 'Error',
         message: fetchResult.statusText,
         data: fetchResult.url,
         code: fetchResult.status,
     };
-
-    throw responseError;
 }
 
 async function _update_results_table_with_fetched_data(requestId) {
@@ -94,18 +90,16 @@ async function _update_results_table_with_fetched_data(requestId) {
 }
 
 async function _fetch_api_documentation_markdown() {
-    const fetchResult = await fetch(ApiDocumentationMarkdownFileLocation, )
+    const fetchResult = await fetch(ApiDocumentationMarkdownFileLocation, );
 
     if (fetchResult.ok) {
         return await fetchResult.text();
     }
 
-    const responseError = {
+    throw {
         type: 'Error',
         message: fetchResult.statusText,
         data: fetchResult.url,
         code: fetchResult.status,
     };
-
-    throw responseError;
 }
