@@ -1,3 +1,7 @@
+**API Documentation:**
+----
+----
+
 **Creating a new request**
 ----
   You create a new request only to initiate the fuzzy matching process. This new request has TTL set to 1 hour. After that, the request is removed from the application request database.

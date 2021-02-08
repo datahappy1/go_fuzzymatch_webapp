@@ -54,9 +54,7 @@ async function _fetch_post_new_request() {
         code: fetchResult.status,
     };
 
-    let error = new Error();
-    error = {...error, ...responseError};
-    throw (error);
+    throw responseError;
 }
 
 async function _fetch_get_lazy_response_results(requestId) {
@@ -80,9 +78,7 @@ async function _fetch_get_lazy_response_results(requestId) {
         code: fetchResult.status,
     };
 
-    let error = new Error();
-    error = {...error, ...responseError};
-    throw (error);
+    throw responseError;
 }
 
 async function _update_results_table_with_fetched_data(requestId) {
@@ -111,8 +107,5 @@ async function _fetch_api_documentation_markdown() {
         code: fetchResult.status,
     };
 
-    let error = new Error();
-    error = {...error, ...responseError};
-    throw (error);
-
+    throw responseError;
 }
