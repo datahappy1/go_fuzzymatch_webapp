@@ -4,13 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-
     <title>Fuzzy Matching</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -19,217 +17,226 @@
 
 <body>
 
-<!-- Navigation start-->
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color:#219bd8;">
-    <a class="navbar-brand" href="/">
-        <img src="/img/match-icon-small.png" alt="fuzzymatching logo">Fuzzster - Online Fuzzy matching tool
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+    <!-- Navigation start-->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color:#219bd8;">
+        <a class="navbar-brand" href="/">
+            <img src="/img/match-icon-small.png" alt="fuzzymatching logo">Fuzzster - Online Fuzzy matching tool
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
             aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/">
-                    Home
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#search">
-                    Search
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#api_docs">
-                    API Docs
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://datahappy.wordpress.com/contact/" target="_blank">
-                    Contact
-                </a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<!-- Navigation end-->
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#search">
+                        Search
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#api_docs">
+                        API Docs
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://datahappy.wordpress.com/contact/" target="_blank">
+                        Contact
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Navigation end-->
 
-<!-- Body Container start-->
-<div class="container-fluid">
+    <!-- Body Container start-->
+    <div class="container-fluid">
 
-    <!-- Top container start -->
-    <a id="search"></a>
-    <div class="pt-5">
-        <div class="shadow-sm p-3 m-3 bg-white rounded">
-            <!-- Alerts start-->
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <div class="alert alert-info" role="alert">
-                        If you need to fuzzy match large chunks of data, use the
-                        <a class="alert-link" href="#api_docs">API</a>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+        <!-- Top container start -->
+        <a id="search"></a>
+        <div class="pt-5">
+            <div class="shadow-sm p-3 m-3 bg-white rounded">
+                <!-- Alerts start-->
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <div class="alert alert-info" role="alert">
+                            If you need to fuzzy match large chunks of data, use the
+                            <a class="alert-link" href="#api_docs">API</a>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert"
+                            style="display:none;">
+                        </div>
+
+                        <div class="alert alert-danger" role="alert" id="backendServiceErrorAlert"
+                            style="display:none;">
+                        </div>
+
+                        <div class="alert alert-danger" role="alert" id="loadDocumentationErrorAlert"
+                            style="display:none;">
+                        </div>
+
                     </div>
+                </div>
+                <!-- Alerts end-->
 
-                    <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert"
-                         style="display:none;">
+                <!-- Setup start-->
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <h2><strong>Fuzzy matching setup:</strong></h2>
                     </div>
+                </div>
 
-                    <div class="alert alert-danger" role="alert" id="backendServiceErrorAlert"
-                         style="display:none;">
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <label for="mode">Choose mode:</label>
+                        <select class="form-control form-control-sm" name="mode" id="mode">
+                            <option value="simple">simple</option>
+                            <option value="deepDive">deepDive</option>
+                            <option value="combined">combined</option>
+                        </select>
                     </div>
-
-                    <div class="alert alert-danger" role="alert" id="loadDocumentationErrorAlert"
-                         style="display:none;">
+                    <div class="col-sm">
                     </div>
-
                 </div>
-            </div>
-            <!-- Alerts end-->
 
-            <!-- Setup start-->
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <h2><strong>Fuzzy matching setup:</strong></h2>
-                </div>
-            </div>
-
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <label for="mode">Choose mode:</label>
-                    <select class="form-control form-control-sm" name="mode" id="mode">
-                        <option value="simple">simple</option>
-                        <option value="deepDive">deepDive</option>
-                        <option value="combined">combined</option>
-                    </select>
-                </div>
-                <div class="col-sm">
-                </div>
-            </div>
-
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <div class="d-flex justify-content-between">
-                        <label for="stringsToMatch">Strings to match:</label>
-                        <button type="button" class="btn btn-danger btn-sm"
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <div class="d-flex justify-content-between">
+                            <label for="stringsToMatch">Strings to match:</label>
+                            <button type="button" class="btn btn-danger btn-sm"
                                 onclick="clearTextarea('stringsToMatch');">
-                            clear
-                        </button>
+                                clear
+                            </button>
+                        </div>
+                        <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"
+                            placeholder="Comma separated list of strings to evaluate comes in here. Use single quotes to quote strings that contain a comma, for example: &#039;address line, city&#039;"
+                            maxlength="10000"></textarea>
                     </div>
-                    <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"
-                              placeholder="Comma separated list of strings to evaluate comes in here. Use single quotes to quote strings that contain a comma, for example: &#039;address line, city&#039;"
-                              maxlength="10000"></textarea>
-                </div>
-                <div class="col-sm">
-                    <div class="d-flex justify-content-between">
-                        <label for="stringsToMatchIn">Strings to match in:</label>
-                        <button type="button" class="btn btn-danger btn-sm"
+                    <div class="col-sm">
+                        <div class="d-flex justify-content-between">
+                            <label for="stringsToMatchIn">Strings to match in:</label>
+                            <button type="button" class="btn btn-danger btn-sm"
                                 onclick="clearTextarea('stringsToMatchIn');">
-                            clear
+                                clear
+                            </button>
+                        </div>
+                        <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="10" cols="50"
+                            placeholder="Comma separated list of strings to match in comes in here. Use single quotes to quote strings that contain a comma, for example: &#039;address line, city&#039;"
+                            maxlength="10000"></textarea>
+                    </div>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <button class="btn btn-primary" onclick="startSearchButtonHandler();" id="submitButton">Match!
+                            <span class="spinner-border spinner-border-sm" id="submitButtonSpinner" role="status"
+                                aria-hidden="true" style="display:none;"></span>
                         </button>
                     </div>
-                    <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="10" cols="50"
-                              placeholder="Comma separated list of strings to match in comes in here. Use single quotes to quote strings that contain a comma, for example: &#039;address line, city&#039;"
-                              maxlength="10000"></textarea>
                 </div>
+                <!-- Setup end-->
             </div>
-
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <button class="btn btn-primary" onclick="submitButtonHandler()" id="submitButton">Match!
-                        <span class="spinner-border spinner-border-sm" id="submitButtonSpinner" role="status"
-                              aria-hidden="true" style="display:none;"></span>
-                    </button>
-                </div>
-            </div>
-            <!-- Setup end-->
         </div>
-    </div>
-    <!-- Top container end -->
+        <!-- Top container end -->
 
-    <!-- Bottom container start -->
-    <a id="results"></a>
-    <div class="pt-5">
-        <div class="shadow-sm p-3 m-3 bg-white rounded" id="resultsDiv" style="display:none;">
-            <!-- Results start-->
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <h2><strong>Match results:</strong></h2>
+        <!-- Bottom container start -->
+        <a id="results"></a>
+        <div class="pt-5">
+            <div class="shadow-sm p-3 m-3 bg-white rounded" id="resultsDiv" style="display:none;">
+                <!-- Results start-->
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <h2><strong>Match results:</strong></h2>
+                    </div>
                 </div>
-            </div>
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <label for="rangeInput" id="labelformControlRange">Filter for results above match
-                        result</label>
-                    <output id="amount" name="amount" for="rangeInput">80</output>
-                    <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="0"
-                           max="100" value="80" oninput="amount.value=rangeInput.value"
-                           onchange="filterResultsTable();">
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <label for="rangeInput" id="labelformControlRange">Filter for results above match
+                            result</label>
+                        <output id="amount" name="amount" for="rangeInput">80</output>
+                        <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="0"
+                            max="100" value="80" oninput="amount.value=rangeInput.value"
+                            onchange="filterResultsTable();">
+                    </div>
                 </div>
-            </div>
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        <button type="button" class="btn btn-outline-primary" id="copyResultsTableToClipboardButton"
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                            <button type="button" class="btn btn-outline-primary" id="copyResultsTableToClipboardButton"
                                 data-clipboard-target="#resultsTable" onclick="copyResultsTableToClipboard();">
-                            Copy results to clipboard
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" id="downloadResultsTableAsCsv"
+                                Copy results to clipboard
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="downloadResultsTableAsCsv"
                                 onclick="downloadResultsTableAsCsv('fuzzy_match_results.csv')">
-                            Download results as .csv file
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" id="clearResultsTable"
+                                Download results as .csv file
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="clearResultsTable"
                                 onclick="clearResultsTable();">
-                            Clear results
-                        </button>
+                                Clear results
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row pt-2">
-                <div class="col-sm">
-                    <label>Results table:</label>
-                    <table class="table table-sm" id="resultsTable">
-                        <thead>
-                        <tr>
-                            <th scope="col">Input String</th>
-                            <th scope="col">Best Match</th>
-                            <th scope="col">Match Result</th>
-                        </tr>
-                        </thead>
-                        <tbody id="resultsTableBody">
-                        </tbody>
-                    </table>
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <label>Results table:</label>
+                        <table class="table table-sm" id="resultsTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Input String</th>
+                                    <th scope="col">Best Match</th>
+                                    <th scope="col">Match Result</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                <!-- Results end-->
             </div>
-            <!-- Results end-->
         </div>
-    </div>
-    <!-- Bottom container end -->
+        <!-- Bottom container end -->
 
-    <!-- API Documentation container start -->
-    <a id="api_docs"></a>
-    <div class="pt-5">
-        <div class="shadow-sm p-3 m-3 bg-white rounded" id="apiDocumentationDiv">
+        <!-- API Documentation container start -->
+        <a id="api_docs"></a>
+        <div class="pt-5">
+            <div class="shadow-sm p-3 m-3 bg-white rounded" id="apiDocumentationDiv">
+            </div>
         </div>
+        <!-- API Documentation container end -->
     </div>
-    <!-- API Documentation container end -->
 
-</div>
-<!-- BodyContainer end-->
+    <!-- BodyContainer end-->
 
-<script src="/js/fetch_api.js"></script>
-<script src="/js/dom_manipulation.js"></script>
-<script src="/js/validation.js"></script>
-<script src="/js/handlers.js"></script>
+    <script src="/js/fetch_api.js"></script>
+    <script src="/js/dom_manipulation.js"></script>
+    <script src="/js/validation.js"></script>
+    <script src="/js/handlers.js"></script>
 
-<script src="/js/external/clipboard.js/2.0.6/clipboard.min.js"></script>
-<script src="/js/external/showdown.js/1.9.1/showdown.min.js"></script>
+    <script src="/js/external/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="/js/external/showdown.js/1.9.1/showdown.min.js"></script>
 
-<noscript>
-    <p>Please enable JavaScript to use this page.</p>
-</noscript>
+    <script> 
+        $(document).ready(function() { 
+            $('li').click(function() { 
+                $('li.nav-item.active').removeClass("active"); 
+                $(this).addClass("active"); 
+            }); 
+        }); 
+    </script> 
+
+    <noscript>
+        <p>Please enable JavaScript to use this page.</p>
+    </noscript>
 
 </body>
 

@@ -1,4 +1,4 @@
-function submitButtonHandler() {
+function startSearchButtonHandler() {
 
     async function createRequestStartFetchingChain() {
         hidePreviousErrors();
@@ -32,7 +32,7 @@ function submitButtonHandler() {
     createRequestStartFetchingChain().catch();
 }
 
-function _loadAPIDocumentationPage() {
+function loadStaticPagesHandler() {
     async function prepareApiDocumentationContent() {
         let ApiDocumentationMarkdownContent = null;
         try {
@@ -52,8 +52,6 @@ function _loadAPIDocumentationPage() {
 
 }
 
-function windowOnLoadHandler() {
-    _loadAPIDocumentationPage();
+window.onload = function () {
+    loadStaticPagesHandler();
 }
-
-window.onload = windowOnLoadHandler();
