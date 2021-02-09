@@ -196,3 +196,10 @@ function updateApiDocumentationDiv(content) {
 }
 
 
+function highlightElement(elementName) {
+    var a = document.getElementsByTagName('a');
+    for (i = 0; i < a.length; i++) {
+        a[i].classList.remove('active')
+    }
+    elementName.classList.add('active');
+}
