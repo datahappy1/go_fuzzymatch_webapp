@@ -50,3 +50,6 @@ func TestCreateInvalidRequest(t *testing.T) {
 		t.Errorf("Expected the 'error' key of the response to be set to 'User not found'. Got '%s'", m["error"])
 	}
 }
+
+//https://github.com/kelvins/GoApiTutorial/blob/master/main_test.go
+//https://webpack.js.org/guides/getting-started/
