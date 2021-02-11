@@ -3,6 +3,7 @@ package main
 //https://github.com/kelvins/GoApiTutorial/blob/master/main_test.go
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -14,13 +15,9 @@ var a App
 
 func TestMain(m *testing.M) {
 	a = App{}
-	a.Initialize("root", "", "rest_api_example")
-
-	//ensureTableExists()
+	a.Initialize()
 
 	code := m.Run()
-
-	//clearTable()
 
 	os.Exit(code)
 }
@@ -38,10 +35,11 @@ func checkResponseCode(t *testing.T, expected, actual int) {
 	}
 }
 
-func TestGetNonExistentUser(t *testing.T) {
-	//clearTable()
+func TestCreateInvalidRequest(t *testing.T) {
 
-	req, _ := http.NewRequest("GET", "/user/45", nil)
+	payload := []byte(`{"stringsToMatch":"testt","stringsToMatchInd":"test", "mode": "simple"}`)
+
+	req, _ := http.NewRequest("POST", "/api/v1/requests/", bytes.NewBuffer(payload))
 	response := executeRequest(req)
 
 	checkResponseCode(t, http.StatusNotFound, response.Code)

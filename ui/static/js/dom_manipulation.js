@@ -46,8 +46,8 @@ function downloadResultsTableAsCsv(filename) {
     downloadCSV(csv.join("\n"), filename);
 }
 
-function clearTextarea(textareaname) {
-    let textareaElement = document.getElementById(textareaname)
+function clearTextarea(textareaName) {
+    let textareaElement = document.getElementById(textareaName)
 
     textareaElement.value = "";
 }
@@ -195,10 +195,9 @@ function updateApiDocumentationDiv(content) {
     apiDocumentationDivElement.innerHTML = content;
 }
 
-
 function highlightElement(elementName) {
-    var a = document.getElementsByTagName('a');
-    for (i = 0; i < a.length; i++) {
+    let a = document.getElementsByTagName('a');
+    for (let i = 0; i < a.length; i++) {
         a[i].classList.remove('active')
     }
     elementName.classList.add('active');

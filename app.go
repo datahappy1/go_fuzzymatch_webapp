@@ -1,9 +1,6 @@
 package main
 
 import (
-	//"database/sql"
-	//_ "github.com/lib/pq"
-
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,18 +18,9 @@ import (
 // App returns struct
 type App struct {
 	Router *mux.Router
-	//DB     *sql.DB
 }
 
-func (a *App) Initialize(user, password, dbname string) {
-	//connectionString := fmt.Sprintf("%s:%s@/%s", user, password, dbname)
-
-	//var err error
-	//a.DB, err = sql.Open("mysql", connectionString)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
+func (a *App) Initialize() {
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 }
@@ -63,6 +51,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	requestedFromIP, err := controller.GetIP(r)
+	fmt.Println(err)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, errors.New("cannot determine IP address"))
 		return
@@ -163,7 +152,7 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if fuzzyMatchDAO.ReturnedRows + fuzzyMatchDAO.BatchSize >= fuzzyMatchDAO.StringsToMatchLength {
+	if fuzzyMatchDAO.ReturnedRows+fuzzyMatchDAO.BatchSize >= fuzzyMatchDAO.StringsToMatchLength {
 		returnedRowsUpperBound = fuzzyMatchDAO.StringsToMatchLength
 		returnedAllRows = true
 	} else {
