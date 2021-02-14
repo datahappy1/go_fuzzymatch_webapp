@@ -13,6 +13,7 @@ import (
 	"sort"
 
 	fm "github.com/datahappy1/go_fuzzymatch/pkg"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/config"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/controller"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 	"github.com/gorilla/mux"
@@ -22,11 +23,19 @@ import (
 type App struct {
 	Router *mux.Router
 	//DB     *sql.DB
+	conf config.Configuration
 }
 
-func (a *App) Initialize() {
+func (a *App) Initialize(environment string) {
+	var err error
+	a.conf, err = config.GetConfiguration(environment)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
+
 }
 
 //func (a *App) Initialize(user, password, dbname string) {
@@ -50,15 +59,15 @@ func (a *App) initializeRoutes() {
 	ui := a.Router.PathPrefix("/").Subrouter()
 	fileServerStaticRoot := http.FileServer(http.Dir("./ui/static/"))
 	ui.PathPrefix("/").Handler(fileServerStaticRoot)
-	ui.PathPrefix("/js/").Handler(fileServerStaticRoot)
+	ui.PathPrefix("/dist/").Handler(fileServerStaticRoot)
 
 }
 
 func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	// TODO status for too large request
-	r.Body = http.MaxBytesReader(w, r.Body, 1048576)
+	r.Body = http.MaxBytesReader(w, r.Body, a.conf.MaxRequestByteSize)
 
-	if model.EvaluateRequestCount() == false {
+	if model.EvaluateRequestCount(a.conf.MaxActiveRequestsCount) == false {
 		respondWithError(w, http.StatusTooManyRequests, errors.New("too many overall requests in flight, try later"))
 		return
 	}
@@ -99,10 +108,15 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fuzzyMatchRequest := controller.CreateFuzzyMatchRequest(
+	fuzzyMatchRequest, err := controller.CreateFuzzyMatchRequest(
 		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatch),
 		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatchIn),
 		fuzzyMatchExternalRequest.Mode, requestedFromIP)
+
+	if err != nil {
+		respondWithError(w, http.StatusNotAcceptable, errors.New("error invalid request"))
+		return
+	}
 
 	// curl sample request:
 	// https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service
@@ -119,7 +133,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	//}'
 
 	model.CreateFuzzyMatchDAOInRequestsData(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
-		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP)
+		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP, a.conf.BatchSize)
 
 	fuzzyMatchRequestResponse := controller.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
 
@@ -155,6 +169,7 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 				model.RequestsData[i].StringsToMatchIn,
 				model.RequestsData[i].Mode,
 				model.RequestsData[i].RequestedFromIP,
+				model.RequestsData[i].BatchSize,
 				model.RequestsData[i].ReturnedRows)
 			break
 		}

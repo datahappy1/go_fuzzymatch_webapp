@@ -4,9 +4,6 @@ import (
 	"time"
 )
 
-var batchSize = 20
-var activeRequestsCount = 1000
-
 // FuzzyMatchDAO returns struct
 type FuzzyMatchDAO struct {
 	RequestID              string
@@ -24,7 +21,7 @@ type FuzzyMatchDAO struct {
 
 // CreateFuzzyMatchDAO returns FuzzyMatchDAO
 func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMatchIn []string,
-	mode string, requestedFromIP string, returnedRows int) FuzzyMatchDAO {
+	mode string, requestedFromIP string, batchSize int, returnedRows int) FuzzyMatchDAO {
 	dao := FuzzyMatchDAO{
 		RequestID:              requestID,
 		StringsToMatch:         stringsToMatch,
@@ -41,8 +38,8 @@ func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMat
 
 // CreateFuzzyMatchDAOInRequestsData returns FuzzyMatchDAO
 func CreateFuzzyMatchDAOInRequestsData(RequestID string, StringsToMatch []string, StringsToMatchIn []string,
-	Mode string, RequestedFromIP string) (string, bool) {
-	dao := CreateFuzzyMatchDAO(RequestID, StringsToMatch, StringsToMatchIn, Mode, RequestedFromIP, 0)
+	Mode string, RequestedFromIP string, BatchSize int) (string, bool) {
+	dao := CreateFuzzyMatchDAO(RequestID, StringsToMatch, StringsToMatchIn, Mode, RequestedFromIP, BatchSize, 0)
 	RequestsData = append(RequestsData, dao)
 	return "ok", true
 }
@@ -88,7 +85,7 @@ func EvaluateRequestRatePerIP(ip string) (bool, string) {
 }
 
 // EvaluateRequestCount returns bool
-func EvaluateRequestCount() bool {
+func EvaluateRequestCount(activeRequestsCount int) bool {
 	if len(RequestsData) > activeRequestsCount {
 		return false
 	}

@@ -105,7 +105,7 @@ function filterResultsTable() {
 function updateMissingMandatoryComponentsAlert(components) {
     let mandatoryFieldsDivComponent = document.getElementById("mandatoryFieldsNotFilledAlert");
 
-    mandatoryFieldsDivComponent.innerHTML = "Mandatory fields not filled: " + components;
+    mandatoryFieldsDivComponent.innerHTML = `Mandatory fields not filled: ${components}`;
 
 }
 
@@ -135,7 +135,7 @@ function toggleSubmitButtonWhileLoadingResults(action) {
 function updateBackendServiceErrorAlert(errorMessage) {
     let backendServiceErrorDivComponent = document.getElementById("backendServiceErrorAlert");
 
-    backendServiceErrorDivComponent.innerHTML = "Backend service error: " + errorMessage;
+    backendServiceErrorDivComponent.innerHTML = `Backend service error: ${errorMessage}`;
     backendServiceErrorDivComponent.style.display = "block";
 }
 
@@ -149,25 +149,25 @@ function toggleBackendServiceErrorAlert(action) {
     }
 }
 
-function updateLoadDocumentationErrorAlert(errorMessage) {
-    let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
+// function updateLoadDocumentationErrorAlert(errorMessage) {
+//     let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
 
-    loadDocumentationErrorAlertComponent.innerHTML = "Load Documentation error: " + errorMessage;
-    loadDocumentationErrorAlertComponent.style.display = "block";
-}
+//     loadDocumentationErrorAlertComponent.innerHTML = `Load Documentation error: ${errorMessage}`;
+//     loadDocumentationErrorAlertComponent.style.display = "block";
+// }
 
-function toggleLoadDocumentationErrorAlert(action) {
-    let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
+// function toggleLoadDocumentationErrorAlert(action) {
+//     let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
 
-    if (action === "show") {
-        loadDocumentationErrorAlertComponent.style.display = "block";
-    } else if (action === "hide") {
-        loadDocumentationErrorAlertComponent.style.display = "none";
-    }
-}
+//     if (action === "show") {
+//         loadDocumentationErrorAlertComponent.style.display = "block";
+//     } else if (action === "hide") {
+//         loadDocumentationErrorAlertComponent.style.display = "none";
+//     }
+// }
 
 function jumpToAnchor(anchor) {
-    window.location.href = "#" + anchor;
+    window.location.href = `#${anchor}`;
 }
 
 function showResultsTable() {

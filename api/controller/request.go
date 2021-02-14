@@ -1,10 +1,22 @@
 package controller
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/google/uuid"
 )
+
+var modeTypes = [3]string{"simple", "deepDive", "combined"}
+
+func stringInSlice(a string, list [3]string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
 
 // FuzzyMatchExternalRequest returns struct
 type FuzzyMatchExternalRequest struct {
@@ -24,17 +36,30 @@ type FuzzyMatchRequest struct {
 
 // CreateFuzzyMatchRequest returns FuzzyMatchRequest
 func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string, mode string,
-	requestedFromIP string) FuzzyMatchRequest {
+	requestedFromIP string) (*FuzzyMatchRequest, error) {
+
+	if len(stringsToMatch) == 0 {
+		return nil, errors.New("stringsToMatch is invalid")
+	}
+
+	if len(stringsToMatchIn) == 0 {
+		return nil, errors.New("stringsToMatchIn is invalid")
+	}
+
+	if mode == "" || stringInSlice(mode, modeTypes) == false {
+		return nil, errors.New("mode is invalid")
+	}
+
 	req := FuzzyMatchRequest{
 		RequestID:        uuid.New().String(),
 		StringsToMatch:   stringsToMatch,
 		StringsToMatchIn: stringsToMatchIn,
 		Mode:             mode,
 		RequestedFromIP:  requestedFromIP}
-	return req
+	return &req, nil
 }
 
-// IsValidUUID returns UUID
+// IsValidUUID returns bool
 func IsValidUUID(RequestUUID string) bool {
 	_, err := uuid.Parse(RequestUUID)
 	return err == nil

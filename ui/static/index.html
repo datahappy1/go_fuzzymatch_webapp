@@ -29,8 +29,8 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#search" onclick="highlightElement(this);">
-                    Search
+                <a class="nav-link" href="#match" onclick="highlightElement(this);">
+                    Match
                 </a>
             </li>
             <li class="nav-item">
@@ -52,15 +52,14 @@
 <div class="container-fluid">
 
     <!-- Top container start -->
-    <a id="search"></a>
+    <a id="match"></a>
     <div class="pt-5">
         <div class="shadow-sm p-3 m-3 bg-white rounded">
             <!-- Alerts start-->
             <div class="row pt-2">
                 <div class="col-sm">
                     <div class="alert alert-info" role="alert">
-                        If you need to fuzzy match large chunks of data, use the
-                        <a class="alert-link" href="#api_docs">API</a>
+                        If you need to fuzzy match large chunks of data, use the API
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -212,14 +211,17 @@
 
 <!-- BodyContainer end-->
 
-<script src="/js/fetch_api.js"></script>
-<script src="/js/dom_manipulation.js"></script>
-<script src="/js/validation.js"></script>
-<script src="/js/page_load_handlers.js"></script>
-<script src="/js/button_handlers.js"></script>
+<!-- <script src="/src/fetch_api.js"></script>
+<script src="/src/dom_manipulation.js"></script>
+<script src="/src/validation.js"></script>
+<script src="/src/index.js"></script> -->
 
-<script src="/js/external/clipboard.js/2.0.6/clipboard.min.js"></script>
-<script src="/js/external/showdown.js/1.9.1/showdown.min.js"></script>
+<!-- <script src="/dist/bundle.js"></script> -->
+
+<script src="/src/index.js"></script>
+
+<!-- <script src="/dist/external/clipboard.js/2.0.6/clipboard.min.js"></script>
+<script src="/dist/external/showdown.js/1.9.1/showdown.min.js"></script> -->
 
 <noscript>
     <p>Please enable JavaScript to use this page.</p>

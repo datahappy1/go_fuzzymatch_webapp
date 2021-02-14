@@ -1,0 +1,5 @@
+{
+    "BatchSize": 20,
+    "MaxActiveRequestsCount": 1000,
+    "MaxRequestByteSize": 1048576
+}

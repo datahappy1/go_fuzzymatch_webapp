@@ -18,10 +18,10 @@ function DOMUpdateOnBackendServiceFetchingDataEnd() {
     jumpToAnchor("results");
 }
 
-function DOMUpdateOnLoadDocumentationError(message) {
-    updateLoadDocumentationErrorAlert(message);
-    toggleLoadDocumentationErrorAlert("show");
-}
+// function DOMUpdateOnLoadDocumentationError(message) {
+//     updateLoadDocumentationErrorAlert(message);
+//     toggleLoadDocumentationErrorAlert("show");
+// }
 
 async function _fetch_post_new_request() {
     const inputStringsToMatch = document.getElementById("stringsToMatch").value;
@@ -63,7 +63,7 @@ async function _fetch_get_lazy_response_results(requestId) {
         method: "GET"
     };
 
-    const fetchResult = await fetch(BaseApiRequestsUrl + requestId + '/', otherParam);
+    const fetchResult = await fetch(`${BaseApiRequestsUrl}${requestId}/`, otherParam);
 
     if (fetchResult.ok) {
         return await fetchResult.json();
@@ -103,3 +103,4 @@ async function _fetch_api_documentation_markdown() {
         code: fetchResult.status,
     };
 }
+
