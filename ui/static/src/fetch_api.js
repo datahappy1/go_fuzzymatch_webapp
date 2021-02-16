@@ -1,29 +1,65 @@
+import {updateLoadDocumentationErrorAlert, toggleLoadDocumentationErrorAlert,
+    updateBackendServiceErrorAlert, toggleBackendServiceErrorAlert,
+    toggleSubmitButtonWhileLoadingResults, clearResultsTable, showResultsTable} from './dom_manipulation.js';
+
 const BaseApiRequestsUrl = 'http://localhost:8080/api/v1/requests/';
 const ApiDocumentationMarkdownFileLocation = 'http://localhost:8080/api_documentation.md';
 
-function DOMUpdateOnBackendServiceError(message) {
+
+function updateLoadDocumentationErrorAlert(errorMessage) {
+    let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
+
+    loadDocumentationErrorAlertComponent.innerHTML = `Load Documentation error: ${errorMessage}`;
+    loadDocumentationErrorAlertComponent.style.display = "block";
+}
+
+function updateBackendServiceErrorAlert(errorMessage) {
+    let backendServiceErrorDivComponent = document.getElementById("backendServiceErrorAlert");
+
+    backendServiceErrorDivComponent.innerHTML = `Backend service error: ${errorMessage}`;
+    backendServiceErrorDivComponent.style.display = "block";
+}
+
+function clearResultsTable() {
+    let container = document.getElementById('resultsTableBody');
+
+    container.innerHTML = '';
+}
+
+function showResultsTable() {
+    let resultsDivElement = document.getElementById("resultsDiv");
+
+    resultsDivElement.style.display = "block";
+}
+
+function jumpToAnchor(anchor) {
+    window.location.href = `#${anchor}`;
+}
+
+
+export function DOMUpdateOnBackendServiceError(message) {
     updateBackendServiceErrorAlert(message);
     toggleBackendServiceErrorAlert("show");
     toggleSubmitButtonWhileLoadingResults("show");
 }
 
-function DOMUpdateOnBackendServiceFetchingDataStart() {
+export function DOMUpdateOnBackendServiceFetchingDataStart() {
     toggleSubmitButtonWhileLoadingResults("hide");
     clearResultsTable();
     showResultsTable();
 }
 
-function DOMUpdateOnBackendServiceFetchingDataEnd() {
+export function DOMUpdateOnBackendServiceFetchingDataEnd() {
     toggleSubmitButtonWhileLoadingResults("show");
     jumpToAnchor("results");
 }
 
-// function DOMUpdateOnLoadDocumentationError(message) {
-//     updateLoadDocumentationErrorAlert(message);
-//     toggleLoadDocumentationErrorAlert("show");
-// }
+export function DOMUpdateOnLoadDocumentationError(message) {
+    updateLoadDocumentationErrorAlert(message);
+    toggleLoadDocumentationErrorAlert("show");
+}
 
-async function _fetch_post_new_request() {
+export async function fetch_post_new_request() {
     const inputStringsToMatch = document.getElementById("stringsToMatch").value;
     const inputStringsToMatchIn = document.getElementById("stringsToMatchIn").value;
     const inputMode = document.getElementById("mode").value;
@@ -55,7 +91,7 @@ async function _fetch_post_new_request() {
     };
 }
 
-async function _fetch_get_lazy_response_results(requestId) {
+export async function fetch_get_lazy_response_results(requestId) {
     const otherParam = {
         headers: {
             "content-type": "application/json; charset=UTF-8"
@@ -77,19 +113,19 @@ async function _fetch_get_lazy_response_results(requestId) {
     };
 }
 
-async function _update_results_table_with_fetched_data(requestId) {
-    let results = await _fetch_get_lazy_response_results(requestId);
+export async function update_results_table_with_fetched_data(requestId) {
+    let results = await fetch_get_lazy_response_results(requestId);
 
     if (results["ReturnedAllRows"] === true) {
         updateResultsTable(results["Results"]);
 
     } else {
         updateResultsTable(results["Results"]);
-        await _update_results_table_with_fetched_data(requestId);
+        await update_results_table_with_fetched_data(requestId);
     }
 }
 
-async function _fetch_api_documentation_markdown() {
+export async function fetch_api_documentation_markdown() {
     const fetchResult = await fetch(ApiDocumentationMarkdownFileLocation, );
 
     if (fetchResult.ok) {
