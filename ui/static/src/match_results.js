@@ -1,21 +1,4 @@
-export function copyResultsTableToClipboard() {
-    let clipboard = new ClipboardJS('.btn');
-
-    clipboard.on('success', function (e) {
-        console.info('Action:', e.action);
-        console.info('Text:', e.text);
-        console.info('Trigger:', e.trigger);
-
-        e.clearSelection();
-    });
-
-    clipboard.on('error', function (e) {
-        console.error('Action:', e.action);
-        console.error('Trigger:', e.trigger);
-    });
-}
-
-function downloadCSV(csv, filename) {
+function _downloadCSV(csv, filename) {
     let csvFile;
     let downloadLink;
 
@@ -43,55 +26,46 @@ export function downloadResultsTableAsCsv(filename) {
         csv.push(row.join(","));
     }
 
-    downloadCSV(csv.join("\n"), filename);
+    _downloadCSV(csv.join("\n"), filename);
+}
+
+export function copyResultsTableToClipboard() {
+    let clipboard = new ClipboardJS('.btn');
+
+    clipboard.on('success', function (e) {
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+
+        e.clearSelection();
+    });
+
+    clipboard.on('error', function (e) {
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+    });
 }
 
 export function clearTextarea(textareaName) {
-    let textareaElement = document.getElementById(textareaName)
+    let textareaElement = document.getElementById(textareaName);
 
     textareaElement.value = "";
 }
 
-function updateResultsTable(results) {
-    let htmlResultsTable = '';
-    let container = document.getElementById('resultsTableBody');
-
-    for (let i = 0; i < results.length; i++) {
-        let htmlTableRow = `<tr>
-                        <td>${results[i]["StringToMatch"]}</td>
-                        <td>${results[i]["StringMatched"]}</td>
-                        <td>${results[i]["Result"]}</td>
-                    </tr>`;
-
-        htmlResultsTable += htmlTableRow;
-    }
-
-    container.innerHTML += htmlResultsTable;
-}
-
-function getRangeInputSliderValue() {
+export function getRangeInputSliderValue() {
     let sliderElement = document.getElementById("rangeInput");
 
     return sliderElement.value
 }
 
-function filterResultsTable() {
-    let inputValue, table, tr, td, i, cellValue;
+export function clearResultsTable() {
+    let container = document.getElementById('resultsTableBody');
 
-    inputValue = getRangeInputSliderValue();
+    container.innerHTML = '';
+}
 
-    table = document.getElementById("resultsTable");
-    tr = table.getElementsByTagName("tr");
+export function showResultsTable() {
+    let resultsDivElement = document.getElementById("resultsDiv");
 
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[2];
-        if (td) {
-            cellValue = td.textContent || td.innerText;
-            if (+cellValue >= +inputValue) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
+    resultsDivElement.style.display = "block";
 }

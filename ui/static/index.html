@@ -29,12 +29,12 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#match" onclick="highlightElement(this);">
+                <a class="nav-link" href="#match"><!-- onclick="highlightElement(this);">-->
                     Match
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#api_docs" onclick="highlightElement(this);">
+                <a class="nav-link" href="#api_docs"><!-- onclick="highlightElement(this);">-->
                     API Docs
                 </a>
             </li>
@@ -105,8 +105,8 @@
                 <div class="col-sm">
                     <div class="d-flex justify-content-between">
                         <label for="stringsToMatch">Strings to match:</label>
-                        <button type="button" class="btn btn-danger btn-sm"
-                                onclick="clearTextarea('stringsToMatch');">
+                        <button type="button" class="btn btn-danger btn-sm">
+                                <!--onclick="clearTextarea('stringsToMatch');">-->
                             clear
                         </button>
                     </div>
@@ -117,8 +117,8 @@
                 <div class="col-sm">
                     <div class="d-flex justify-content-between">
                         <label for="stringsToMatchIn">Strings to match in:</label>
-                        <button type="button" class="btn btn-danger btn-sm"
-                                onclick="clearTextarea('stringsToMatchIn');">
+                        <button type="button" class="btn btn-danger btn-sm">
+                                <!--onclick="clearTextarea('stringsToMatchIn');">-->
                             clear
                         </button>
                     </div>
@@ -153,27 +153,24 @@
             </div>
             <div class="row pt-2">
                 <div class="col-sm">
-                    <label for="rangeInput" id="labelformControlRange">Filter for results above match
+                    <label for="rangeInput" id="labelFormControlRange">Filter for results above match
                         result</label>
                     <output id="amount" name="amount" for="rangeInput">80</output>
                     <input type="range" class="form-control-range" id="rangeInput" name="rangeInput" min="0"
-                           max="100" value="80" oninput="amount.value=rangeInput.value"
-                           onchange="filterResultsTable();">
+                           max="100" value="80" oninput="amount.value=rangeInput.value">
                 </div>
             </div>
             <div class="row pt-2">
                 <div class="col-sm">
                     <div class="btn-group" role="group" aria-label="Basic outlined example">
                         <button type="button" class="btn btn-outline-primary" id="copyResultsTableToClipboardButton"
-                                data-clipboard-target="#resultsTable" onclick="copyResultsTableToClipboard();">
+                                data-clipboard-target="#resultsTable">
                             Copy results to clipboard
                         </button>
-                        <button type="button" class="btn btn-outline-primary" id="downloadResultsTableAsCsv"
-                                onclick="downloadResultsTableAsCsv('fuzzy_match_results.csv')">
+                        <button type="button" class="btn btn-outline-primary" id="downloadResultsTableAsCsvButton">
                             Download results as .csv file
                         </button>
-                        <button type="button" class="btn btn-outline-primary" id="clearResultsTable"
-                                onclick="clearResultsTable();">
+                        <button type="button" class="btn btn-outline-primary" id="clearResultsTableButton">
                             Clear results
                         </button>
                     </div>
@@ -220,8 +217,8 @@
 
 <script type="module" src="/src/index.js"></script>
 
-<!-- <script src="/dist/external/clipboard.js/2.0.6/clipboard.min.js"></script>
-<script src="/dist/external/showdown.js/1.9.1/showdown.min.js"></script> -->
+<script src="/dist/external/clipboard.js/2.0.6/clipboard.min.js"></script>
+<script src="/dist/external/showdown.js/1.9.1/showdown.min.js"></script>
 
 <noscript>
     <p>Please enable JavaScript to use this page.</p>

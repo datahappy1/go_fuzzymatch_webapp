@@ -22,22 +22,6 @@ function _getMissingMandatoryInputs() {
     return missingMandatoryInputComponents;
 }
 
-function _updateMissingMandatoryComponentsAlert(components) {
-    let mandatoryFieldsDivComponent = document.getElementById("mandatoryFieldsNotFilledAlert");
-
-    mandatoryFieldsDivComponent.innerHTML = `Mandatory fields not filled: ${components}`;
-}
-
-function _toggleMissingMandatoryComponentsAlert(action) {
-    let mandatoryFieldsDivComponent = document.getElementById("mandatoryFieldsNotFilledAlert");
-
-    if (action === "show") {
-        mandatoryFieldsDivComponent.style.display = "block";
-    } else if (action === "hide") {
-        mandatoryFieldsDivComponent.style.display = "none";
-    }
-}
-
 export function getInputValidationErrors() {
     let missingMandatoryInputs = _getMissingMandatoryInputs();
 
@@ -45,9 +29,4 @@ export function getInputValidationErrors() {
         return missingMandatoryInputs
     }
     return []
-}
-
-export function DOMUpdateOnInputError(message) {
-    _updateMissingMandatoryComponentsAlert(message);
-    _toggleMissingMandatoryComponentsAlert("show");
 }

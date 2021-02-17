@@ -1,27 +1,56 @@
-import {hidePreviousErrors} from './errors.js';
-import {getInputValidationErrors, DOMUpdateOnInputError} from './validation.js';
-import {convertMarkdownToHtml, updateApiDocumentationDiv} from './api_documentation.js';
+import {
+    DOMUpdateOnBackendServiceError,
+    DOMUpdateOnBackendServiceFetchingDataEnd,
+    DOMUpdateOnBackendServiceFetchingDataStart,
+    DOMUpdateOnInputError,
+    DOMUpdateOnLoadDocumentationError,
+    hidePreviousErrors
+} from "./errors.js";
+import {getInputValidationErrors} from './validation.js';
+import {
+    convertMarkdownToHtml,
+    fetch_api_documentation_markdown,
+    updateApiDocumentationDiv
+} from './api_documentation.js';
+import {fetch_post_new_request, update_results_table_with_fetched_data} from "./match.js";
+import {
+    showResultsTable,
+    clearResultsTable,
+    copyResultsTableToClipboard,
+    downloadResultsTableAsCsv,
+    getRangeInputSliderValue
+} from "./match_results.js";
 
 
-import {fetch_post_new_request, DOMUpdateOnBackendServiceError, 
-    update_results_table_with_fetched_data, DOMUpdateOnLoadDocumentationError, 
-    DOMUpdateOnBackendServiceFetchingDataStart, DOMUpdateOnBackendServiceFetchingDataEnd} from './fetch_api.js';
+function loadStaticPagesHandler() {
+    async function prepareApiDocumentationContent() {
+        let ApiDocumentationMarkdownContent = null;
+        try {
+            ApiDocumentationMarkdownContent = await fetch_api_documentation_markdown().then();
+        } catch (e) {
+            DOMUpdateOnLoadDocumentationError(JSON.stringify(e));
+            return;
+        }
 
+        let ApiDocumentationHtmlContent = convertMarkdownToHtml(ApiDocumentationMarkdownContent);
 
-import {toggleLoadDocumentationErrorAlert, } from './dom_manipulation.js';
+        updateApiDocumentationDiv(ApiDocumentationHtmlContent);
 
-
-
-
-function highlightElement(elementName) {
-    let a = document.getElementsByTagName('a');
-    for (let i = 0; i < a.length; i++) {
-        a[i].classList.remove('active')
     }
-    elementName.classList.add('active');
+
+    prepareApiDocumentationContent().catch();
+
 }
 
-function startSearchButtonHandler() {
+// function highlightElementHandler(elementName) {
+//     let a = document.getElementsByTagName('a');
+//     for (let i = 0; i < a.length; i++) {
+//         a[i].classList.remove('active')
+//     }
+//     elementName.classList.add('active');
+// }
+
+function startMatchButtonHandler() {
 
     async function createRequestStartFetchingChain() {
         hidePreviousErrors();
@@ -48,6 +77,8 @@ function startSearchButtonHandler() {
             DOMUpdateOnBackendServiceError(JSON.stringify(e));
             return;
         }
+        //clearResultsTable();
+        showResultsTable();
         DOMUpdateOnBackendServiceFetchingDataEnd();
 
     }
@@ -55,35 +86,65 @@ function startSearchButtonHandler() {
     createRequestStartFetchingChain().catch();
 }
 
-function loadStaticPagesHandler() {
-    async function prepareApiDocumentationContent() {
-        let ApiDocumentationMarkdownContent = null;
-        try {
-            ApiDocumentationMarkdownContent = await _fetch_api_documentation_markdown().then();
-        } catch (e) {
-            DOMUpdateOnLoadDocumentationError(JSON.stringify(e));
-            return;
+function filterResultsTableButtonHandler() {
+    let inputValue, table, tr, td, i, cellValue;
+
+    inputValue = getRangeInputSliderValue();
+
+    table = document.getElementById("resultsTable");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[2];
+        if (td) {
+            cellValue = td.textContent || td.innerText;
+            if (+cellValue >= +inputValue) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
         }
-
-        let ApiDocumentationHtmlContent = convertMarkdownToHtml(ApiDocumentationMarkdownContent);
-
-        updateApiDocumentationDiv(ApiDocumentationHtmlContent);
-
     }
-
-    prepareApiDocumentationContent().catch();
-
 }
 
+function copyResultsToClipboardButtonHandler() {
+    copyResultsTableToClipboard()
+}
+
+function downloadResultsCSVButtonHandler() {
+    downloadResultsTableAsCsv('fuzzy_match_results.csv')
+}
+
+function clearResultsButtonHandler() {
+    clearResultsTable()
+}
 
 // window.onload = function () {
 //     loadStaticPagesHandler();
 // };
-
 window.addEventListener('load', (event) => {
     console.log('The page has fully loaded');
     loadStaticPagesHandler();
 });
 
-const button = document.getElementById( 'submitButton' );
-button.addEventListener( 'click', startSearchButtonHandler );
+// const highlightElementLink = document.getElementById('submitButton');
+// highlightElementLink.addEventListener('click', highlightElementHandler);
+
+const matchButton = document.getElementById('submitButton');
+matchButton.addEventListener('click', startMatchButtonHandler);
+
+const filterResultsButton = document.getElementById('rangeInput');
+filterResultsButton.addEventListener('onchange', filterResultsTableButtonHandler);
+
+const copyResultsToClipboardButton = document.getElementById('copyResultsTableToClipboardButton');
+copyResultsToClipboardButton.addEventListener('onchange', copyResultsToClipboardButtonHandler);
+
+const downloadResultsToCSVButton = document.getElementById('downloadResultsTableAsCsvButton');
+downloadResultsToCSVButton.addEventListener('onchange', downloadResultsCSVButtonHandler);
+
+const clearResultsTableButton = document.getElementById('clearResultsTableButton');
+clearResultsTableButton.addEventListener('onchange', clearResultsButtonHandler);
+
+
+
+
