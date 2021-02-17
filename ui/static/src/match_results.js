@@ -33,23 +33,17 @@ export function copyResultsTableToClipboard() {
     let clipboard = new ClipboardJS('.btn');
 
     clipboard.on('success', function (e) {
-        console.info('Action:', e.action);
-        console.info('Text:', e.text);
-        console.info('Trigger:', e.trigger);
+        // console.info('Action:', e.action);
+        // console.info('Text:', e.text);
+        // console.info('Trigger:', e.trigger);
 
         e.clearSelection();
     });
 
     clipboard.on('error', function (e) {
-        console.error('Action:', e.action);
-        console.error('Trigger:', e.trigger);
+        // console.error('Action:', e.action);
+        // console.error('Trigger:', e.trigger);
     });
-}
-
-export function clearTextarea(textareaName) {
-    let textareaElement = document.getElementById(textareaName);
-
-    textareaElement.value = "";
 }
 
 export function getRangeInputSliderValue() {
@@ -69,3 +63,21 @@ export function showResultsTable() {
 
     resultsDivElement.style.display = "block";
 }
+
+export function toggleSubmitButtonWhileLoadingResults(action) {
+    let submitButtonElement = document.getElementById("submitButton");
+    let submitButtonSpinnerElement = document.getElementById("submitButtonSpinner");
+
+    if (action === "show") {
+        submitButtonElement.disabled = false;
+        submitButtonSpinnerElement.style.display = "none";
+    } else if (action === "hide") {
+        submitButtonElement.disabled = true;
+        submitButtonSpinnerElement.style.display = "block";
+    }
+}
+
+export function jumpToAnchor(anchor) {
+    window.location.href = `#${anchor}`;
+}
+

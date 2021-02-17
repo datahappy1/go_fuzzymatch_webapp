@@ -29,13 +29,18 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#match"><!-- onclick="highlightElement(this);">-->
+                <a class="nav-link" id="menuLinkToMatch" href="/">
                     Match
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#api_docs"><!-- onclick="highlightElement(this);">-->
+                <a class="nav-link" id="menuLinkToAPIDocs" href="#api_docs">
                     API Docs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="menuLinkToAPIDocs" href="/api_documentation">
+                    API Docs2
                 </a>
             </li>
             <li class="nav-item">
@@ -105,8 +110,7 @@
                 <div class="col-sm">
                     <div class="d-flex justify-content-between">
                         <label for="stringsToMatch">Strings to match:</label>
-                        <button type="button" class="btn btn-danger btn-sm">
-                                <!--onclick="clearTextarea('stringsToMatch');">-->
+                        <button type="button" class="btn btn-danger btn-sm" id="clearStringsToMatchTextarea">
                             clear
                         </button>
                     </div>
@@ -117,8 +121,7 @@
                 <div class="col-sm">
                     <div class="d-flex justify-content-between">
                         <label for="stringsToMatchIn">Strings to match in:</label>
-                        <button type="button" class="btn btn-danger btn-sm">
-                                <!--onclick="clearTextarea('stringsToMatchIn');">-->
+                        <button type="button" class="btn btn-danger btn-sm" id="clearStringsToMatchInTextarea">
                             clear
                         </button>
                     </div>
@@ -195,7 +198,6 @@
             <!-- Results end-->
         </div>
     </div>
-    <!-- Bottom container end -->
 
     <!-- API Documentation container start -->
     <a id="api_docs"></a>
@@ -204,18 +206,16 @@
         </div>
     </div>
     <!-- API Documentation container end -->
+
+    <!-- Bottom container end -->
+
 </div>
 
 <!-- BodyContainer end-->
 
-<!-- <script src="/src/fetch_api.js"></script>
-<script src="/src/dom_manipulation.js"></script>
-<script src="/src/validation.js"></script>
-<script src="/src/index.js"></script> -->
+<script type="module" src="/dist/bundle.js"></script> 
 
-<!-- <script src="/dist/bundle.js"></script> -->
-
-<script type="module" src="/src/index.js"></script>
+<!-- <script type="module" src="/src/index.js"></script> -->
 
 <script src="/dist/external/clipboard.js/2.0.6/clipboard.min.js"></script>
 <script src="/dist/external/showdown.js/1.9.1/showdown.min.js"></script>

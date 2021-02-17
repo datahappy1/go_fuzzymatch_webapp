@@ -1,24 +1,28 @@
 import {
     DOMUpdateOnBackendServiceError,
-    DOMUpdateOnBackendServiceFetchingDataEnd,
-    DOMUpdateOnBackendServiceFetchingDataStart,
     DOMUpdateOnInputError,
     DOMUpdateOnLoadDocumentationError,
     hidePreviousErrors
 } from "./errors.js";
-import {getInputValidationErrors} from './validation.js';
+import { getInputValidationErrors }
+    from './validation.js';
 import {
     convertMarkdownToHtml,
     fetch_api_documentation_markdown,
     updateApiDocumentationDiv
 } from './api_documentation.js';
-import {fetch_post_new_request, update_results_table_with_fetched_data} from "./match.js";
+import {
+    fetch_post_new_request,
+    update_results_table_with_fetched_data,
+} from "./match.js";
 import {
     showResultsTable,
     clearResultsTable,
     copyResultsTableToClipboard,
     downloadResultsTableAsCsv,
-    getRangeInputSliderValue
+    getRangeInputSliderValue,
+    toggleSubmitButtonWhileLoadingResults,
+    jumpToAnchor
 } from "./match_results.js";
 
 
@@ -42,18 +46,11 @@ function loadStaticPagesHandler() {
 
 }
 
-// function highlightElementHandler(elementName) {
-//     let a = document.getElementsByTagName('a');
-//     for (let i = 0; i < a.length; i++) {
-//         a[i].classList.remove('active')
-//     }
-//     elementName.classList.add('active');
-// }
-
 function startMatchButtonHandler() {
 
     async function createRequestStartFetchingChain() {
         hidePreviousErrors();
+        toggleSubmitButtonWhileLoadingResults("show");
 
         let inputValidationErrors = getInputValidationErrors();
         if (inputValidationErrors.length > 0) {
@@ -70,16 +67,17 @@ function startMatchButtonHandler() {
             return;
         }
 
-        DOMUpdateOnBackendServiceFetchingDataStart();
+        toggleSubmitButtonWhileLoadingResults("hide");
+        clearResultsTable();
         try {
             await update_results_table_with_fetched_data(requestId);
         } catch (e) {
             DOMUpdateOnBackendServiceError(JSON.stringify(e));
             return;
         }
-        //clearResultsTable();
         showResultsTable();
-        DOMUpdateOnBackendServiceFetchingDataEnd();
+        toggleSubmitButtonWhileLoadingResults("show");
+        jumpToAnchor("results");
 
     }
 
@@ -119,32 +117,37 @@ function clearResultsButtonHandler() {
     clearResultsTable()
 }
 
-// window.onload = function () {
-//     loadStaticPagesHandler();
-// };
+function clearStringsToMatchTextareaHandler() {
+    element = document.getElementById("clearStringsToMatchTextarea")
+    element.value = "";
+}
+
+function clearStringsToMatchInTextareaHandler() {
+    element = document.getElementById("clearStringsToMatchInTextarea")
+    element.value = "";
+}
+
 window.addEventListener('load', (event) => {
-    console.log('The page has fully loaded');
     loadStaticPagesHandler();
 });
-
-// const highlightElementLink = document.getElementById('submitButton');
-// highlightElementLink.addEventListener('click', highlightElementHandler);
 
 const matchButton = document.getElementById('submitButton');
 matchButton.addEventListener('click', startMatchButtonHandler);
 
+const clearStringsToMatchTextarea = document.getElementById('clearStringsToMatchTextarea');
+clearStringsToMatchTextarea.addEventListener('click', clearStringsToMatchTextareaHandler)
+
+const clearStringsToMatchInTextarea = document.getElementById('clearStringsToMatchInTextarea');
+clearStringsToMatchInTextarea.addEventListener('click', clearStringsToMatchInTextareaHandler)
+
 const filterResultsButton = document.getElementById('rangeInput');
-filterResultsButton.addEventListener('onchange', filterResultsTableButtonHandler);
+filterResultsButton.addEventListener('change', filterResultsTableButtonHandler);
 
 const copyResultsToClipboardButton = document.getElementById('copyResultsTableToClipboardButton');
-copyResultsToClipboardButton.addEventListener('onchange', copyResultsToClipboardButtonHandler);
+copyResultsToClipboardButton.addEventListener('click', copyResultsToClipboardButtonHandler);
 
 const downloadResultsToCSVButton = document.getElementById('downloadResultsTableAsCsvButton');
-downloadResultsToCSVButton.addEventListener('onchange', downloadResultsCSVButtonHandler);
+downloadResultsToCSVButton.addEventListener('click', downloadResultsCSVButtonHandler);
 
 const clearResultsTableButton = document.getElementById('clearResultsTableButton');
-clearResultsTableButton.addEventListener('onchange', clearResultsButtonHandler);
-
-
-
-
+clearResultsTableButton.addEventListener('click', clearResultsButtonHandler);
