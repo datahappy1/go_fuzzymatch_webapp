@@ -4,25 +4,21 @@ import {
     DOMUpdateOnLoadDocumentationError,
     hidePreviousErrors
 } from "./errors.js";
-import { getInputValidationErrors }
-    from './validation.js';
+import {getInputValidationErrors} from './validation.js';
 import {
     convertMarkdownToHtml,
     fetch_api_documentation_markdown,
     updateApiDocumentationDiv
 } from './api_documentation.js';
+import {fetch_post_new_request, update_results_table_with_fetched_data,} from "./match.js";
 import {
-    fetch_post_new_request,
-    update_results_table_with_fetched_data,
-} from "./match.js";
-import {
-    showResultsTable,
     clearResultsTable,
     copyResultsTableToClipboard,
     downloadResultsTableAsCsv,
     getRangeInputSliderValue,
-    toggleSubmitButtonWhileLoadingResults,
-    jumpToAnchor
+    jumpToAnchor,
+    showResultsTable,
+    toggleSubmitButtonWhileLoadingResults
 } from "./match_results.js";
 
 
@@ -118,14 +114,15 @@ function clearResultsButtonHandler() {
 }
 
 function clearStringsToMatchTextareaHandler() {
-    element = document.getElementById("clearStringsToMatchTextarea")
-    element.value = "";
+    let TextAreaElement = document.getElementById("stringsToMatch");
+    TextAreaElement.value = "";
 }
 
 function clearStringsToMatchInTextareaHandler() {
-    element = document.getElementById("clearStringsToMatchInTextarea")
-    element.value = "";
+    let TextAreaElement = document.getElementById("stringsToMatchIn");
+    TextAreaElement.value = "";
 }
+
 
 window.addEventListener('load', (event) => {
     loadStaticPagesHandler();
@@ -135,10 +132,10 @@ const matchButton = document.getElementById('submitButton');
 matchButton.addEventListener('click', startMatchButtonHandler);
 
 const clearStringsToMatchTextarea = document.getElementById('clearStringsToMatchTextarea');
-clearStringsToMatchTextarea.addEventListener('click', clearStringsToMatchTextareaHandler)
+clearStringsToMatchTextarea.addEventListener('click', clearStringsToMatchTextareaHandler);
 
 const clearStringsToMatchInTextarea = document.getElementById('clearStringsToMatchInTextarea');
-clearStringsToMatchInTextarea.addEventListener('click', clearStringsToMatchInTextareaHandler)
+clearStringsToMatchInTextarea.addEventListener('click', clearStringsToMatchInTextareaHandler);
 
 const filterResultsButton = document.getElementById('rangeInput');
 filterResultsButton.addEventListener('change', filterResultsTableButtonHandler);

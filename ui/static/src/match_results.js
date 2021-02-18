@@ -80,4 +80,3 @@ export function toggleSubmitButtonWhileLoadingResults(action) {
 export function jumpToAnchor(anchor) {
     window.location.href = `#${anchor}`;
 }
-
