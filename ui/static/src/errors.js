@@ -18,6 +18,16 @@ function _toggleBackendServiceErrorAlert(action) {
     }
 }
 
+function _toggleLoadDocumentationErrorAlert(action) {
+    let backendServiceErrorDivComponent = document.getElementById("loadDocumentationErrorAlert");
+
+    if (action === "show") {
+        backendServiceErrorDivComponent.style.display = "block";
+    } else if (action === "hide") {
+        backendServiceErrorDivComponent.style.display = "none";
+    }
+}
+
 function _updateLoadDocumentationErrorAlert(errorMessage) {
     let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
 
@@ -40,8 +50,7 @@ function _updateMissingMandatoryComponentsAlert(components) {
 
 export function DOMUpdateOnBackendServiceError(message) {
     _updateBackendServiceErrorAlert(message);
-    toggleBackendServiceErrorAlert("show");
-    toggleSubmitButtonWhileLoadingResults("show");
+    _toggleBackendServiceErrorAlert("show");
 }
 
 export function DOMUpdateOnLoadDocumentationError(message) {

@@ -60,6 +60,7 @@ function startMatchButtonHandler() {
             requestId = objectId["RequestID"];
         } catch (e) {
             DOMUpdateOnBackendServiceError(JSON.stringify(e));
+            toggleSubmitButtonWhileLoadingResults("show");
             return;
         }
 
