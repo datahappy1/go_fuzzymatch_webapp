@@ -60,7 +60,7 @@ func (a *App) initializeRoutes() {
 	fileServerStaticRoot := http.FileServer(http.Dir("./ui/static/"))
 	ui.PathPrefix("/").Handler(fileServerStaticRoot)
 	//ui.PathPrefix("/src/").Handler(fileServerStaticRoot)
-	ui.PathPrefix("/dist/").Handler(fileServerStaticRoot)
+	//ui.PathPrefix("/dist/").Handler(fileServerStaticRoot)
 
 }
 

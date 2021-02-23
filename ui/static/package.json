@@ -3,8 +3,11 @@
     "version": "1.0.0",
     "description": "fuzzy matching web app",
     "private": true,
-    "main": "index.json",
+    "main": "index.js",
     "scripts": {
+        "build": "webpack --config ./webpack.config.js --progress --colors",
+        "build:production": "NODE_ENV=production",
+        "build:local": "NODE_ENV=local",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],

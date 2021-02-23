@@ -18,6 +18,7 @@ function _updateResultsTable(results) {
 }
 
 export async function fetch_post_new_request() {
+
     const inputStringsToMatch = document.getElementById("stringsToMatch").value;
     const inputStringsToMatchIn = document.getElementById("stringsToMatchIn").value;
     const inputMode = document.getElementById("mode").value;
@@ -81,4 +82,9 @@ export async function update_results_table_with_fetched_data(requestId) {
         _updateResultsTable(results["Results"]);
         await update_results_table_with_fetched_data(requestId);
     }
+}
+
+export function clearStringsTextarea(elementName) {
+    let TextAreaElement = document.getElementById(elementName);
+    TextAreaElement.value = "";
 }

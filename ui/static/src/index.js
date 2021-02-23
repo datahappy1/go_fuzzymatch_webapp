@@ -4,13 +4,19 @@ import {
     DOMUpdateOnLoadDocumentationError,
     hidePreviousErrors
 } from "./errors.js";
-import {getInputValidationErrors} from './validation.js';
+import {
+    getInputValidationErrors
+} from './validation.js';
 import {
     convertMarkdownToHtml,
     fetch_api_documentation_markdown,
     updateApiDocumentationDiv
 } from './api_documentation.js';
-import {fetch_post_new_request, update_results_table_with_fetched_data,} from "./match.js";
+import {
+    fetch_post_new_request, 
+    update_results_table_with_fetched_data,
+    clearStringsTextarea
+} from "./match.js";
 import {
     clearResultsTable,
     copyResultsTableToClipboard,
@@ -115,13 +121,11 @@ function clearResultsButtonHandler() {
 }
 
 function clearStringsToMatchTextareaHandler() {
-    let TextAreaElement = document.getElementById("stringsToMatch");
-    TextAreaElement.value = "";
+    clearStringsTextarea("stringsToMatch");
 }
 
 function clearStringsToMatchInTextareaHandler() {
-    let TextAreaElement = document.getElementById("stringsToMatchIn");
-    TextAreaElement.value = "";
+    clearStringsTextarea("stringsToMatchIn");
 }
 
 
