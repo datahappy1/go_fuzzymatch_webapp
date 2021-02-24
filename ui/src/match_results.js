@@ -1,3 +1,5 @@
+import * as clipboardJS from "./external/clipboard.js/2.0.6/clipboard.js";
+
 function _downloadCSV(csv, filename) {
     let csvFile;
     let downloadLink;
@@ -30,7 +32,7 @@ export function downloadResultsTableAsCsv(filename) {
 }
 
 export function copyResultsTableToClipboard() {
-    let clipboard = new ClipboardJS('.btn');
+    let clipboard = new clipboardJS('.btn');
 
     clipboard.on('success', function (e) {
         // console.info('Action:', e.action);

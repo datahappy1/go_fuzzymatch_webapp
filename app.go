@@ -57,7 +57,7 @@ func (a *App) initializeRoutes() {
 	api.HandleFunc("/requests/", a.post).Methods(http.MethodPost)
 
 	ui := a.Router.PathPrefix("/").Subrouter()
-	fileServerStaticRoot := http.FileServer(http.Dir("./ui/static/"))
+	fileServerStaticRoot := http.FileServer(http.Dir("./ui/dist/"))
 	ui.PathPrefix("/").Handler(fileServerStaticRoot)
 	//ui.PathPrefix("/src/").Handler(fileServerStaticRoot)
 	//ui.PathPrefix("/dist/").Handler(fileServerStaticRoot)
