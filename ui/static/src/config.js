@@ -1,7 +1,2 @@
-// export const BaseApiRequestsUrl = 'http://localhost:8080/api/v1/requests/';
-// export const ApiDocumentationMarkdownFileLocation = 'http://localhost:8080/api_documentation.md';
-console.log(__DEV__)
-console.log(__PRERELEASE__)
-
-export const BaseApiRequestsUrl = __DEV__
-export const ApiDocumentationMarkdownFileLocation = __PRERELEASE__
+export const BaseApiRequestsUrl = process.env.API_URL;
+export const ApiDocumentationMarkdownFileLocation = process.env.API_DOC_MD_LOCATION;

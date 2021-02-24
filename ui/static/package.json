@@ -5,10 +5,8 @@
     "private": true,
     "main": "index.js",
     "scripts": {
-        "build": "webpack --config ./webpack.config.js --progress --colors",
-        "build:production": "NODE_ENV=production",
-        "build:local": "NODE_ENV=local",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build:development": "webpack --config webpack.config.development.js",
+        "build:production": "webpack --config webpack.config.production.js"
     },
     "keywords": [],
     "author": "",
