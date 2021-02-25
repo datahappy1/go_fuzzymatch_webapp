@@ -1,1 +1,1 @@
-web: main app
+web: fuzzster
