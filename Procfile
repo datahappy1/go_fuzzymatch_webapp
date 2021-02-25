@@ -1,1 +1,1 @@
-web: fuzzster
+web: go run main.go app.go
