@@ -18,7 +18,7 @@ var a App
 
 func TestMain(m *testing.M) {
 	a = App{}
-	a.Initialize("test")
+	a.Initialize("development")
 	//a.Initialize("root", "", "rest_api_example")
 	code := m.Run()
 

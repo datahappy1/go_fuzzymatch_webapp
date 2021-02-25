@@ -1,0 +1,8 @@
+github.com/datahappy1/go_fuzzymatch v0.0.0-20210209214449-4eb229b55eb2 h1:7hoIRQGWxQdCFacttBGb+c0UIBihkCSX1pQmJ2qNRaY=
+github.com/datahappy1/go_fuzzymatch v0.0.0-20210209214449-4eb229b55eb2/go.mod h1:Ur5H75cgSO3lEoQHZxH/TPrPa0RS/BAAaOwx2jZkAbs=
+github.com/datahappy1/permutation v0.0.0-20201214100618-1f3e7285f953 h1:vbxogLRZ+CDvOR2jb5OyWvD9xrRgjHoQHn0oDt9+kAQ=
+github.com/datahappy1/permutation v0.0.0-20201214100618-1f3e7285f953/go.mod h1:ZRW8ikWbFqtZBmUkFzO7rYrbikXAb4oJGYJUyhjCH/4=
+github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
+github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
+github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
