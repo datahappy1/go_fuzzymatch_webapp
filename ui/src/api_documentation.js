@@ -1,9 +1,9 @@
-import * as showdownJS from "./external/showdown.js/1.9.1/showdown.js";
+import * as ShowdownJS from "./external/showdown.js/1.9.1/showdown.js";
 
 import {ApiDocumentationMarkdownFileLocation} from './config.js';
 
 export function convertMarkdownToHtml(inputText) {
-    let converter = new showdownJS.Converter();
+    let converter = new ShowdownJS.Converter();
     return converter.makeHtml(inputText)
 }
 

@@ -1,21 +1,20 @@
 import {
     DOMUpdateOnBackendServiceError,
+    DOMUpdateOnCopyToClipboardError,
     DOMUpdateOnInputError,
     DOMUpdateOnLoadDocumentationError,
-    hidePreviousErrors
+    hidePreviousErrorsAlerts
 } from "./errors.js";
-import {
-    getInputValidationErrors
-} from './validation.js';
+import {getInputValidationErrors} from './validation.js';
 import {
     convertMarkdownToHtml,
     fetch_api_documentation_markdown,
     updateApiDocumentationDiv
 } from './api_documentation.js';
 import {
-    fetch_post_new_request, 
-    update_results_table_with_fetched_data,
-    clearStringsTextarea
+    clearStringsTextarea,
+    fetch_post_new_request,
+    update_results_table_with_fetched_data
 } from "./match.js";
 import {
     clearResultsTable,
@@ -51,7 +50,7 @@ function loadStaticPagesHandler() {
 function startMatchButtonHandler() {
 
     async function createRequestStartFetchingChain() {
-        hidePreviousErrors();
+        hidePreviousErrorsAlerts();
         toggleSubmitButtonWhileLoadingResults("show");
 
         let inputValidationErrors = getInputValidationErrors();
@@ -109,7 +108,11 @@ function filterResultsTableButtonHandler() {
 }
 
 function copyResultsToClipboardButtonHandler() {
-    copyResultsTableToClipboard()
+    try {
+        copyResultsTableToClipboard();
+    } catch (e) {
+        DOMUpdateOnCopyToClipboardError(JSON.stringify(e));
+    }
 }
 
 function downloadResultsCSVButtonHandler() {

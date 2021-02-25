@@ -1,30 +1,10 @@
-function _toggleMissingMandatoryComponentsAlert(action) {
-    let mandatoryFieldsDivComponent = document.getElementById("mandatoryFieldsNotFilledAlert");
+function _alertSwitcher(action, alertDivName) {
+    let alertDivComponent = document.getElementById(alertDivName);
 
     if (action === "show") {
-        mandatoryFieldsDivComponent.style.display = "block";
+        alertDivComponent.style.display = "block";
     } else if (action === "hide") {
-        mandatoryFieldsDivComponent.style.display = "none";
-    }
-}
-
-function _toggleBackendServiceErrorAlert(action) {
-    let backendServiceErrorDivComponent = document.getElementById("backendServiceErrorAlert");
-
-    if (action === "show") {
-        backendServiceErrorDivComponent.style.display = "block";
-    } else if (action === "hide") {
-        backendServiceErrorDivComponent.style.display = "none";
-    }
-}
-
-function _toggleLoadDocumentationErrorAlert(action) {
-    let backendServiceErrorDivComponent = document.getElementById("loadDocumentationErrorAlert");
-
-    if (action === "show") {
-        backendServiceErrorDivComponent.style.display = "block";
-    } else if (action === "hide") {
-        backendServiceErrorDivComponent.style.display = "none";
+        alertDivComponent.style.display = "none";
     }
 }
 
@@ -32,14 +12,14 @@ function _updateLoadDocumentationErrorAlert(errorMessage) {
     let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
 
     loadDocumentationErrorAlertComponent.innerHTML = `Load Documentation error: ${errorMessage}`;
-    loadDocumentationErrorAlertComponent.style.display = "block";
+    // loadDocumentationErrorAlertComponent.style.display = "block";
 }
 
 function _updateBackendServiceErrorAlert(errorMessage) {
     let backendServiceErrorDivComponent = document.getElementById("backendServiceErrorAlert");
 
     backendServiceErrorDivComponent.innerHTML = `Backend service error: ${errorMessage}`;
-    backendServiceErrorDivComponent.style.display = "block";
+    // backendServiceErrorDivComponent.style.display = "block";
 }
 
 function _updateMissingMandatoryComponentsAlert(components) {
@@ -48,22 +28,35 @@ function _updateMissingMandatoryComponentsAlert(components) {
     mandatoryFieldsDivComponent.innerHTML = `Mandatory fields not filled: ${components}`;
 }
 
+function _updateCopyToClipboardAlert(components) {
+    let copyToClipboardDivComponent = document.getElementById("copyToClipboardErrorAlert");
+
+    copyToClipboardDivComponent.innerHTML = `Copy to clipboard error: ${components}`;
+}
+
 export function DOMUpdateOnBackendServiceError(message) {
     _updateBackendServiceErrorAlert(message);
-    _toggleBackendServiceErrorAlert("show");
+    _alertSwitcher("show", "backendServiceErrorAlert")
 }
 
 export function DOMUpdateOnLoadDocumentationError(message) {
     _updateLoadDocumentationErrorAlert(message);
-    _toggleLoadDocumentationErrorAlert("show");
+    _alertSwitcher("show", "loadDocumentationErrorAlert")
 }
 
 export function DOMUpdateOnInputError(message) {
     _updateMissingMandatoryComponentsAlert(message);
-    _toggleMissingMandatoryComponentsAlert("show");
+    _alertSwitcher("show", "mandatoryFieldsNotFilledAlert")
 }
 
-export function hidePreviousErrors() {
-    _toggleMissingMandatoryComponentsAlert("hide");
-    _toggleBackendServiceErrorAlert("hide");
+export function DOMUpdateOnCopyToClipboardError(message) {
+    _updateCopyToClipboardAlert(message);
+    _alertSwitcher("show", "copyToClipboardErrorAlert")
+}
+
+export function hidePreviousErrorsAlerts() {
+    _alertSwitcher("hide", "backendServiceErrorAlert");
+    _alertSwitcher("hide", "loadDocumentationErrorAlert");
+    _alertSwitcher("hide", "mandatoryFieldsNotFilledAlert");
+    _alertSwitcher("hide", "copyToClipboardErrorAlert");
 }

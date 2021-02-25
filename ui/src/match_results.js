@@ -1,4 +1,4 @@
-import * as clipboardJS from "./external/clipboard.js/2.0.6/clipboard.js";
+import * as ClipboardJS from "./external/clipboard.js/2.0.6/clipboard.js";
 
 function _downloadCSV(csv, filename) {
     let csvFile;
@@ -32,19 +32,19 @@ export function downloadResultsTableAsCsv(filename) {
 }
 
 export function copyResultsTableToClipboard() {
-    let clipboard = new clipboardJS('.btn');
+    let clipboard = new ClipboardJS('.btn');
 
     clipboard.on('success', function (e) {
-        // console.info('Action:', e.action);
-        // console.info('Text:', e.text);
-        // console.info('Trigger:', e.trigger);
-
         e.clearSelection();
     });
 
     clipboard.on('error', function (e) {
-        // console.error('Action:', e.action);
-        // console.error('Trigger:', e.trigger);
+        throw {
+            type: 'Error',
+            message: e.action,
+            data: e.trigger,
+            code: null,
+        };
     });
 }
 
