@@ -1,1 +1,1 @@
-web: go run main.go app.go
+web: go_fuzzymatch_webapp
