@@ -61,7 +61,7 @@ export function clearResultsTable() {
 }
 
 export function showResultsTable() {
-    let resultsDivElement = document.getElementById("resultsDiv");
+    let resultsDivElement = document.getElementById("results");
 
     resultsDivElement.style.display = "block";
 }

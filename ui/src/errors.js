@@ -12,14 +12,12 @@ function _updateLoadDocumentationErrorAlert(errorMessage) {
     let loadDocumentationErrorAlertComponent = document.getElementById("loadDocumentationErrorAlert");
 
     loadDocumentationErrorAlertComponent.innerHTML = `Load Documentation error: ${errorMessage}`;
-    // loadDocumentationErrorAlertComponent.style.display = "block";
 }
 
 function _updateBackendServiceErrorAlert(errorMessage) {
     let backendServiceErrorDivComponent = document.getElementById("backendServiceErrorAlert");
 
     backendServiceErrorDivComponent.innerHTML = `Backend service error: ${errorMessage}`;
-    // backendServiceErrorDivComponent.style.display = "block";
 }
 
 function _updateMissingMandatoryComponentsAlert(components) {
