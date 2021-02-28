@@ -3,10 +3,7 @@
   You create a new request only to initiate the fuzzy matching process. This new request has TTL set to 1 hour. After that, the request is removed from the application request database.
 
 * **URL**
-  * when running this app @ localhost: 
-    * http://localhost:8080/api/v1/requests/
-  * when accessing the deployed app API:
-    * http://fuzzster.herokuapp.com:8080/api/v1/requests/
+  * {{root_api_url}}
 
 * **Method:**
   
@@ -65,11 +62,7 @@
 
 * **URL**
 
-  * when running this app @ localhost: 
-    * http://localhost:8080/api/v1/requests/{requestID}/
-  * when accessing the deployed app API:
-    * http://fuzzster.herokuapp.com:8080/api/v1/requests/{requestID}/
-
+  * {{root_api_url}}/{requestID}/
 
 * **Method:**
   
