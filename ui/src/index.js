@@ -3,7 +3,9 @@ import {
     DOMUpdateOnCopyToClipboardError,
     DOMUpdateOnInputError,
     DOMUpdateOnLoadDocumentationError,
-    hidePreviousErrorsAlerts
+    hidePreviousMatchErrorsAlerts,
+    hidePreviousMatchResultsErrorsAlerts,
+    hidePreviousLoadDocumentationErrorsAlerts
 } from "./errors.js";
 import {getInputValidationErrors} from './validation.js';
 import {
@@ -29,6 +31,8 @@ import {
 
 function loadStaticPagesHandler() {
     async function prepareApiDocumentationContent() {
+        hidePreviousLoadDocumentationErrorsAlerts();
+
         let ApiDocumentationMarkdownContent = null;
         try {
             ApiDocumentationMarkdownContent = await fetch_api_documentation_markdown().then();
@@ -50,7 +54,7 @@ function loadStaticPagesHandler() {
 function startMatchButtonHandler() {
 
     async function createRequestStartFetchingChain() {
-        hidePreviousErrorsAlerts();
+        hidePreviousMatchErrorsAlerts();
         toggleSubmitButtonWhileLoadingResults("show");
 
         let inputValidationErrors = getInputValidationErrors();
@@ -75,6 +79,7 @@ function startMatchButtonHandler() {
             await update_results_table_with_fetched_data(requestId);
         } catch (e) {
             DOMUpdateOnBackendServiceError(JSON.stringify(e));
+            toggleSubmitButtonWhileLoadingResults("show");
             return;
         }
         showResultsTable();
@@ -108,6 +113,7 @@ function filterResultsTableButtonHandler() {
 }
 
 function copyResultsToClipboardButtonHandler() {
+    hidePreviousMatchResultsErrorsAlerts();
     try {
         copyResultsTableToClipboard();
     } catch (e) {

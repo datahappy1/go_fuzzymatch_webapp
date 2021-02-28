@@ -1,6 +1,6 @@
 import * as ShowdownJS from "./external/showdown.js/1.9.1/showdown.js";
 
-import {ApiDocumentationMarkdownFileLocation} from './config.js';
+import { ApiDocumentationMarkdownFileLocation } from './config.js';
 
 export function convertMarkdownToHtml(inputText) {
     let converter = new ShowdownJS.Converter();
@@ -14,8 +14,18 @@ export function updateApiDocumentationDiv(content) {
 }
 
 export async function fetch_api_documentation_markdown() {
-    const fetchResult = await fetch(ApiDocumentationMarkdownFileLocation,);
-
+    let fetchResult = null;
+    try {
+        fetchResult = await fetch(ApiDocumentationMarkdownFileLocation);
+    }
+    catch (e) {
+        throw {
+            type: 'Error',
+            message: e.message,
+            data: ApiDocumentationMarkdownFileLocation,
+            code: 500,
+        };
+    }
     if (fetchResult.ok) {
         return await fetchResult.text();
     }

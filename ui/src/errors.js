@@ -52,9 +52,15 @@ export function DOMUpdateOnCopyToClipboardError(message) {
     _alertSwitcher("show", "copyToClipboardErrorAlert")
 }
 
-export function hidePreviousErrorsAlerts() {
+export function hidePreviousMatchErrorsAlerts() {
     _alertSwitcher("hide", "backendServiceErrorAlert");
-    _alertSwitcher("hide", "loadDocumentationErrorAlert");
     _alertSwitcher("hide", "mandatoryFieldsNotFilledAlert");
+}
+
+export function hidePreviousLoadDocumentationErrorsAlerts() {
+    _alertSwitcher("hide", "loadDocumentationErrorAlert");
+}
+
+export function hidePreviousMatchResultsErrorsAlerts() {
     _alertSwitcher("hide", "copyToClipboardErrorAlert");
 }

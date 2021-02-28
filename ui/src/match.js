@@ -1,4 +1,4 @@
-import {BaseApiRequestsUrl} from './config.js';
+import { BaseApiRequestsUrl } from './config.js';
 
 function _updateResultsTable(results) {
     let htmlResultsTable = '';
@@ -35,8 +35,20 @@ export async function fetch_post_new_request() {
         body: Data,
         method: "POST"
     };
+    const url = BaseApiRequestsUrl;
+    let fetchResult = null;
 
-    const fetchResult = await fetch(BaseApiRequestsUrl, otherParam);
+    try {
+        fetchResult = await fetch(url, otherParam);
+    }
+    catch (e) {
+        throw {
+            type: 'Error',
+            message: e.message,
+            data: url,
+            code: 500,
+        };
+    }
 
     if (fetchResult.ok) {
         return await fetchResult.json();
@@ -57,8 +69,20 @@ export async function fetch_get_lazy_response_results(requestId) {
         },
         method: "GET"
     };
+    const url = `${BaseApiRequestsUrl}${requestId}/`;
+    let fetchResult = null;
 
-    const fetchResult = await fetch(`${BaseApiRequestsUrl}${requestId}/`, otherParam);
+    try {
+        fetchResult = await fetch(url, otherParam);
+    }
+    catch (e) {
+        throw {
+            type: 'Error',
+            message: e.message,
+            data: url,
+            code: 500,
+        };
+    }
 
     if (fetchResult.ok) {
         return await fetchResult.json();
