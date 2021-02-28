@@ -4,37 +4,40 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
-        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
     <title>Fuzzster</title>
+
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <style>
-        body {
-            position: relative;
-        }
-    </style>
+
 </head>
 
 <body class="bg-light" data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="0" tabindex="0">
     <!-- Navigation start-->
-    <nav id="navbar" class="navbar fixed-top navbar-light" style="background-color:#310535;">
+    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
         <div class="container-fluid">
             <div class="navbar-brand">
                 <a class="navbar-brand mr-0 mr-md-2" href="/">
                     <img src="/img/fuzzster_logo_200x30.png" alt="fuzzster logo" class="d-inline-block align-top">
                 </a>
             </div>
-            <ul class="nav nav-pills">
-                7
-                <li class="nav-item"><a class="nav-link link-light" href="#home">Home</a></li>
-                <li class="nav-item"><a class="nav-link link-light" href="#match">Match</a></li>
-                <li class="nav-item"><a class="nav-link link-light" href="#api_docs">API</a></li>
-                <li class="nav-item"><a class="nav-link link-light" href="#contact">Contact</a></li>
-            </ul>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link" href="#match">Match</a></li>
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link" href="#api_docs">API</a></li>
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
     <!-- Navigation end-->
@@ -66,12 +69,6 @@
                         <p>
                             If you are fine with fuzzy matching chunks of data that fit max. 10 000 chars, <a
                                 href="#match">start matching</a>
-                        </p>
-                        <p>
-                            If you find this tool useful, you can
-                            <a href="https://www.buymeacoffee.com/datahappy" target="_blank">
-                                <img src="./img/buy_me_a_coffee_black.png" alt="buy me a coffee">
-                            </a>
                         </p>
                     </div>
                 </div>
@@ -151,9 +148,8 @@
         <div class="pt-5" id="results" style="display:none;">
             <div class="shadow-sm p-3 m-3 bg-white rounded min-vh-100">
                 <!-- Alerts start-->
-                <div class="alert alert-danger" role="alert" id="copyToClipboardErrorAlert"
-                    style="display:none;">
-                </div> 
+                <div class="alert alert-danger" role="alert" id="copyToClipboardErrorAlert" style="display:none;">
+                </div>
                 <!-- Alerts end-->
                 <div class="row pt-2">
                     <div class="col-sm">
@@ -209,16 +205,20 @@
         <div class="pt-5" id="api_docs">
             <div class="shadow-sm p-3 m-3 bg-white rounded min-vh-100" id="apiDocumentationDiv">
                 <!-- Alerts start-->
-                <div class="alert alert-danger" role="alert" id="loadDocumentationErrorAlert" 
-                style="display:none;">
+                <div class="alert alert-danger" role="alert" id="loadDocumentationErrorAlert" style="display:none;">
                 </div>
                 <!-- Alerts end-->
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <h2><strong>API Documentation:</strong></h2>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- API Documentation container end -->
         <!-- Contact container start -->
         <div class="pt-5" id="contact">
-            <div class="shadow-sm p-3 m-3 bg-white rounded min-vh-100" id="contact">
+            <div class="shadow-sm p-3 m-3 bg-white rounded min-vh-100">
                 <div class="row pt-2">
                     <div class="col-sm">
                         <h2><strong>Contact:</strong></h2>
@@ -252,7 +252,9 @@
         <!-- Contact container end -->
     </div>
     <!-- BodyContainer end-->
+
     <script src="bundle.js"></script>
+
     <noscript>
         <p>Please enable JavaScript to use this page.</p>
     </noscript>

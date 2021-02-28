@@ -10,7 +10,7 @@ export function convertMarkdownToHtml(inputText) {
 export function updateApiDocumentationDiv(content) {
     let apiDocumentationDivElement = document.getElementById("apiDocumentationDiv");
 
-    apiDocumentationDivElement.innerHTML = content;
+    apiDocumentationDivElement.innerHTML += content;
 }
 
 export async function fetch_api_documentation_markdown() {

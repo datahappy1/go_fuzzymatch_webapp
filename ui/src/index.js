@@ -7,7 +7,8 @@ import {
     hidePreviousMatchResultsErrorsAlerts,
     hidePreviousLoadDocumentationErrorsAlerts
 } from "./errors.js";
-import {getInputValidationErrors} from './validation.js';
+import { highlightActiveMenuItem } from './menu.js';
+import { getInputValidationErrors } from './validation.js';
 import {
     convertMarkdownToHtml,
     fetch_api_documentation_markdown,
@@ -137,8 +138,8 @@ function clearStringsToMatchInTextareaHandler() {
     clearStringsTextarea("stringsToMatchIn");
 }
 
-
 window.addEventListener('load', (event) => {
+    highlightActiveMenuItem();
     loadStaticPagesHandler();
 });
 
