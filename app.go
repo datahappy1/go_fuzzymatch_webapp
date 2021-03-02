@@ -1,29 +1,24 @@
 package main
 
 import (
-	//"database/sql"
-	//_ "github.com/lib/pq"
-
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"sort"
-
 	fm "github.com/datahappy1/go_fuzzymatch/pkg"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/config"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/controller"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 	"github.com/gorilla/mux"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"sort"
 )
 
 // App returns struct
 type App struct {
 	Router *mux.Router
-	//DB     *sql.DB
-	conf config.Configuration
+	conf   config.Configuration
 }
 
 func (a *App) Initialize(environment string) {
@@ -38,15 +33,6 @@ func (a *App) Initialize(environment string) {
 
 }
 
-//func (a *App) Initialize(user, password, dbname string) {
-//connectionString := fmt.Sprintf("%s:%s@/%s", user, password, dbname)
-
-//var err error
-//a.DB, err = sql.Open("mysql", connectionString)
-//if err != nil {
-//	log.Fatal(err)
-//}
-
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
@@ -59,13 +45,24 @@ func (a *App) initializeRoutes() {
 	ui := a.Router.PathPrefix("/").Subrouter()
 	fileServerStaticRoot := http.FileServer(http.Dir("./ui/dist/"))
 	ui.PathPrefix("/").Handler(fileServerStaticRoot)
-	//ui.PathPrefix("/src/").Handler(fileServerStaticRoot)
-	//ui.PathPrefix("/dist/").Handler(fileServerStaticRoot)
-
 }
 
 func (a *App) post(w http.ResponseWriter, r *http.Request) {
-	// TODO status for too large request
+
+	// curl sample request:
+	// https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service
+	// Windows cmd:
+	// curl -X POST -d "{""stringsToMatch"":""'apple, gmbh','corp'"",""stringsToMatchIn"":""hair"",""mode"":""combined""}" http://localhost:8080/api/v1/requests/
+
+	// *Nix terminal:
+	//	curl --location --request POST 'http://localhost:8080/api/v1/requests/' \
+	//	--header 'Content-Type: text/plain' \
+	//	--data-raw '{
+	//	"stringsToMatch": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.",
+	//		"stringsToMatchIn": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.'\''",
+	//		"mode": "combined"
+	//}'
+
 	r.Body = http.MaxBytesReader(w, r.Body, a.conf.MaxRequestByteSize)
 
 	if model.EvaluateRequestCount(a.conf.MaxActiveRequestsCount) == false {
@@ -74,7 +71,6 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	requestedFromIP, err := controller.GetIP(r)
-	fmt.Println(err)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, errors.New("cannot determine IP address"))
 		return
@@ -95,16 +91,11 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//rawRequestBody := string(requestBodyString[:])
 	err = json.Unmarshal(requestBodyString, &fuzzyMatchExternalRequest)
 	if err != nil {
-
-		log.Printf("error decoding response: %v", err)
 		if e, ok := err.(*json.SyntaxError); ok {
 			log.Printf("syntax error at byte offset %d", e.Offset)
 		}
-		log.Printf("response: %q", requestBodyString)
-
 		respondWithError(w, http.StatusInternalServerError, errors.New("error decoding request data"))
 		return
 	}
@@ -119,34 +110,19 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// curl sample request:
-	// https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service
-	// Windows cmd:
-	// curl -X POST -d "{""stringsToMatch"":""'apple, gmbh','corp'"",""stringsToMatchIn"":""hair"",""mode"":""combined""}" http://localhost:8080/api/v1/requests/
-
-	// *Nix terminal:
-	//	curl --location --request POST 'http://localhost:8080/api/v1/requests/' \
-	//	--header 'Content-Type: text/plain' \
-	//	--data-raw '{
-	//	"stringsToMatch": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.",
-	//		"stringsToMatchIn": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.'\''",
-	//		"mode": "combined"
-	//}'
-
 	model.CreateFuzzyMatchDAOInRequestsData(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
 		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP, a.conf.BatchSize)
 
 	fuzzyMatchRequestResponse := controller.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
 
 	respondWithJSON(w, http.StatusOK, fuzzyMatchRequestResponse)
-
 }
 
 func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
-	pathParams := mux.Vars(r)
-
 	// curl sample request
 	// curl -X GET http://localhost:8080/api/v1/requests/66e3a79e-a05e-4d63-856f-5a12ed673965/
+
+	pathParams := mux.Vars(r)
 
 	requestID := ""
 	if val, ok := pathParams["requestID"]; ok {
@@ -240,7 +216,6 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.WriteHeader(code)
 
 	response, _ := json.Marshal(payload)
-	// TODO handle write response error
 	w.Write(response)
 
 }
