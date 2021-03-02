@@ -25,7 +25,7 @@ import {
     downloadResultsTableAsCsv,
     getRangeInputSliderValue,
     jumpToAnchor,
-    showResultsTable,
+    showResultsDiv,
     toggleSubmitButtonWhileLoadingResults
 } from "./match_results.js";
 
@@ -76,6 +76,8 @@ function startMatchButtonHandler() {
 
         toggleSubmitButtonWhileLoadingResults("hide");
         clearResultsTable();
+        showResultsDiv();
+
         try {
             await update_results_table_with_fetched_data(requestId);
         } catch (e) {
@@ -83,10 +85,8 @@ function startMatchButtonHandler() {
             toggleSubmitButtonWhileLoadingResults("show");
             return;
         }
-        showResultsTable();
         toggleSubmitButtonWhileLoadingResults("show");
         jumpToAnchor("results");
-
     }
 
     createRequestStartFetchingChain().catch();

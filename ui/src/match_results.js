@@ -60,7 +60,7 @@ export function clearResultsTable() {
     container.innerHTML = '';
 }
 
-export function showResultsTable() {
+export function showResultsDiv() {
     let resultsDivElement = document.getElementById("results");
 
     resultsDivElement.style.display = "block";

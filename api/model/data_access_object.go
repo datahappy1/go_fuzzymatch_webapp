@@ -86,7 +86,7 @@ func EvaluateRequestRatePerIP(ip string) (bool, string) {
 
 // EvaluateRequestCount returns bool
 func EvaluateRequestCount(activeRequestsCount int) bool {
-	if len(RequestsData) > activeRequestsCount {
+	if len(RequestsData) >= activeRequestsCount {
 		return false
 	}
 	return true

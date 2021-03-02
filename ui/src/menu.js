@@ -1,5 +1,5 @@
 export function highlightActiveMenuItem() {
-    var tabs = document.getElementsByClassName('nav-item');
+    const tabs = document.getElementsByClassName('nav-item');
 
     for (let tabIndexId = 0; tabIndexId < tabs.length; tabIndexId++) {
         tabs[tabIndexId].addEventListener('click', clickTab)

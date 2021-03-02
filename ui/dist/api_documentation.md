@@ -2,8 +2,8 @@
 ----
   You create a new request only to initiate the fuzzy matching process. This new request has TTL set to 1 hour. After that, the request is removed from the application request database.
 
-* **URL**
-  * {{root_api_url}}
+* **URL** 
+  {root_api_url}
 
 * **Method:**
   
@@ -62,7 +62,7 @@
 
 * **URL**
 
-  * {{root_api_url}}/{requestID}/
+  {root_api_url}/{requestID}/
 
 * **Method:**
   
