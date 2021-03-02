@@ -1,7 +1,5 @@
 package main
 
-//https://github.com/kelvins/GoApiTutorial/blob/master/main_test.go
-
 import (
 	"bytes"
 	"encoding/json"
@@ -20,7 +18,6 @@ var a App
 func TestMain(m *testing.M) {
 	a = App{}
 	a.Initialize("development")
-	//a.Initialize("root", "", "rest_api_example")
 	code := m.Run()
 
 	os.Exit(code)
@@ -98,6 +95,25 @@ func TestCreateInvalidPostRequestInvalidPayload(t *testing.T) {
 
 		model.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
 	}
+}
+
+func TestCreateInvalidPostRequestInvalidIP(t *testing.T) {
+
+	payload := []byte(`{"stringsToMatch":"teststring1","stringsToMatchIn":"teststring2", "mode": "simple"}`)
+
+	req, _ := http.NewRequest("POST", "/api/v1/requests/", bytes.NewBuffer(payload))
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusInternalServerError, response.Code)
+
+	var m map[string]string
+	json.Unmarshal(response.Body.Bytes(), &m)
+
+	if m["error"] != "cannot determine IP address" {
+		t.Errorf("Expected cannot determine IP address error. Got '%s'", m["error"])
+	}
+
+	model.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
 }
 
 func TestCreateInvalidPostRequestTooManyRequestsFromSameIP(t *testing.T) {
@@ -193,13 +209,12 @@ func TestCreateValidGetRequest(t *testing.T) {
 	var m2 map[string]string
 	json.Unmarshal(response2.Body.Bytes(), &m2)
 
-	fmt.Println(m2["error"])
 	if m2["error"] != "" {
 		t.Errorf("Expected no error. Got '%s'", m2["error"])
 	}
 }
 
-func TestCreateInvalidGetRequestNotExists(t *testing.T) {
+func TestCreateInvalidGetRequestInvalidUUID(t *testing.T) {
 
 	requestID := "invalidRequestId"
 
@@ -212,9 +227,27 @@ func TestCreateInvalidGetRequestNotExists(t *testing.T) {
 	var m map[string]string
 	json.Unmarshal(response.Body.Bytes(), &m)
 
-	fmt.Println(m)
 	if m["error"] != "need a valid UUID for request ID" {
 		t.Errorf("Expected need a valid UUID for request ID error. Got '%s'", m["error"])
+	}
+
+}
+
+func TestCreateInvalidGetRequestInvalidRequestId(t *testing.T) {
+
+	requestID := "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+
+	req, _ := http.NewRequest("GET", "/api/v1/requests/"+requestID+"/", nil)
+	req.RemoteAddr = "0.0.0.0:80"
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusNotFound, response.Code)
+
+	var m map[string]string
+	json.Unmarshal(response.Body.Bytes(), &m)
+
+	if m["error"] != "request not found" {
+		t.Errorf("Expected request not found error. Got '%s'", m["error"])
 	}
 
 }
@@ -230,7 +263,6 @@ func TestCreateInvalidGetRequestInvalidURL(t *testing.T) {
 	var m map[string]string
 	json.Unmarshal(response.Body.Bytes(), &m)
 
-	fmt.Println(m)
 	if m["error"] != "" {
 		t.Errorf("Expected no error. Got '%s'", m["error"])
 	}
