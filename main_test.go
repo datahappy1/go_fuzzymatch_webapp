@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/controller"
-	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/repository"
 )
 
 var a App
@@ -57,7 +57,7 @@ func TestCreateValidPostRequest(t *testing.T) {
 		t.Errorf("Expected no error. Got '%s'", m["error"])
 	}
 
-	model.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
+	repository.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
 
 }
 
@@ -93,7 +93,7 @@ func TestCreateInvalidPostRequestInvalidPayload(t *testing.T) {
 			t.Errorf("Expected invalid request error. Got '%s'", m["error"])
 		}
 
-		model.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
+		repository.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
 	}
 }
 
@@ -113,7 +113,7 @@ func TestCreateInvalidPostRequestInvalidIP(t *testing.T) {
 		t.Errorf("Expected cannot determine IP address error. Got '%s'", m["error"])
 	}
 
-	model.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
+	repository.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
 }
 
 func TestCreateInvalidPostRequestTooManyRequestsFromSameIP(t *testing.T) {
@@ -142,8 +142,8 @@ func TestCreateInvalidPostRequestTooManyRequestsFromSameIP(t *testing.T) {
 		t.Errorf("Expected too many requests from IP address in flight error. Got '%s'", m2["error"])
 	}
 
-	model.DeleteFuzzyMatchDAOInRequestsData(m1["RequestID"])
-	model.DeleteFuzzyMatchDAOInRequestsData(m2["RequestID"])
+	repository.DeleteFuzzyMatchDAOInRequestsData(m1["RequestID"])
+	repository.DeleteFuzzyMatchDAOInRequestsData(m2["RequestID"])
 }
 
 func TestCreateInvalidPostRequestTooManyOverallRequests(t *testing.T) {
@@ -181,9 +181,9 @@ func TestCreateInvalidPostRequestTooManyOverallRequests(t *testing.T) {
 		t.Errorf("Expected too many overall requests error. Got '%s'", m3["error"])
 	}
 
-	model.DeleteFuzzyMatchDAOInRequestsData(m1["RequestID"])
-	model.DeleteFuzzyMatchDAOInRequestsData(m2["RequestID"])
-	model.DeleteFuzzyMatchDAOInRequestsData(m3["RequestID"])
+	repository.DeleteFuzzyMatchDAOInRequestsData(m1["RequestID"])
+	repository.DeleteFuzzyMatchDAOInRequestsData(m2["RequestID"])
+	repository.DeleteFuzzyMatchDAOInRequestsData(m3["RequestID"])
 }
 
 func TestCreateValidGetRequest(t *testing.T) {

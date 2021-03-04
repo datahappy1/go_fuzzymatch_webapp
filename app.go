@@ -8,6 +8,7 @@ import (
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/config"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/controller"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/repository"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
@@ -21,6 +22,7 @@ type App struct {
 	conf   config.Configuration
 }
 
+// Initialize App
 func (a *App) Initialize(environment string) {
 	var err error
 	a.conf, err = config.GetConfiguration(environment)
@@ -33,6 +35,7 @@ func (a *App) Initialize(environment string) {
 
 }
 
+// Run App
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
@@ -49,23 +52,9 @@ func (a *App) initializeRoutes() {
 
 func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
-	// curl sample request:
-	// https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service
-	// Windows cmd:
-	// curl -X POST -d "{""stringsToMatch"":""'apple, gmbh','corp'"",""stringsToMatchIn"":""hair"",""mode"":""combined""}" http://localhost:8080/api/v1/requests/
-
-	// *Nix terminal:
-	//	curl --location --request POST 'http://localhost:8080/api/v1/requests/' \
-	//	--header 'Content-Type: text/plain' \
-	//	--data-raw '{
-	//	"stringsToMatch": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.",
-	//		"stringsToMatchIn": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.'\''",
-	//		"mode": "combined"
-	//}'
-
 	r.Body = http.MaxBytesReader(w, r.Body, a.conf.MaxRequestByteSize)
 
-	if model.EvaluateRequestCount(a.conf.MaxActiveRequestsCount) == false {
+	if repository.EvaluateRequestCount(a.conf.MaxActiveRequestsCount) == false {
 		respondWithError(w, http.StatusTooManyRequests, errors.New("too many overall requests in flight, try later"))
 		return
 	}
@@ -76,7 +65,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isTooManyRequestRatePerIP, inFlightRequestID := model.EvaluateRequestRatePerIP(requestedFromIP)
+	isTooManyRequestRatePerIP, inFlightRequestID := repository.EvaluateRequestRatePerIP(requestedFromIP)
 	if isTooManyRequestRatePerIP == true {
 		respondWithError(w, http.StatusTooManyRequests, errors.New(fmt.Sprintf("too many requests from IP address in flight, "+
 			"collect previous request %s data first", inFlightRequestID)))
@@ -110,7 +99,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.CreateFuzzyMatchDAOInRequestsData(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
+	repository.CreateFuzzyMatchDAOInRequestsData(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
 		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP, a.conf.BatchSize)
 
 	fuzzyMatchRequestResponse := controller.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
@@ -119,8 +108,6 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
-	// curl sample request
-	// curl -X GET http://localhost:8080/api/v1/requests/66e3a79e-a05e-4d63-856f-5a12ed673965/
 
 	pathParams := mux.Vars(r)
 
@@ -139,15 +126,15 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	var returnedRowsUpperBound int
 	var returnedAllRows bool
 
-	for i := range model.RequestsData {
-		if model.RequestsData[i].RequestID == requestID {
+	for i := range repository.RequestsData {
+		if repository.RequestsData[i].RequestID == requestID {
 			fuzzyMatchDAO = model.CreateFuzzyMatchDAO(requestID,
-				model.RequestsData[i].StringsToMatch,
-				model.RequestsData[i].StringsToMatchIn,
-				model.RequestsData[i].Mode,
-				model.RequestsData[i].RequestedFromIP,
-				model.RequestsData[i].BatchSize,
-				model.RequestsData[i].ReturnedRows)
+				repository.RequestsData[i].StringsToMatch,
+				repository.RequestsData[i].StringsToMatchIn,
+				repository.RequestsData[i].Mode,
+				repository.RequestsData[i].RequestedFromIP,
+				repository.RequestsData[i].BatchSize,
+				repository.RequestsData[i].ReturnedRows)
 			break
 		}
 	}
@@ -199,9 +186,9 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 		Results:         fuzzyMatchResults}
 
 	if returnedAllRows == true {
-		model.DeleteFuzzyMatchDAOInRequestsData(requestID)
+		repository.DeleteFuzzyMatchDAOInRequestsData(requestID)
 	} else {
-		model.UpdateFuzzyMatchDAOInRequestsData(requestID, returnedRowsUpperBound)
+		repository.UpdateFuzzyMatchDAOInRequestsData(requestID, returnedRowsUpperBound)
 	}
 
 	respondWithJSON(w, http.StatusOK, fuzzyMatchResultsResponse)
