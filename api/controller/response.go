@@ -38,7 +38,7 @@ type FuzzyMatchResultsResponse struct {
 }
 
 // CreateFuzzyMatchResultsResponse returns FuzzyMatchResultsResponse
-func CreateFuzzyMatchResultsResponse(requestID string, mode string, requestedOn string, returnedAllRows bool, results FuzzyMatchResults) FuzzyMatchResultsResponse {
+func CreateFuzzyMatchResultsResponse(requestID, mode, requestedOn string, returnedAllRows bool, results FuzzyMatchResults) FuzzyMatchResultsResponse {
 	resp := FuzzyMatchResultsResponse{
 		RequestID:       requestID,
 		Mode:            mode,
