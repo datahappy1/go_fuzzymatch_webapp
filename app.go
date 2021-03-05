@@ -54,7 +54,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, a.conf.MaxRequestByteSize)
 
-	if (repository.CountAll() >= a.conf.MaxActiveRequestsCount) == true {
+	if repository.CountAll() >= a.conf.MaxActiveRequestsCount {
 		respondWithError(w, http.StatusTooManyRequests, errors.New("too many overall requests in flight, try later"))
 		return
 	}
