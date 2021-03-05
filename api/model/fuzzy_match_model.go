@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-// FuzzyMatchDAO returns struct
-type FuzzyMatchDAO struct {
+// FuzzyMatchModel returns struct
+type FuzzyMatchModel struct {
 	RequestID              string
 	StringsToMatch         []string
 	StringsToMatchIn       []string
@@ -19,10 +19,26 @@ type FuzzyMatchDAO struct {
 	ReturnedAllRows        bool
 }
 
-// CreateFuzzyMatchDAO returns FuzzyMatchDAO
-func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMatchIn []string,
-	mode string, requestedFromIP string, batchSize int, returnedRows int) FuzzyMatchDAO {
-	dao := FuzzyMatchDAO{
+// CreateDummyFuzzyMatch returns FuzzyMatchModel
+func CreateDummyFuzzyMatch() FuzzyMatchModel {
+	return FuzzyMatchModel{
+		RequestID:              "",
+		StringsToMatch:         []string{},
+		StringsToMatchIn:       []string{},
+		Mode:                   "",
+		RequestedOn:            "",
+		RequestedFromIP:        "",
+		BatchSize:              0,
+		StringsToMatchLength:   0,
+		StringsToMatchInLength: 0,
+		ReturnedRows:           0,
+		ReturnedAllRows:        false}
+}
+
+// CreateFuzzyMatch returns FuzzyMatchModel
+func CreateFuzzyMatch(requestID string, stringsToMatch []string, stringsToMatchIn []string,
+	mode string, requestedFromIP string, batchSize int, returnedRows int) FuzzyMatchModel {
+	return FuzzyMatchModel{
 		RequestID:              requestID,
 		StringsToMatch:         stringsToMatch,
 		StringsToMatchIn:       stringsToMatchIn,
@@ -32,13 +48,16 @@ func CreateFuzzyMatchDAO(requestID string, stringsToMatch []string, stringsToMat
 		BatchSize:              batchSize,
 		StringsToMatchLength:   len(stringsToMatch),
 		StringsToMatchInLength: len(stringsToMatchIn),
-		ReturnedRows:           returnedRows}
-	return dao
+		ReturnedRows:           returnedRows,
+		ReturnedAllRows:        false}
 }
 
-// UpdateFuzzyMatchDAO returns FuzzyMatchDAO
-func UpdateFuzzyMatchDAO(fuzzyMatchDAO FuzzyMatchDAO, returnedRows int) FuzzyMatchDAO {
-	dao := fuzzyMatchDAO
-	dao.ReturnedRows = returnedRows
-	return dao
+// UpdateFuzzyMatch returns FuzzyMatchModel
+func UpdateFuzzyMatch(fuzzyMatch FuzzyMatchModel, returnedRows int) FuzzyMatchModel {
+	updatedFuzzyMatch := fuzzyMatch
+	updatedFuzzyMatch.ReturnedRows = returnedRows
+	return updatedFuzzyMatch
 }
+
+// RequestsData returns []FuzzyMatchModel
+var RequestsData []FuzzyMatchModel

@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 
-	"github.com/datahappy1/go_fuzzymatch_webapp/api/controller"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/repository"
 )
 
@@ -49,7 +49,7 @@ func TestCreateValidPostRequest(t *testing.T) {
 	var m map[string]string
 	json.Unmarshal(response.Body.Bytes(), &m)
 
-	if controller.IsValidUUID(m["RequestID"]) == false {
+	if utils.IsValidUUID(m["RequestID"]) == false {
 		t.Errorf("Invalid RequestID. Got '%s'", m["RequestID"])
 	}
 
@@ -57,7 +57,7 @@ func TestCreateValidPostRequest(t *testing.T) {
 		t.Errorf("Expected no error. Got '%s'", m["error"])
 	}
 
-	repository.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
+	repository.Delete(m["RequestID"])
 
 }
 
@@ -93,7 +93,7 @@ func TestCreateInvalidPostRequestInvalidPayload(t *testing.T) {
 			t.Errorf("Expected invalid request error. Got '%s'", m["error"])
 		}
 
-		repository.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
+		repository.Delete(m["RequestID"])
 	}
 }
 
@@ -113,7 +113,7 @@ func TestCreateInvalidPostRequestInvalidIP(t *testing.T) {
 		t.Errorf("Expected cannot determine IP address error. Got '%s'", m["error"])
 	}
 
-	repository.DeleteFuzzyMatchDAOInRequestsData(m["RequestID"])
+	repository.Delete(m["RequestID"])
 }
 
 func TestCreateInvalidPostRequestTooManyRequestsFromSameIP(t *testing.T) {
@@ -138,12 +138,12 @@ func TestCreateInvalidPostRequestTooManyRequestsFromSameIP(t *testing.T) {
 	var m2 map[string]string
 	json.Unmarshal(response2.Body.Bytes(), &m2)
 
-	if m2["error"] != "too many requests from IP address in flight, collect previous request "+m1["RequestID"]+" data first" {
+	if m2["error"] != "too many requests from IP address, collect request "+m1["RequestID"]+" data first" {
 		t.Errorf("Expected too many requests from IP address in flight error. Got '%s'", m2["error"])
 	}
 
-	repository.DeleteFuzzyMatchDAOInRequestsData(m1["RequestID"])
-	repository.DeleteFuzzyMatchDAOInRequestsData(m2["RequestID"])
+	repository.Delete(m1["RequestID"])
+	repository.Delete(m2["RequestID"])
 }
 
 func TestCreateInvalidPostRequestTooManyOverallRequests(t *testing.T) {
@@ -181,9 +181,9 @@ func TestCreateInvalidPostRequestTooManyOverallRequests(t *testing.T) {
 		t.Errorf("Expected too many overall requests error. Got '%s'", m3["error"])
 	}
 
-	repository.DeleteFuzzyMatchDAOInRequestsData(m1["RequestID"])
-	repository.DeleteFuzzyMatchDAOInRequestsData(m2["RequestID"])
-	repository.DeleteFuzzyMatchDAOInRequestsData(m3["RequestID"])
+	repository.Delete(m1["RequestID"])
+	repository.Delete(m2["RequestID"])
+	repository.Delete(m3["RequestID"])
 }
 
 func TestCreateValidGetRequest(t *testing.T) {
@@ -212,6 +212,57 @@ func TestCreateValidGetRequest(t *testing.T) {
 	if m2["error"] != "" {
 		t.Errorf("Expected no error. Got '%s'", m2["error"])
 	}
+
+	repository.Delete(m1["RequestID"])
+
+}
+
+//TODO FIXME
+func TestCreateValidGetRequestWithReturnedAllRows(t *testing.T) {
+
+	payload := []byte(`{"stringsToMatch":"'teststring1','teststring2','teststring3','teststring4'","stringsToMatchIn":"teststring2", "mode": "simple"}`)
+
+	req1, _ := http.NewRequest("POST", "/api/v1/requests/", bytes.NewBuffer(payload))
+	req1.RemoteAddr = "0.0.0.0:80"
+	response1 := executeRequest(req1)
+
+	checkResponseCode(t, http.StatusOK, response1.Code)
+
+	var m1 map[string]string
+	json.Unmarshal(response1.Body.Bytes(), &m1)
+
+	requestID := m1["RequestID"]
+
+	req2, _ := http.NewRequest("GET", "/api/v1/requests/"+requestID+"/", nil)
+	response2 := executeRequest(req2)
+
+	checkResponseCode(t, http.StatusOK, response2.Code)
+
+	var m2 map[string]string
+	json.Unmarshal(response2.Body.Bytes(), &m2)
+
+	fmt.Println(m2)
+
+	if m2["error"] != "" {
+		t.Errorf("Expected no error. Got '%s'", m2["error"])
+	}
+
+	req3, _ := http.NewRequest("GET", "/api/v1/requests/"+requestID+"/", nil)
+	response3 := executeRequest(req3)
+
+	checkResponseCode(t, http.StatusOK, response3.Code)
+
+	var m3 map[string]string
+	json.Unmarshal(response3.Body.Bytes(), &m3)
+
+	fmt.Println(m3["ReturnedAllRows"])
+
+	if m3["error"] != "" {
+		t.Errorf("Expected no error. Got '%s'", m3["error"])
+	}
+
+	repository.Delete(m1["RequestID"])
+
 }
 
 func TestCreateInvalidGetRequestInvalidUUID(t *testing.T) {

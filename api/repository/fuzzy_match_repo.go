@@ -4,55 +4,65 @@ import (
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 )
 
-// CreateFuzzyMatchDAOInRequestsData returns FuzzyMatchDAO
-func CreateFuzzyMatchDAOInRequestsData(RequestID string, StringsToMatch []string, StringsToMatchIn []string,
+// Create returns string, bool
+func Create(RequestID string, StringsToMatch []string, StringsToMatchIn []string,
 	Mode string, RequestedFromIP string, BatchSize int) (string, bool) {
-	dao := model.CreateFuzzyMatchDAO(RequestID, StringsToMatch, StringsToMatchIn, Mode, RequestedFromIP, BatchSize, 0)
-	RequestsData = append(RequestsData, dao)
+	fuzzyMatchObject := model.CreateFuzzyMatch(RequestID, StringsToMatch, StringsToMatchIn, Mode, RequestedFromIP, BatchSize, 0)
+	model.RequestsData = append(model.RequestsData, fuzzyMatchObject)
 	return "ok", true
 }
 
-// UpdateFuzzyMatchDAOInRequestsData returns FuzzyMatchDAO
-func UpdateFuzzyMatchDAOInRequestsData(requestID string, returnedRows int) (string, bool) {
-	for i := range RequestsData {
-		if RequestsData[i].RequestID == requestID {
-			RequestsData[i] = model.UpdateFuzzyMatchDAO(RequestsData[i], returnedRows)
-			break
+// Update returns string, bool
+func Update(requestID string, returnedRows int) (string, bool) {
+	for i := range model.RequestsData {
+		if model.RequestsData[i].RequestID == requestID {
+			model.RequestsData[i] = model.UpdateFuzzyMatch(model.RequestsData[i], returnedRows)
+			return "ok", true
 		}
 	}
-	return "ok", true
+	return "not found", false
 }
 
-// DeleteFuzzyMatchDAOInRequestsData returns FuzzyMatchDAO
-func DeleteFuzzyMatchDAOInRequestsData(requestID string) (string, bool) {
-	for i := range RequestsData {
-		if RequestsData[i].RequestID == requestID {
-			RequestsData[i] = RequestsData[len(RequestsData)-1]
-			RequestsData[len(RequestsData)-1] = model.FuzzyMatchDAO{}
-			RequestsData = RequestsData[:len(RequestsData)-1]
-			break
+// Delete returns string, bool
+func Delete(requestID string) (string, bool) {
+	for i := range model.RequestsData {
+		if model.RequestsData[i].RequestID == requestID {
+			model.RequestsData[i] = model.RequestsData[len(model.RequestsData)-1]
+			model.RequestsData[len(model.RequestsData)-1] = model.FuzzyMatchModel{}
+			model.RequestsData = model.RequestsData[:len(model.RequestsData)-1]
+			return "ok", true
 		}
 	}
-	return "ok", true
+	return "not found", false
 }
 
-// EvaluateRequestRatePerIP returns bool
-func EvaluateRequestRatePerIP(ip string) (bool, string) {
-	for i := range RequestsData {
-		if RequestsData[i].RequestedFromIP == ip {
-			return true, RequestsData[i].RequestID
+// GetByRequestID returns FuzzyMatchModel
+func GetByRequestID(requestID string) model.FuzzyMatchModel {
+	for i := range model.RequestsData {
+		if model.RequestsData[i].RequestID == requestID {
+			return model.CreateFuzzyMatch(requestID,
+				model.RequestsData[i].StringsToMatch,
+				model.RequestsData[i].StringsToMatchIn,
+				model.RequestsData[i].Mode,
+				model.RequestsData[i].RequestedFromIP,
+				model.RequestsData[i].BatchSize,
+				model.RequestsData[i].ReturnedRows)
 		}
 	}
-	return false, ""
+	return model.CreateDummyFuzzyMatch()
 }
 
-// EvaluateRequestCount returns bool
-func EvaluateRequestCount(activeRequestsCount int) bool {
-	if len(RequestsData) >= activeRequestsCount {
-		return false
+// GetByIP returns FuzzyMatchModel
+func GetByIP(ip string) model.FuzzyMatchModel {
+	for i := range model.RequestsData {
+		if model.RequestsData[i].RequestedFromIP == ip {
+			return model.RequestsData[i]
+		}
 	}
-	return true
+	return model.CreateDummyFuzzyMatch()
 }
 
-// RequestsData returns []FuzzyMatchDAO
-var RequestsData []model.FuzzyMatchDAO
+// CountAll returns int
+func CountAll() int {
+	return len(model.RequestsData)
+}

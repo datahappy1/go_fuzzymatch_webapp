@@ -1,5 +1,5 @@
 {
-    "batchSize": 20,
+    "batchSize": 3,
     "maxActiveRequestsCount": 2,
     "MaxRequestByteSize": 1048576
 }

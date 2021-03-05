@@ -1,22 +1,11 @@
-package controller
+package model
 
 import (
 	"errors"
-	"strings"
-
-	"github.com/google/uuid"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 )
 
 var modeTypes = [3]string{"simple", "deepDive", "combined"}
-
-func stringInSlice(a string, list [3]string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
-}
 
 // FuzzyMatchExternalRequest returns struct
 type FuzzyMatchExternalRequest struct {
@@ -46,48 +35,15 @@ func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string,
 		return nil, errors.New("stringsToMatchIn is invalid")
 	}
 
-	if mode == "" || stringInSlice(mode, modeTypes) == false {
+	if mode == "" || utils.IsStringInSlice(mode, modeTypes) == false {
 		return nil, errors.New("mode is invalid")
 	}
 
 	req := FuzzyMatchRequest{
-		RequestID:        uuid.New().String(),
+		RequestID:        utils.CreateUUID(),
 		StringsToMatch:   stringsToMatch,
 		StringsToMatchIn: stringsToMatchIn,
 		Mode:             mode,
 		RequestedFromIP:  requestedFromIP}
 	return &req, nil
-}
-
-// IsValidUUID returns bool
-func IsValidUUID(RequestUUID string) bool {
-	_, err := uuid.Parse(RequestUUID)
-	return err == nil
-}
-
-func safeCommaSplitter(str string, delimiter rune) []string {
-	var isQuote = false
-
-	f := func(c rune) bool {
-		if c == '\'' {
-			if isQuote {
-				isQuote = false
-			} else {
-				isQuote = true
-			}
-		}
-		if !isQuote {
-			return c == delimiter
-		}
-		return false
-	}
-	result := strings.FieldsFunc(str, f)
-	return result
-}
-
-// SplitFormStringValueToSliceOfStrings returns array of strings
-func SplitFormStringValueToSliceOfStrings(formValue string) []string {
-	delimiter := []rune(",")[0]
-	parsedStringsSlice := safeCommaSplitter(formValue, delimiter)
-	return parsedStringsSlice
 }

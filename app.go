@@ -6,9 +6,9 @@ import (
 	"fmt"
 	fm "github.com/datahappy1/go_fuzzymatch/pkg"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/config"
-	"github.com/datahappy1/go_fuzzymatch_webapp/api/controller"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/repository"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
@@ -54,25 +54,25 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, a.conf.MaxRequestByteSize)
 
-	if repository.EvaluateRequestCount(a.conf.MaxActiveRequestsCount) == false {
+	if (repository.CountAll() >= a.conf.MaxActiveRequestsCount) == true {
 		respondWithError(w, http.StatusTooManyRequests, errors.New("too many overall requests in flight, try later"))
 		return
 	}
 
-	requestedFromIP, err := controller.GetIP(r)
+	requestedFromIP, err := utils.GetIP(r)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, errors.New("cannot determine IP address"))
 		return
 	}
 
-	isTooManyRequestRatePerIP, inFlightRequestID := repository.EvaluateRequestRatePerIP(requestedFromIP)
-	if isTooManyRequestRatePerIP == true {
-		respondWithError(w, http.StatusTooManyRequests, errors.New(fmt.Sprintf("too many requests from IP address in flight, "+
-			"collect previous request %s data first", inFlightRequestID)))
+	inFlightRequestID := repository.GetByIP(requestedFromIP).RequestID
+	if inFlightRequestID != "" {
+		respondWithError(w, http.StatusTooManyRequests,
+			errors.New(fmt.Sprintf("too many requests from IP address, collect request %s data first", inFlightRequestID)))
 		return
 	}
 
-	var fuzzyMatchExternalRequest controller.FuzzyMatchExternalRequest
+	var fuzzyMatchExternalRequest model.FuzzyMatchExternalRequest
 
 	requestBodyString, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -89,9 +89,9 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fuzzyMatchRequest, err := controller.CreateFuzzyMatchRequest(
-		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatch),
-		controller.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatchIn),
+	fuzzyMatchRequest, err := model.CreateFuzzyMatchRequest(
+		utils.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatch),
+		utils.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatchIn),
 		fuzzyMatchExternalRequest.Mode, requestedFromIP)
 
 	if err != nil {
@@ -99,10 +99,10 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repository.CreateFuzzyMatchDAOInRequestsData(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
+	repository.Create(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
 		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP, a.conf.BatchSize)
 
-	fuzzyMatchRequestResponse := controller.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
+	fuzzyMatchRequestResponse := model.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
 
 	respondWithJSON(w, http.StatusOK, fuzzyMatchRequestResponse)
 }
@@ -114,54 +114,43 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	requestID := ""
 	if val, ok := pathParams["requestID"]; ok {
 		requestID = val
-		if controller.IsValidUUID(val) == false {
+		if utils.IsValidUUID(val) == false {
 			respondWithError(w, http.StatusInternalServerError, errors.New("need a valid UUID for request ID"))
 			return
 		}
 	}
 
-	var fuzzyMatchDAO model.FuzzyMatchDAO
-	var fuzzyMatchResults controller.FuzzyMatchResults
-	var fuzzyMatchResultsResponse controller.FuzzyMatchResultsResponse
+	var fuzzyMatchObject model.FuzzyMatchModel
+	var fuzzyMatchResults model.FuzzyMatchResults
+	var fuzzyMatchResultsResponse model.FuzzyMatchResultsResponse
 	var returnedRowsUpperBound int
 	var returnedAllRows bool
 
-	for i := range repository.RequestsData {
-		if repository.RequestsData[i].RequestID == requestID {
-			fuzzyMatchDAO = model.CreateFuzzyMatchDAO(requestID,
-				repository.RequestsData[i].StringsToMatch,
-				repository.RequestsData[i].StringsToMatchIn,
-				repository.RequestsData[i].Mode,
-				repository.RequestsData[i].RequestedFromIP,
-				repository.RequestsData[i].BatchSize,
-				repository.RequestsData[i].ReturnedRows)
-			break
-		}
-	}
+	fuzzyMatchObject = repository.GetByRequestID(requestID)
 
-	if fuzzyMatchDAO.RequestID == "" {
+	if fuzzyMatchObject.RequestID == "" {
 		respondWithError(w, http.StatusNotFound, errors.New("request not found"))
 		return
 	}
 
-	if fuzzyMatchDAO.ReturnedRows+fuzzyMatchDAO.BatchSize >= fuzzyMatchDAO.StringsToMatchLength {
-		returnedRowsUpperBound = fuzzyMatchDAO.StringsToMatchLength
+	if fuzzyMatchObject.ReturnedRows+fuzzyMatchObject.BatchSize >= fuzzyMatchObject.StringsToMatchLength {
+		returnedRowsUpperBound = fuzzyMatchObject.StringsToMatchLength
 		returnedAllRows = true
 	} else {
-		returnedRowsUpperBound = fuzzyMatchDAO.ReturnedRows + fuzzyMatchDAO.BatchSize
+		returnedRowsUpperBound = fuzzyMatchObject.ReturnedRows + fuzzyMatchObject.BatchSize
 		returnedAllRows = false
 	}
 
-	for stringToMatch := fuzzyMatchDAO.ReturnedRows; stringToMatch < returnedRowsUpperBound; stringToMatch++ {
-		var auxiliaryMatchResults []controller.AuxiliaryMatchResult
+	for stringToMatch := fuzzyMatchObject.ReturnedRows; stringToMatch < returnedRowsUpperBound; stringToMatch++ {
+		var auxiliaryMatchResults []model.AuxiliaryMatchResult
 
-		for stringToMatchIn := 0; stringToMatchIn < fuzzyMatchDAO.StringsToMatchInLength; stringToMatchIn++ {
-			auxiliaryMatchResult := controller.AuxiliaryMatchResult{
-				StringMatched: fuzzyMatchDAO.StringsToMatchIn[stringToMatchIn],
+		for stringToMatchIn := 0; stringToMatchIn < fuzzyMatchObject.StringsToMatchInLength; stringToMatchIn++ {
+			auxiliaryMatchResult := model.AuxiliaryMatchResult{
+				StringMatched: fuzzyMatchObject.StringsToMatchIn[stringToMatchIn],
 				Result: fm.FuzzyMatch(
-					fuzzyMatchDAO.StringsToMatch[stringToMatch],
-					fuzzyMatchDAO.StringsToMatchIn[stringToMatchIn],
-					fuzzyMatchDAO.Mode)}
+					fuzzyMatchObject.StringsToMatch[stringToMatch],
+					fuzzyMatchObject.StringsToMatchIn[stringToMatchIn],
+					fuzzyMatchObject.Mode)}
 
 			auxiliaryMatchResults = append(auxiliaryMatchResults, auxiliaryMatchResult)
 		}
@@ -170,25 +159,22 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 			return auxiliaryMatchResults[i].Result > auxiliaryMatchResults[j].Result
 		})
 
-		fuzzyMatchResult := controller.FuzzyMatchResult{
-			StringToMatch: fuzzyMatchDAO.StringsToMatch[stringToMatch],
+		fuzzyMatchResult := model.FuzzyMatchResult{
+			StringToMatch: fuzzyMatchObject.StringsToMatch[stringToMatch],
 			StringMatched: auxiliaryMatchResults[0].StringMatched,
 			Result:        auxiliaryMatchResults[0].Result}
 
 		fuzzyMatchResults = append(fuzzyMatchResults, fuzzyMatchResult)
 	}
 
-	fuzzyMatchResultsResponse = controller.FuzzyMatchResultsResponse{
-		RequestID:       requestID,
-		Mode:            fuzzyMatchDAO.Mode,
-		RequestedOn:     fuzzyMatchDAO.RequestedOn,
-		ReturnedAllRows: returnedAllRows,
-		Results:         fuzzyMatchResults}
+	fuzzyMatchResultsResponse = model.CreateFuzzyMatchResultsResponse(
+		requestID, fuzzyMatchObject.Mode, fuzzyMatchObject.RequestedOn, returnedAllRows, fuzzyMatchResults,
+	)
 
 	if returnedAllRows == true {
-		repository.DeleteFuzzyMatchDAOInRequestsData(requestID)
+		repository.Delete(requestID)
 	} else {
-		repository.UpdateFuzzyMatchDAOInRequestsData(requestID, returnedRowsUpperBound)
+		repository.Update(requestID, returnedRowsUpperBound)
 	}
 
 	respondWithJSON(w, http.StatusOK, fuzzyMatchResultsResponse)
