@@ -40,7 +40,8 @@ func Delete(requestID string) (string, bool) {
 func GetByRequestID(requestID string) model.FuzzyMatchModel {
 	for i := range model.RequestsData {
 		if model.RequestsData[i].RequestID == requestID {
-			return model.CreateFuzzyMatch(requestID,
+			return model.CreateFuzzyMatch(
+				model.RequestsData[i].RequestID,
 				model.RequestsData[i].StringsToMatch,
 				model.RequestsData[i].StringsToMatchIn,
 				model.RequestsData[i].Mode,
@@ -56,7 +57,14 @@ func GetByRequestID(requestID string) model.FuzzyMatchModel {
 func GetByIP(ip string) model.FuzzyMatchModel {
 	for i := range model.RequestsData {
 		if model.RequestsData[i].RequestedFromIP == ip {
-			return model.RequestsData[i]
+			return model.CreateFuzzyMatch(
+				model.RequestsData[i].RequestID,
+				model.RequestsData[i].StringsToMatch,
+				model.RequestsData[i].StringsToMatchIn,
+				model.RequestsData[i].Mode,
+				model.RequestsData[i].RequestedFromIP,
+				model.RequestsData[i].BatchSize,
+				model.RequestsData[i].ReturnedRows)
 		}
 	}
 	return model.CreateDummyFuzzyMatch()
