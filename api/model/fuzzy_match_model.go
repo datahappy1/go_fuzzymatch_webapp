@@ -19,22 +19,6 @@ type FuzzyMatchModel struct {
 	ReturnedAllRows        bool
 }
 
-// CreateDummyFuzzyMatch returns FuzzyMatchModel
-func CreateDummyFuzzyMatch() FuzzyMatchModel {
-	return FuzzyMatchModel{
-		RequestID:              "",
-		StringsToMatch:         []string{},
-		StringsToMatchIn:       []string{},
-		Mode:                   "",
-		RequestedOn:            "",
-		RequestedFromIP:        "",
-		BatchSize:              0,
-		StringsToMatchLength:   0,
-		StringsToMatchInLength: 0,
-		ReturnedRows:           0,
-		ReturnedAllRows:        false}
-}
-
 // CreateFuzzyMatch returns FuzzyMatchModel
 func CreateFuzzyMatch(requestID string, stringsToMatch []string, stringsToMatchIn []string,
 	mode string, requestedFromIP string, batchSize int, returnedRows int) FuzzyMatchModel {

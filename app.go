@@ -4,16 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	fm "github.com/datahappy1/go_fuzzymatch/pkg"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/config"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/repository"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/service"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"sort"
 )
 
 // App returns struct
@@ -54,7 +53,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, a.conf.MaxRequestByteSize)
 
-	if repository.CountAll() >= a.conf.MaxActiveRequestsCount {
+	if len(repository.GetAll()) >= a.conf.MaxActiveRequestsCount {
 		respondWithError(w, http.StatusTooManyRequests, errors.New("too many overall requests in flight, try later"))
 		return
 	}
@@ -99,8 +98,14 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repository.Create(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
+	err = repository.Create(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
 		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP, a.conf.BatchSize)
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError,
+			errors.New(fmt.Sprintf("error cannot persist request %s", err)))
+		return
+	}
 
 	fuzzyMatchRequestResponse := model.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
 
@@ -120,62 +125,37 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var fuzzyMatchObject model.FuzzyMatchModel
-	var fuzzyMatchResults model.FuzzyMatchResults
-	var fuzzyMatchResultsResponse model.FuzzyMatchResultsResponse
-	var returnedRowsUpperBound int
-	var returnedAllRows bool
-
-	fuzzyMatchObject = repository.GetByRequestID(requestID)
+	fuzzyMatchObject := repository.GetByRequestID(requestID)
 
 	if fuzzyMatchObject.RequestID == "" {
 		respondWithError(w, http.StatusNotFound, errors.New("request not found"))
 		return
 	}
 
-	if fuzzyMatchObject.ReturnedRows+fuzzyMatchObject.BatchSize >= fuzzyMatchObject.StringsToMatchLength {
-		returnedRowsUpperBound = fuzzyMatchObject.StringsToMatchLength
-		returnedAllRows = true
-	} else {
-		returnedRowsUpperBound = fuzzyMatchObject.ReturnedRows + fuzzyMatchObject.BatchSize
-		returnedAllRows = false
-	}
-
-	for stringToMatch := fuzzyMatchObject.ReturnedRows; stringToMatch < returnedRowsUpperBound; stringToMatch++ {
-		var auxiliaryMatchResults []model.AuxiliaryMatchResult
-
-		for stringToMatchIn := 0; stringToMatchIn < fuzzyMatchObject.StringsToMatchInLength; stringToMatchIn++ {
-			auxiliaryMatchResult := model.AuxiliaryMatchResult{
-				StringMatched: fuzzyMatchObject.StringsToMatchIn[stringToMatchIn],
-				Result: fm.FuzzyMatch(
-					fuzzyMatchObject.StringsToMatch[stringToMatch],
-					fuzzyMatchObject.StringsToMatchIn[stringToMatchIn],
-					fuzzyMatchObject.Mode)}
-
-			auxiliaryMatchResults = append(auxiliaryMatchResults, auxiliaryMatchResult)
-		}
-
-		sort.SliceStable(auxiliaryMatchResults, func(i, j int) bool {
-			return auxiliaryMatchResults[i].Result > auxiliaryMatchResults[j].Result
-		})
-
-		fuzzyMatchResult := model.FuzzyMatchResult{
-			StringToMatch: fuzzyMatchObject.StringsToMatch[stringToMatch],
-			StringMatched: auxiliaryMatchResults[0].StringMatched,
-			Result:        auxiliaryMatchResults[0].Result}
-
-		fuzzyMatchResults = append(fuzzyMatchResults, fuzzyMatchResult)
-	}
-
-	fuzzyMatchResultsResponse = model.CreateFuzzyMatchResultsResponse(
-		requestID, fuzzyMatchObject.Mode, fuzzyMatchObject.RequestedOn, returnedAllRows, fuzzyMatchResults,
-	)
+	fuzzyMatchResults, returnedAllRows, returnedRowsUpperBound := service.CalculateFuzzyMatchingResults(fuzzyMatchObject)
 
 	if returnedAllRows == true {
-		repository.Delete(requestID)
+		err := repository.Delete(requestID)
+
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError,
+				errors.New(fmt.Sprintf("error cannot process request %s", err)))
+			return
+		}
+
 	} else {
-		repository.Update(requestID, returnedRowsUpperBound)
+		err := repository.Update(requestID, returnedRowsUpperBound)
+
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError,
+				errors.New(fmt.Sprintf("error cannot process request %s", err)))
+			return
+		}
 	}
+
+	fuzzyMatchResultsResponse := model.CreateFuzzyMatchResultsResponse(
+		requestID, fuzzyMatchObject.Mode, fuzzyMatchObject.RequestedOn, returnedAllRows, fuzzyMatchResults,
+	)
 
 	respondWithJSON(w, http.StatusOK, fuzzyMatchResultsResponse)
 }

@@ -36,6 +36,23 @@ func checkResponseCode(t *testing.T, expected, actual int) {
 	}
 }
 
+type successPostRequestResponse struct {
+	RequestID string `json:"RequestID"`
+}
+
+type result struct {
+	StringToMatch string `json:"StringToMatch"`
+	StringMatched string `json:"StringMatched"`
+	Result        int    `json:"Result"`
+}
+type successGetResultsResponse struct {
+	RequestID       string   `json:"RequestID"`
+	Mode            string   `json:"Mode"`
+	RequestedOn     string   `json:"RequestedOn"`
+	ReturnedAllRows bool     `json:"ReturnedAllRows"`
+	Results         []result `json:"Results"`
+}
+
 func TestCreateValidPostRequest(t *testing.T) {
 
 	payload := []byte(`{"stringsToMatch":"teststring1","stringsToMatchIn":"teststring2", "mode": "simple"}`)
@@ -217,7 +234,6 @@ func TestCreateValidGetRequest(t *testing.T) {
 
 }
 
-//TODO FIXME
 func TestCreateValidGetRequestWithReturnedAllRows(t *testing.T) {
 
 	payload := []byte(`{"stringsToMatch":"'teststring1','teststring2','teststring3','teststring4'","stringsToMatchIn":"teststring2", "mode": "simple"}`)
@@ -228,23 +244,21 @@ func TestCreateValidGetRequestWithReturnedAllRows(t *testing.T) {
 
 	checkResponseCode(t, http.StatusOK, response1.Code)
 
-	var m1 map[string]string
-	json.Unmarshal(response1.Body.Bytes(), &m1)
+	SuccessRequestResponse := successPostRequestResponse{}
+	json.Unmarshal(response1.Body.Bytes(), &SuccessRequestResponse)
 
-	requestID := m1["RequestID"]
+	requestID := SuccessRequestResponse.RequestID
 
 	req2, _ := http.NewRequest("GET", "/api/v1/requests/"+requestID+"/", nil)
 	response2 := executeRequest(req2)
 
 	checkResponseCode(t, http.StatusOK, response2.Code)
 
-	var m2 map[string]string
-	json.Unmarshal(response2.Body.Bytes(), &m2)
+	SuccessResultsResponse := successGetResultsResponse{}
+	json.Unmarshal(response2.Body.Bytes(), &SuccessResultsResponse)
 
-	fmt.Println(m2)
-
-	if m2["error"] != "" {
-		t.Errorf("Expected no error. Got '%s'", m2["error"])
+	if SuccessResultsResponse.ReturnedAllRows != false {
+		t.Errorf("Expected ReturnedAllRows false. Got '%t'", SuccessResultsResponse.ReturnedAllRows)
 	}
 
 	req3, _ := http.NewRequest("GET", "/api/v1/requests/"+requestID+"/", nil)
@@ -252,16 +266,14 @@ func TestCreateValidGetRequestWithReturnedAllRows(t *testing.T) {
 
 	checkResponseCode(t, http.StatusOK, response3.Code)
 
-	var m3 map[string]string
-	json.Unmarshal(response3.Body.Bytes(), &m3)
+	SuccessResultsResponse = successGetResultsResponse{}
+	json.Unmarshal(response3.Body.Bytes(), &SuccessResultsResponse)
 
-	fmt.Println(m3["ReturnedAllRows"])
-
-	if m3["error"] != "" {
-		t.Errorf("Expected no error. Got '%s'", m3["error"])
+	if SuccessResultsResponse.ReturnedAllRows != true {
+		t.Errorf("Expected ReturnedAllRows true. Got '%t'", SuccessResultsResponse.ReturnedAllRows)
 	}
 
-	repository.Delete(m1["RequestID"])
+	repository.Delete(requestID)
 
 }
 

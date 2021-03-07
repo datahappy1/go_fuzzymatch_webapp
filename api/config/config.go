@@ -27,7 +27,7 @@ func GetConfiguration(environment string) (Configuration, error) {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	// fmt.Println(configuration.Users) // output: [UserA, UserB]
+
 	defer file.Close()
 	return configuration, err
 }

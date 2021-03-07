@@ -1,76 +1,63 @@
 package repository
 
 import (
+	"errors"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 )
 
-// Create returns string, bool
+// Create returns string
 func Create(RequestID string, StringsToMatch []string, StringsToMatchIn []string,
-	Mode string, RequestedFromIP string, BatchSize int) (string, bool) {
+	Mode string, RequestedFromIP string, BatchSize int) error {
 	fuzzyMatchObject := model.CreateFuzzyMatch(RequestID, StringsToMatch, StringsToMatchIn, Mode, RequestedFromIP, BatchSize, 0)
 	model.RequestsData = append(model.RequestsData, fuzzyMatchObject)
-	return "ok", true
+	return nil
 }
 
-// Update returns string, bool
-func Update(requestID string, returnedRows int) (string, bool) {
+// Update returns (string, error)
+func Update(requestID string, returnedRows int) error {
 	for i := range model.RequestsData {
 		if model.RequestsData[i].RequestID == requestID {
 			model.RequestsData[i] = model.UpdateFuzzyMatch(model.RequestsData[i], returnedRows)
-			return "ok", true
+			return nil
 		}
 	}
-	return "not found", false
+	return errors.New("Request not found, not updated")
 }
 
-// Delete returns string, bool
-func Delete(requestID string) (string, bool) {
+// Delete returns error
+func Delete(requestID string) error {
 	for i := range model.RequestsData {
 		if model.RequestsData[i].RequestID == requestID {
 			model.RequestsData[i] = model.RequestsData[len(model.RequestsData)-1]
 			model.RequestsData[len(model.RequestsData)-1] = model.FuzzyMatchModel{}
 			model.RequestsData = model.RequestsData[:len(model.RequestsData)-1]
-			return "ok", true
+			return nil
 		}
 	}
-	return "not found", false
+	return errors.New("Request not found, not deleted")
 }
 
 // GetByRequestID returns FuzzyMatchModel
 func GetByRequestID(requestID string) model.FuzzyMatchModel {
 	for i := range model.RequestsData {
 		if model.RequestsData[i].RequestID == requestID {
-			return model.CreateFuzzyMatch(
-				model.RequestsData[i].RequestID,
-				model.RequestsData[i].StringsToMatch,
-				model.RequestsData[i].StringsToMatchIn,
-				model.RequestsData[i].Mode,
-				model.RequestsData[i].RequestedFromIP,
-				model.RequestsData[i].BatchSize,
-				model.RequestsData[i].ReturnedRows)
+			return model.RequestsData[i]
 		}
 	}
-	return model.CreateDummyFuzzyMatch()
+	return model.FuzzyMatchModel{}
 }
 
 // GetByIP returns FuzzyMatchModel
 func GetByIP(ip string) model.FuzzyMatchModel {
 	for i := range model.RequestsData {
 		if model.RequestsData[i].RequestedFromIP == ip {
-			return model.CreateFuzzyMatch(
-				model.RequestsData[i].RequestID,
-				model.RequestsData[i].StringsToMatch,
-				model.RequestsData[i].StringsToMatchIn,
-				model.RequestsData[i].Mode,
-				model.RequestsData[i].RequestedFromIP,
-				model.RequestsData[i].BatchSize,
-				model.RequestsData[i].ReturnedRows)
+			return model.RequestsData[i]
 		}
 	}
-	return model.CreateDummyFuzzyMatch()
+	return model.FuzzyMatchModel{}
 }
 
-// CountAll returns int
-func CountAll() int {
-	return len(model.RequestsData)
+// GetAll returns model.FuzzyMatchModel
+func GetAll() []model.FuzzyMatchModel {
+	return model.RequestsData
 }
