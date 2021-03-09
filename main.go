@@ -7,7 +7,6 @@ import (
 func main() {
 	a := App{}
 	a.Initialize("production")
-	//a.Initialize("root", "", "rest_api_example")
 
 	port, ok := os.LookupEnv("PORT")
 

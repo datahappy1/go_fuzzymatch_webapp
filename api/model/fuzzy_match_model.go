@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -19,15 +20,22 @@ type FuzzyMatchModel struct {
 	ReturnedAllRows        bool
 }
 
+func getFormattedTimestamp() string {
+	t := time.Now()
+	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d",
+		t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
+}
+
 // CreateFuzzyMatch returns FuzzyMatchModel
 func CreateFuzzyMatch(requestID string, stringsToMatch []string, stringsToMatchIn []string,
 	mode string, requestedFromIP string, batchSize int, returnedRows int) FuzzyMatchModel {
+
 	return FuzzyMatchModel{
 		RequestID:              requestID,
 		StringsToMatch:         stringsToMatch,
 		StringsToMatchIn:       stringsToMatchIn,
 		Mode:                   mode,
-		RequestedOn:            time.Now().String(),
+		RequestedOn:            getFormattedTimestamp(),
 		RequestedFromIP:        requestedFromIP,
 		BatchSize:              batchSize,
 		StringsToMatchLength:   len(stringsToMatch),

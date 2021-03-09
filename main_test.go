@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/repository"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
-
-	"github.com/datahappy1/go_fuzzymatch_webapp/api/repository"
+	"time"
 )
 
 var a App
@@ -34,6 +34,10 @@ func checkResponseCode(t *testing.T, expected, actual int) {
 	if expected != actual {
 		t.Errorf("Expected response code %d. Got %d\n", expected, actual)
 	}
+}
+
+type failureResponse struct {
+	Error string `json:"error"`
 }
 
 type successPostRequestResponse struct {
@@ -63,18 +67,14 @@ func TestCreateValidPostRequest(t *testing.T) {
 
 	checkResponseCode(t, http.StatusOK, response.Code)
 
-	var m map[string]string
-	json.Unmarshal(response.Body.Bytes(), &m)
+	SuccessResponse := successPostRequestResponse{}
+	json.Unmarshal(response.Body.Bytes(), &SuccessResponse)
 
-	if utils.IsValidUUID(m["RequestID"]) == false {
-		t.Errorf("Invalid RequestID. Got '%s'", m["RequestID"])
+	if utils.IsValidUUID(SuccessResponse.RequestID) == false {
+		t.Errorf("Invalid RequestID. Got '%s'", SuccessResponse.RequestID)
 	}
 
-	if m["error"] != "" {
-		t.Errorf("Expected no error. Got '%s'", m["error"])
-	}
-
-	repository.Delete(m["RequestID"])
+	repository.Delete(SuccessResponse.RequestID)
 
 }
 
@@ -103,14 +103,13 @@ func TestCreateInvalidPostRequestInvalidPayload(t *testing.T) {
 
 		checkResponseCode(t, tt.responseStatusCode, response.Code)
 
-		var m map[string]string
-		json.Unmarshal(response.Body.Bytes(), &m)
+		FailureResponse := failureResponse{}
+		json.Unmarshal(response.Body.Bytes(), &FailureResponse)
 
-		if m["error"] != "error invalid request" {
-			t.Errorf("Expected invalid request error. Got '%s'", m["error"])
+		if FailureResponse.Error != "error invalid request" {
+			t.Errorf("Expected invalid request error. Got '%s'", FailureResponse.Error)
 		}
 
-		repository.Delete(m["RequestID"])
 	}
 }
 
@@ -123,14 +122,13 @@ func TestCreateInvalidPostRequestInvalidIP(t *testing.T) {
 
 	checkResponseCode(t, http.StatusInternalServerError, response.Code)
 
-	var m map[string]string
-	json.Unmarshal(response.Body.Bytes(), &m)
+	FailureResponse := failureResponse{}
+	json.Unmarshal(response.Body.Bytes(), &FailureResponse)
 
-	if m["error"] != "cannot determine IP address" {
-		t.Errorf("Expected cannot determine IP address error. Got '%s'", m["error"])
+	if FailureResponse.Error != "cannot determine IP address" {
+		t.Errorf("Expected cannot determine IP address error. Got '%s'", FailureResponse.Error)
 	}
 
-	repository.Delete(m["RequestID"])
 }
 
 func TestCreateInvalidPostRequestTooManyRequestsFromSameIP(t *testing.T) {
@@ -143,8 +141,8 @@ func TestCreateInvalidPostRequestTooManyRequestsFromSameIP(t *testing.T) {
 
 	checkResponseCode(t, http.StatusOK, response1.Code)
 
-	var m1 map[string]string
-	json.Unmarshal(response1.Body.Bytes(), &m1)
+	SuccessResponse := successPostRequestResponse{}
+	json.Unmarshal(response1.Body.Bytes(), &SuccessResponse)
 
 	req2, _ := http.NewRequest("POST", "/api/v1/requests/", bytes.NewBuffer(payload))
 	req2.RemoteAddr = "0.0.0.0:80"
@@ -152,15 +150,14 @@ func TestCreateInvalidPostRequestTooManyRequestsFromSameIP(t *testing.T) {
 
 	checkResponseCode(t, http.StatusTooManyRequests, response2.Code)
 
-	var m2 map[string]string
-	json.Unmarshal(response2.Body.Bytes(), &m2)
+	FailureResponse := failureResponse{}
+	json.Unmarshal(response2.Body.Bytes(), &FailureResponse)
 
-	if m2["error"] != "too many requests from IP address, collect request "+m1["RequestID"]+" data first" {
-		t.Errorf("Expected too many requests from IP address in flight error. Got '%s'", m2["error"])
+	if FailureResponse.Error != "too many requests from IP address, collect request "+SuccessResponse.RequestID+" data first" {
+		t.Errorf("Expected too many requests from IP address in flight error. Got '%s'", FailureResponse.Error)
 	}
 
-	repository.Delete(m1["RequestID"])
-	repository.Delete(m2["RequestID"])
+	repository.Delete(SuccessResponse.RequestID)
 }
 
 func TestCreateInvalidPostRequestTooManyOverallRequests(t *testing.T) {
@@ -181,26 +178,26 @@ func TestCreateInvalidPostRequestTooManyOverallRequests(t *testing.T) {
 
 	checkResponseCode(t, http.StatusOK, response1.Code)
 
-	var m1 map[string]string
-	json.Unmarshal(response1.Body.Bytes(), &m1)
+	SuccessResponse1 := successPostRequestResponse{}
+	json.Unmarshal(response1.Body.Bytes(), &SuccessResponse1)
 
 	checkResponseCode(t, http.StatusOK, response2.Code)
 
-	var m2 map[string]string
-	json.Unmarshal(response2.Body.Bytes(), &m2)
+	SuccessResponse2 := successPostRequestResponse{}
+	json.Unmarshal(response2.Body.Bytes(), &SuccessResponse2)
 
 	checkResponseCode(t, http.StatusTooManyRequests, response3.Code)
 
-	var m3 map[string]string
-	json.Unmarshal(response3.Body.Bytes(), &m3)
+	FailureResponse := failureResponse{}
+	json.Unmarshal(response3.Body.Bytes(), &FailureResponse)
 
-	if m3["error"] != "too many overall requests in flight, try later" {
-		t.Errorf("Expected too many overall requests error. Got '%s'", m3["error"])
+	if FailureResponse.Error != "too many overall requests in flight, try later" {
+		t.Errorf("Expected too many overall requests error. Got '%s'", FailureResponse.Error)
 	}
 
-	repository.Delete(m1["RequestID"])
-	repository.Delete(m2["RequestID"])
-	repository.Delete(m3["RequestID"])
+	repository.Delete(SuccessResponse1.RequestID)
+	repository.Delete(SuccessResponse2.RequestID)
+
 }
 
 func TestCreateValidGetRequest(t *testing.T) {
@@ -213,24 +210,51 @@ func TestCreateValidGetRequest(t *testing.T) {
 
 	checkResponseCode(t, http.StatusOK, response1.Code)
 
-	var m1 map[string]string
-	json.Unmarshal(response1.Body.Bytes(), &m1)
+	SuccessResponse1 := successPostRequestResponse{}
+	json.Unmarshal(response1.Body.Bytes(), &SuccessResponse1)
 
-	requestID := m1["RequestID"]
-
-	req2, _ := http.NewRequest("GET", "/api/v1/requests/"+requestID+"/", nil)
+	req2, _ := http.NewRequest("GET", "/api/v1/requests/"+SuccessResponse1.RequestID+"/", nil)
 	response2 := executeRequest(req2)
 
 	checkResponseCode(t, http.StatusOK, response2.Code)
 
-	var m2 map[string]string
-	json.Unmarshal(response2.Body.Bytes(), &m2)
+	SuccessResultsResponse := successGetResultsResponse{}
+	json.Unmarshal(response2.Body.Bytes(), &SuccessResultsResponse)
 
-	if m2["error"] != "" {
-		t.Errorf("Expected no error. Got '%s'", m2["error"])
+	if SuccessResultsResponse.Mode != "simple" {
+		t.Errorf("Invalid mode value, expected simple. Got '%s'", SuccessResultsResponse.Mode)
 	}
 
-	repository.Delete(m1["RequestID"])
+	if SuccessResultsResponse.ReturnedAllRows != true {
+		t.Errorf("Invalid ReturnedAllRows value, expected true. Got '%v'", SuccessResultsResponse.ReturnedAllRows)
+	}
+
+	if utils.IsValidUUID(SuccessResultsResponse.RequestID) == false {
+		t.Errorf("Invalid RequestID value, expected valid UUID. Got '%s'", SuccessResponse1.RequestID)
+	}
+
+	if len(SuccessResultsResponse.Results) != 1 {
+		t.Errorf("Invalid Results array item count value, expected 1. Got '%d'", len(SuccessResultsResponse.Results))
+	}
+
+	_, err := time.Parse("2006-01-02T15:04:05", SuccessResultsResponse.RequestedOn)
+	if err != nil {
+		t.Errorf("Invalid RequestedOn value, cannot parse to layout 2006-01-02T15:04:05. Got '%s'", SuccessResultsResponse.RequestedOn)
+	}
+
+	if SuccessResultsResponse.Results[0].StringToMatch != "teststring1" {
+		t.Errorf("Invalid StringToMatch value, expected teststring1. Got '%s'", SuccessResultsResponse.Results[0].StringToMatch)
+	}
+
+	if SuccessResultsResponse.Results[0].StringMatched != "teststring2" {
+		t.Errorf("Invalid StringMatched value, expected teststring2. Got '%s'", SuccessResultsResponse.Results[0].StringMatched)
+	}
+
+	if SuccessResultsResponse.Results[0].Result != 90 {
+		t.Errorf("Invalid Result value, expected 90. Got '%d'", SuccessResultsResponse.Results[0].Result)
+	}
+
+	repository.Delete(SuccessResponse1.RequestID)
 
 }
 
@@ -247,9 +271,7 @@ func TestCreateValidGetRequestWithReturnedAllRows(t *testing.T) {
 	SuccessRequestResponse := successPostRequestResponse{}
 	json.Unmarshal(response1.Body.Bytes(), &SuccessRequestResponse)
 
-	requestID := SuccessRequestResponse.RequestID
-
-	req2, _ := http.NewRequest("GET", "/api/v1/requests/"+requestID+"/", nil)
+	req2, _ := http.NewRequest("GET", "/api/v1/requests/"+SuccessRequestResponse.RequestID+"/", nil)
 	response2 := executeRequest(req2)
 
 	checkResponseCode(t, http.StatusOK, response2.Code)
@@ -261,7 +283,7 @@ func TestCreateValidGetRequestWithReturnedAllRows(t *testing.T) {
 		t.Errorf("Expected ReturnedAllRows false. Got '%t'", SuccessResultsResponse.ReturnedAllRows)
 	}
 
-	req3, _ := http.NewRequest("GET", "/api/v1/requests/"+requestID+"/", nil)
+	req3, _ := http.NewRequest("GET", "/api/v1/requests/"+SuccessRequestResponse.RequestID+"/", nil)
 	response3 := executeRequest(req3)
 
 	checkResponseCode(t, http.StatusOK, response3.Code)
@@ -273,7 +295,7 @@ func TestCreateValidGetRequestWithReturnedAllRows(t *testing.T) {
 		t.Errorf("Expected ReturnedAllRows true. Got '%t'", SuccessResultsResponse.ReturnedAllRows)
 	}
 
-	repository.Delete(requestID)
+	repository.Delete(SuccessRequestResponse.RequestID)
 
 }
 
@@ -287,11 +309,11 @@ func TestCreateInvalidGetRequestInvalidUUID(t *testing.T) {
 
 	checkResponseCode(t, http.StatusInternalServerError, response.Code)
 
-	var m map[string]string
-	json.Unmarshal(response.Body.Bytes(), &m)
+	FailureResponse := failureResponse{}
+	json.Unmarshal(response.Body.Bytes(), &FailureResponse)
 
-	if m["error"] != "need a valid UUID for request ID" {
-		t.Errorf("Expected need a valid UUID for request ID error. Got '%s'", m["error"])
+	if FailureResponse.Error != "need a valid UUID for request ID" {
+		t.Errorf("Expected need a valid UUID for request ID error. Got '%s'", FailureResponse.Error)
 	}
 
 }
@@ -306,11 +328,11 @@ func TestCreateInvalidGetRequestInvalidRequestId(t *testing.T) {
 
 	checkResponseCode(t, http.StatusNotFound, response.Code)
 
-	var m map[string]string
-	json.Unmarshal(response.Body.Bytes(), &m)
+	FailureResponse := failureResponse{}
+	json.Unmarshal(response.Body.Bytes(), &FailureResponse)
 
-	if m["error"] != "request not found" {
-		t.Errorf("Expected request not found error. Got '%s'", m["error"])
+	if FailureResponse.Error != "request not found" {
+		t.Errorf("Expected request not found error. Got '%s'", FailureResponse.Error)
 	}
 
 }
@@ -323,11 +345,11 @@ func TestCreateInvalidGetRequestInvalidURL(t *testing.T) {
 
 	checkResponseCode(t, http.StatusNotFound, response.Code)
 
-	var m map[string]string
-	json.Unmarshal(response.Body.Bytes(), &m)
+	FailureResponse := failureResponse{}
+	json.Unmarshal(response.Body.Bytes(), &FailureResponse)
 
-	if m["error"] != "" {
-		t.Errorf("Expected no error. Got '%s'", m["error"])
+	if FailureResponse.Error != "" {
+		t.Errorf("Expected no error. Got '%s'", FailureResponse.Error)
 	}
 
 }
