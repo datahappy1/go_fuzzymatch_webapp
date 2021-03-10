@@ -8,7 +8,16 @@ import (
 // Create returns string
 func Create(RequestID string, StringsToMatch []string, StringsToMatchIn []string,
 	Mode string, RequestedFromIP string, BatchSize int) error {
-	fuzzyMatchObject := model.CreateFuzzyMatch(RequestID, StringsToMatch, StringsToMatchIn, Mode, RequestedFromIP, BatchSize, 0)
+
+	fuzzyMatchObject := model.CreateFuzzyMatch(
+		RequestID,
+		StringsToMatch,
+		StringsToMatchIn,
+		Mode,
+		RequestedFromIP,
+		BatchSize,
+		0)
+
 	model.RequestsData = append(model.RequestsData, fuzzyMatchObject)
 	return nil
 }
@@ -21,7 +30,7 @@ func Update(requestID string, returnedRows int) error {
 			return nil
 		}
 	}
-	return errors.New("Request not found, not updated")
+	return errors.New("request not found, not updated")
 }
 
 // Delete returns error
@@ -34,7 +43,7 @@ func Delete(requestID string) error {
 			return nil
 		}
 	}
-	return errors.New("Request not found, not deleted")
+	return errors.New("request not found, not deleted")
 }
 
 // GetByRequestID returns FuzzyMatchModel

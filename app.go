@@ -54,13 +54,15 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, a.conf.MaxRequestByteSize)
 
 	if len(repository.GetAll()) >= a.conf.MaxActiveRequestsCount {
-		respondWithError(w, http.StatusTooManyRequests, errors.New("too many overall requests in flight, try later"))
+		respondWithError(w, http.StatusTooManyRequests,
+			errors.New("too many overall requests in flight, try later"))
 		return
 	}
 
 	requestedFromIP, err := utils.GetIP(r)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, errors.New("cannot determine IP address"))
+		respondWithError(w, http.StatusInternalServerError,
+			errors.New("cannot determine IP address"))
 		return
 	}
 
@@ -75,7 +77,8 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
 	requestBodyString, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		respondWithError(w, http.StatusNotAcceptable, errors.New("cannot read request body"))
+		respondWithError(w, http.StatusNotAcceptable,
+			errors.New("cannot read request body"))
 		return
 	}
 
@@ -84,7 +87,8 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		if e, ok := err.(*json.SyntaxError); ok {
 			log.Printf("syntax error at byte offset %d", e.Offset)
 		}
-		respondWithError(w, http.StatusInternalServerError, errors.New("error decoding request data"))
+		respondWithError(w, http.StatusInternalServerError,
+			errors.New("error decoding request data"))
 		return
 	}
 
@@ -94,7 +98,8 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		fuzzyMatchExternalRequest.Mode, requestedFromIP)
 
 	if err != nil {
-		respondWithError(w, http.StatusNotAcceptable, errors.New("error invalid request"))
+		respondWithError(w, http.StatusNotAcceptable,
+			errors.New("error invalid request"))
 		return
 	}
 
@@ -120,7 +125,8 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	if val, ok := pathParams["requestID"]; ok {
 		requestID = val
 		if utils.IsValidUUID(val) == false {
-			respondWithError(w, http.StatusInternalServerError, errors.New("need a valid UUID for request ID"))
+			respondWithError(w, http.StatusInternalServerError,
+				errors.New("need a valid UUID for request ID"))
 			return
 		}
 	}
@@ -128,7 +134,8 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	fuzzyMatchObject := repository.GetByRequestID(requestID)
 
 	if fuzzyMatchObject.RequestID == "" {
-		respondWithError(w, http.StatusNotFound, errors.New("request not found"))
+		respondWithError(w, http.StatusNotFound,
+			errors.New("request not found"))
 		return
 	}
 
@@ -169,6 +176,8 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.WriteHeader(code)
 
 	response, _ := json.Marshal(payload)
-	w.Write(response)
+	_, err := w.Write(response)
+
+	fmt.Println(err)
 
 }
