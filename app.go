@@ -13,12 +13,27 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 // App returns struct
 type App struct {
 	Router *mux.Router
 	conf   config.Configuration
+}
+
+// ClearAppRequestData
+func ClearAppRequestData() {
+	ticker := time.NewTicker(1 * time.Minute)
+
+	go func() {
+		for {
+			select {
+			case t := <-ticker.C:
+				fmt.Println("Tick at", t)
+			}
+		}
+	}()
 }
 
 // Initialize App
@@ -178,6 +193,8 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 	_, err := w.Write(response)
 
-	fmt.Println(err)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 }

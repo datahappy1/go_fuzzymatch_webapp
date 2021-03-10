@@ -5,8 +5,13 @@ import (
 )
 
 func main() {
-	a := App{}
-	a.Initialize("production")
+
+	go ClearAppRequestData()
+
+	env, ok := os.LookupEnv("ENV")
+	if !ok {
+		env = "production"
+	}
 
 	port, ok := os.LookupEnv("PORT")
 
@@ -14,6 +19,8 @@ func main() {
 		port = "8080"
 	}
 
+	a := App{}
+	a.Initialize(env)
 	a.Run(":" + port)
 
 }
