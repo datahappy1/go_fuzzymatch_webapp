@@ -6,8 +6,6 @@ import (
 
 func main() {
 
-	go ClearAppRequestData()
-
 	env, ok := os.LookupEnv("ENV")
 	if !ok {
 		env = "production"
@@ -20,6 +18,8 @@ func main() {
 	}
 
 	a := App{}
+
+	go a.ClearAppRequestData()
 	a.Initialize(env)
 	a.Run(":" + port)
 

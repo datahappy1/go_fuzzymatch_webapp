@@ -3,7 +3,7 @@ package repository
 import (
 	"errors"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
-	"time"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 )
 
 // Create returns string
@@ -72,22 +72,15 @@ func GetAll() []model.FuzzyMatchModel {
 	return model.RequestsData
 }
 
-func convertDateStringToUnixEpoch(dateString string) int64 {
-	t, err := time.Parse("2006-01-02T15:04:05", dateString)
-	if err != nil {
-		return 0
-	}
-	return t.Unix()
-}
-
 // GetAllTimedOutRequests returns []model.FuzzyMatchModel
-func GetAllTimedOutRequests() []model.FuzzyMatchModel {
+func GetAllTimedOutRequests(RequestTTLInMinutes int) []model.FuzzyMatchModel {
 	var result []model.FuzzyMatchModel
-	dt := time.Now().Unix()
+	currentDateTimeOffset := utils.GetCurrentDateTimeOffset(RequestTTLInMinutes)
+	currentDateTimeOffsetString := currentDateTimeOffset.String()
+	currentDateTimeOffsetUnixEpoch := utils.ConvertDateStringToUnixEpoch(currentDateTimeOffsetString)
 
 	for i := range model.RequestsData {
-
-		if convertDateStringToUnixEpoch(model.RequestsData[i].RequestedOn) >= dt {
+		if utils.ConvertDateStringToUnixEpoch(model.RequestsData[i].RequestedOn) <= currentDateTimeOffsetUnixEpoch {
 			result = append(result, model.RequestsData[i])
 		}
 	}

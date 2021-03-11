@@ -9,6 +9,7 @@ import (
 // Configuration returns struct
 type Configuration struct {
 	BatchSize              int
+	RequestTTLInMinutes	   int
 	MaxActiveRequestsCount int
 	MaxRequestByteSize     int64
 }

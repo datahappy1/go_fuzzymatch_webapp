@@ -22,8 +22,8 @@ type App struct {
 	conf   config.Configuration
 }
 
-// ClearAppRequestData
-func ClearAppRequestData() {
+// ClearAppRequestData returns nil
+func (a *App) ClearAppRequestData() {
 	ticker := time.NewTicker(1 * time.Minute)
 
 	go func() {
@@ -31,7 +31,7 @@ func ClearAppRequestData() {
 			select {
 			case t := <-ticker.C:
 				fmt.Println("Tick at", t)
-				timedOutRequests := repository.GetAllTimedOutRequests()
+				timedOutRequests := repository.GetAllTimedOutRequests(a.conf.RequestTTLInMinutes)
 				for i := range timedOutRequests {
 					err := repository.Delete(timedOutRequests[i].RequestID)
 					if err != nil {
