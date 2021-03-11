@@ -31,6 +31,13 @@ func ClearAppRequestData() {
 			select {
 			case t := <-ticker.C:
 				fmt.Println("Tick at", t)
+				timedOutRequests := repository.GetAllTimedOutRequests()
+				for i := range timedOutRequests {
+					err := repository.Delete(timedOutRequests[i].RequestID)
+					if err != nil {
+						fmt.Println("cannot delete request")
+					}
+				}
 			}
 		}
 	}()
