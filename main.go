@@ -6,13 +6,12 @@ import (
 
 func main() {
 
-	env, ok := os.LookupEnv("ENV")
+	env, ok := os.LookupEnv("environment")
 	if !ok {
 		env = "production"
 	}
 
 	port, ok := os.LookupEnv("PORT")
-
 	if !ok {
 		port = "8080"
 	}

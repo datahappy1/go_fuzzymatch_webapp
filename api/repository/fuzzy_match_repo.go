@@ -76,8 +76,7 @@ func GetAll() []model.FuzzyMatchModel {
 func GetAllTimedOutRequests(RequestTTLInMinutes int) []model.FuzzyMatchModel {
 	var result []model.FuzzyMatchModel
 	currentDateTimeOffset := utils.GetCurrentDateTimeOffset(RequestTTLInMinutes)
-	currentDateTimeOffsetString := currentDateTimeOffset.String()
-	currentDateTimeOffsetUnixEpoch := utils.ConvertDateStringToUnixEpoch(currentDateTimeOffsetString)
+	currentDateTimeOffsetUnixEpoch := utils.ConvertDateStringToUnixEpoch(currentDateTimeOffset)
 
 	for i := range model.RequestsData {
 		if utils.ConvertDateStringToUnixEpoch(model.RequestsData[i].RequestedOn) <= currentDateTimeOffsetUnixEpoch {
