@@ -2,26 +2,31 @@
 <html lang="en">
 
 <head>
+    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <title>Fuzzster</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-
 </head>
 
-<body class="bg-light">
+<body class="bg-dark">
     <!-- Navigation start-->
-    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
+    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-light bg-info align-items-end">
         <div class="container-fluid">
-            <div class="navbar-brand">
-                <a class="navbar-brand mr-0 mr-md-2" href="/">
-                    <img src="/img/fuzzster_logo_200x30.png" alt="fuzzster logo" class="d-inline-block align-top">
+            <div class="navbar-brand align-self-end">
+                <a class="navbar-brand" href="/">
+                    Fuzzster
                 </a>
             </div>
 
@@ -33,11 +38,11 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
-                            href="#home">Home</a></li>
-                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
                             href="#match">Match</a></li>
                     <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
                             href="#api_docs">API</a></li>
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
+                            href="#about">About</a></li>
                     <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
                             href="#contact">Contact</a></li>
                 </ul>
@@ -47,59 +52,16 @@
     <!-- Navigation end-->
     <!-- Body Container start-->
     <div>
-        <!-- Home container start -->
-        <div class="pt-5" id="home">
-            <div class="shadow-sm p-3 m-3 bg-white rounded min-vh-100">
+        <div class="pt-5" id="match">
+            <div class="p-3 mt-3 mr-5 ml-5 mb-0">
                 <div class="row pt-2">
-                    <div class="col-sm">
-                        <h4>Welcome to Fuzzster!</h4>
-                        <p>
-                            This fuzzy matching tool is based on the
-                            <a href="https://en.wikipedia.org/wiki/Levenshtein_distance" target="_blank">Levenshtein string distance</a> ratio.
-                        </p>
-                        <p>
-                            This tool was build using Go for the backend API part and Javascript with Webpack for the
-                            frontend client part.
-                        </p>
-                        <p>
-                            Checkout the
-                            <a href="https://github.com/datahappy1/go_fuzzymatch_webapp" target="_blank">Github repository</a> if you want to find out more on how this tool is build.
-                        </p>
-                        <p>
-                            Checkout this
-                            <a href="https://github.com/datahappy1/go_fuzzymatch#go_fuzzymatch" target="_blank">Github repository</a> if you want to find out more on the available matching modes.
-
-                        </p>
-                    </div>
+                    <img src="/img/gopher_logo_small.png" class="mx-auto d-block" alt="gopher fuzzster logo">
                 </div>
-
-                <div class="row pt-2">
-                    <div class="col-sm-6">
-                        <div class="card h-200">
-                            <div class="card-body">
-                                <h5 class="card-title">Start matching!</h5>
-                                <p class="card-text">If you need to fuzzy match chunks of data of up to 10 000 chars, <a href="#match">start matching</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="card h-200">
-                            <div class="card-body">
-                                <h5 class="card-title">Use the API!</h5>
-                                <p class="card-text">If you need to fuzzy match large chunks of data, use the <a href="#api_docs">API</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
-        <!-- Home container end-->
         <!-- Match container start -->
         <div class="pt-5" id="match">
-            <div class="shadow-sm p-3 m-3 bg-white rounded min-vh-100">
+            <div class="shadow-sm p-3 mt-0 mr-5 ml-5 mb-5 bg-light rounded min-vh-100">
                 <!-- Alerts start-->
                 <div class="row pt-2">
                     <div class="col-sm">
@@ -120,6 +82,13 @@
                 </div>
                 <div class="row pt-2">
                     <div class="col-sm">
+                        <blockquote class="blockquote">
+                            If you need to fuzzy match large chunks of data, use the <a href="#api_docs">API</a>
+                        </blockquote>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-sm">
                         <label for="mode">Choose mode:</label>
                         <select class="form-control form-control-sm" name="mode" id="mode">
                             <option value="simple">simple</option>
@@ -134,8 +103,9 @@
                     <div class="col-sm">
                         <div class="d-flex justify-content-between">
                             <label for="stringsToMatch">Strings to match:</label>
-                            <button type="button" class="btn btn-danger btn-sm" id="clearStringsToMatchTextarea">
-                                clear
+                            <button type="button" class="close" aria-label="Close" id="clearStringsToMatchTextarea"
+                                title="Clear contents">
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"
@@ -145,8 +115,9 @@
                     <div class="col-sm">
                         <div class="d-flex justify-content-between">
                             <label for="stringsToMatchIn">Strings to match in:</label>
-                            <button type="button" class="btn btn-danger btn-sm" id="clearStringsToMatchInTextarea">
-                                clear
+                            <button type="button" class="close" aria-label="Close" id="clearStringsToMatchInTextarea"
+                                title="Clear contents">
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="10" cols="50"
@@ -168,7 +139,7 @@
         <!-- Match container end -->
         <!-- Results container start -->
         <div class="pt-5" id="results" style="display:none;">
-            <div class="shadow-sm p-3 m-3 bg-white rounded min-vh-100">
+            <div class="shadow-sm p-3 m-5 bg-light rounded min-vh-100">
                 <!-- Alerts start-->
                 <div class="alert alert-danger" role="alert" id="copyToClipboardErrorAlert" style="display:none;">
                 </div>
@@ -180,7 +151,8 @@
                 </div>
                 <div class="row pt-2">
                     <div class="col-sm">
-                        <label for="rangeInput" class="form-label" id="labelFormControlRange">Filter for results above
+                        <label for="rangeInput" class="form-label" id="labelFormControlRange">Filter for results
+                            above
                             match
                             result</label>
                         <output id="amount" name="amount" for="rangeInput">80</output>
@@ -225,7 +197,7 @@
         <!-- Results container end-->
         <!-- API Documentation container start -->
         <div class="pt-5" id="api_docs">
-            <div class="shadow-sm p-3 m-3 bg-white rounded min-vh-100" id="apiDocumentationDiv">
+            <div class="shadow-sm p-3 m-5 bg-light rounded min-vh-100" id="apiDocumentationDiv">
                 <!-- Alerts start-->
                 <div class="alert alert-danger" role="alert" id="loadDocumentationErrorAlert" style="display:none;">
                 </div>
@@ -243,9 +215,46 @@
             </div>
         </div>
         <!-- API Documentation container end -->
+        <!-- About container start -->
+        <div class="pt-5" id="about">
+            <div class="shadow-sm p-3 m-5 bg-light rounded min-vh-100">
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <h4>About:</h4>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-sm">
+                        <p>
+                            This fuzzy matching tool is based on the
+                            <a href="https://en.wikipedia.org/wiki/Levenshtein_distance" target="_blank">Levenshtein
+                                string distance</a> ratio.
+                        </p>
+                        <p>
+                            This tool was build using Go for the backend API part and Javascript with Webpack for
+                            the
+                            frontend client part.
+                        </p>
+                        <p>
+                            Checkout the
+                            <a href="https://github.com/datahappy1/go_fuzzymatch_webapp" target="_blank">Github
+                                repository</a> if you want to find out more on how this tool is build.
+                        </p>
+                        <p>
+                            Checkout this
+                            <a href="https://github.com/datahappy1/go_fuzzymatch#go_fuzzymatch" target="_blank">Github
+                                repository</a> if you want to find out more on the available
+                            matching modes.
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- About container end -->
         <!-- Contact container start -->
         <div class="pt-5" id="contact">
-            <div class="shadow-sm p-3 m-3 bg-white rounded min-vh-100">
+            <div class="shadow-sm p-3 m-5 bg-light rounded min-vh-100">
                 <div class="row pt-2">
                     <div class="col-sm">
                         <h4>Contact:</h4>
@@ -267,7 +276,8 @@
                             <div class="card-body">
                                 <h5 class="card-title">Raise issues with Fuzzster</h5>
                                 <p class="card-text">In case you need to raise issues with this tool go
-                                    <a href="https://github.com/datahappy1/go_fuzzymatch_webapp/issues" target="_blank">here</a>
+                                    <a href="https://github.com/datahappy1/go_fuzzymatch_webapp/issues"
+                                        target="_blank">here</a>
                                 </p>
                             </div>
                         </div>

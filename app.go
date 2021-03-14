@@ -30,15 +30,15 @@ func (a *App) ClearAppRequestData() {
 		for {
 			select {
 			case t := <-ticker.C:
-				fmt.Println("Checking for timed out requests", t)
+				log.Printf("Checking for timed out requests %s", t)
 				timedOutRequests := repository.GetAllTimedOutRequests(a.conf.RequestTTLInMinutes)
 
 				for i := range timedOutRequests {
 					err := repository.Delete(timedOutRequests[i].RequestID)
 					if err != nil {
-						fmt.Println("cannot delete request", timedOutRequests[i].RequestID)
+						log.Printf("cannot delete request %s", timedOutRequests[i].RequestID)
 					} else {
-						fmt.Println("deleted timed out request", timedOutRequests[i].RequestID)
+						log.Printf("deleted timed out request %s", timedOutRequests[i].RequestID)
 					}
 				}
 			}

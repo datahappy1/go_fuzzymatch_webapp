@@ -17,6 +17,8 @@ var a App
 
 func TestMain(m *testing.M) {
 	a = App{}
+
+	go a.ClearAppRequestData()
 	a.Initialize("development")
 	code := m.Run()
 
@@ -350,6 +352,39 @@ func TestCreateInvalidGetRequestInvalidURL(t *testing.T) {
 
 	if FailureResponse.Error != "" {
 		t.Errorf("Expected no error. Got '%s'", FailureResponse.Error)
+	}
+
+}
+
+func TestCreateValidPostRequestTimeout(t *testing.T) {
+
+	payload := []byte(`{"stringsToMatch":"teststring1","stringsToMatchIn":"teststring2", "mode": "simple"}`)
+
+	req1, _ := http.NewRequest("POST", "/api/v1/requests/", bytes.NewBuffer(payload))
+	req1.RemoteAddr = "0.0.0.0:80"
+	response1 := executeRequest(req1)
+
+	checkResponseCode(t, http.StatusOK, response1.Code)
+
+	SuccessResponse1 := successPostRequestResponse{}
+	json.Unmarshal(response1.Body.Bytes(), &SuccessResponse1)
+
+	if utils.IsValidUUID(SuccessResponse1.RequestID) == false {
+		t.Errorf("Invalid RequestID. Got '%s'", SuccessResponse1.RequestID)
+	}
+
+	time.Sleep(time.Duration(a.conf.RequestTTLInMinutes) * time.Minute)
+
+	req2, _ := http.NewRequest("GET", "/api/v1/requests/"+SuccessResponse1.RequestID+"/", nil)
+	response2 := executeRequest(req2)
+
+	checkResponseCode(t, http.StatusNotFound, response2.Code)
+
+	FailureResponse := failureResponse{}
+	json.Unmarshal(response2.Body.Bytes(), &FailureResponse)
+
+	if FailureResponse.Error != "request not found" {
+		t.Errorf("Expected request not found. Got '%s'", FailureResponse.Error)
 	}
 
 }

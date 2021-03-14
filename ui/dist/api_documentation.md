@@ -41,10 +41,10 @@
 * **Sample Call:**
 
 	Windows cmd:
-	`curl -X POST -d "{""stringsToMatch"":""'apple, gmbh','corp'"",""stringsToMatchIn"":""aplle"",""mode"":""combined""}" http://localhost:8080/api/v1/requests/`
+	`curl -X POST -d "{""stringsToMatch"":""'apple, gmbh','corp'"",""stringsToMatchIn"":""aplle"",""mode"":""combined""}" {root_api_url}`
 
 	*Nix terminal:
-	`curl --location --request POST 'http://localhost:8080/api/v1/requests/' \
+	`curl --location --request POST '{root_api_url}' \
 	--header 'Content-Type: text/plain' \
 	--data-raw '{
 		"stringsToMatch": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.",
