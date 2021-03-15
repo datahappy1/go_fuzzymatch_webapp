@@ -22,7 +22,7 @@
 
 <body class="bg-dark">
     <!-- Navigation start-->
-    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-light bg-info align-items-end">
+    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-dark bg-success align-items-end">
         <div class="container-fluid">
             <div class="navbar-brand align-self-end">
                 <a class="navbar-brand" href="/">
@@ -52,7 +52,7 @@
     <!-- Navigation end-->
     <!-- Body Container start-->
     <div>
-        <div class="pt-5" id="logo">
+        <div class="pt-5" id="match">
             <div class="p-3 mt-3 mr-5 ml-5 mb-0">
                 <div class="row pt-2">
                     <img src="/img/gopher_logo_ruler_small.png" class="mx-auto d-block" alt="gopher fuzzster logo">
@@ -60,8 +60,8 @@
             </div>
         </div>
         <!-- Match container start -->
-        <div class="pt-5" id="match">
-            <div class="shadow-sm p-3 mt-5 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
+        <div class="pt-0" id="match_input">
+            <div class="shadow-sm p-3 mt-0 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
                 <!-- Alerts start-->
                 <div class="row pt-2">
                     <div class="col-sm">
@@ -91,9 +91,9 @@
                     <div class="col-sm">
                         <label for="mode">Choose mode:</label>
                         <select class="form-control form-control-sm" name="mode" id="mode">
-                            <option value="simple">simple</option>
-                            <option value="deepDive">deepDive</option>
-                            <option value="combined">combined</option>
+                            <option value="simple">simple ( the fast option )</option>
+                            <option value="deepDive">deep-dive ( the slower in-depth option )</option>
+                            <option value="combined">combined ( combination of simple and deep-dive mode )</option>
                         </select>
                     </div>
                     <div class="col-sm">
