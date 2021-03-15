@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 	a = App{}
 
 	go a.ClearAppRequestData()
-	a.Initialize("development")
+	a.Initialize("testing")
 	code := m.Run()
 
 	os.Exit(code)

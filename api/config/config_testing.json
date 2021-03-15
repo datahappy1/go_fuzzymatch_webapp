@@ -1,0 +1,6 @@
+{
+    "batchSize": 3,
+    "RequestTTLInMinutes": 1,
+    "maxActiveRequestsCount": 2,
+    "MaxRequestByteSize": 1048576
+}
