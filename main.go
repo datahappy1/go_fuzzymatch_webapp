@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/datahappy1/go_fuzzymatch_webapp/api"
 	"os"
 )
 
@@ -16,7 +17,7 @@ func main() {
 		port = "8080"
 	}
 
-	a := App{}
+	a := api.App{}
 
 	go a.ClearAppRequestData()
 	a.Initialize(env)

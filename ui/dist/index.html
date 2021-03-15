@@ -90,7 +90,7 @@
                 <div class="row pt-2">
                     <div class="col-sm">
                         <label for="mode">Choose mode:</label>
-                        <select class="form-control form-control-sm" name="mode" id="mode">
+                        <select class="form-control form-control" name="mode" id="mode">
                             <option value="simple">simple ( the fast option )</option>
                             <option value="deepDive">deep-dive ( the slower in-depth option )</option>
                             <option value="combined">combined ( combination of simple and deep-dive mode )</option>
@@ -108,7 +108,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="10" cols="50"
+                        <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="8" cols="50"
                             placeholder="Comma separated list of strings to evaluate comes in here. Use single quotes to quote strings that contain a comma, for example: &#039;address line, city&#039;"
                             maxlength="10000"></textarea>
                     </div>
@@ -120,14 +120,14 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="10" cols="50"
+                        <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="8" cols="50"
                             placeholder="Comma separated list of strings to match in comes in here. Use single quotes to quote strings that contain a comma, for example: &#039;address line, city&#039;"
                             maxlength="10000"></textarea>
                     </div>
                 </div>
                 <div class="row pt-2">
                     <div class="col-sm">
-                        <button class="btn btn-primary" id="submitButton">Match!
+                        <button class="btn btn-primary btn-lg btn-block" id="submitButton">Match!
                             <span class="spinner-border spinner-border-sm" id="submitButtonSpinner" role="status"
                                 aria-hidden="true" style="display:none;"></span>
                         </button>

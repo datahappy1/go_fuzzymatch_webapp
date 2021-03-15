@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/repository"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 	"net/http"
@@ -13,10 +14,10 @@ import (
 	"time"
 )
 
-var a App
+var a api.App
 
 func TestMain(m *testing.M) {
-	a = App{}
+	a = api.App{}
 
 	go a.ClearAppRequestData()
 	a.Initialize("testing")
@@ -373,7 +374,7 @@ func TestCreateValidPostRequestTimeout(t *testing.T) {
 		t.Errorf("Invalid RequestID. Got '%s'", SuccessResponse1.RequestID)
 	}
 
-	time.Sleep(time.Duration(a.conf.RequestTTLInMinutes) * time.Minute)
+	time.Sleep(time.Duration(a.Conf.RequestTTLInMinutes) * time.Minute)
 
 	req2, _ := http.NewRequest("GET", "/api/v1/requests/"+SuccessResponse1.RequestID+"/", nil)
 	response2 := executeRequest(req2)

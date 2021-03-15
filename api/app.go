@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -19,7 +19,7 @@ import (
 // App returns struct
 type App struct {
 	Router *mux.Router
-	conf   config.Configuration
+	Conf   config.Configuration
 }
 
 // ClearAppRequestData returns nil
@@ -31,7 +31,7 @@ func (a *App) ClearAppRequestData() {
 			select {
 			case t := <-ticker.C:
 				log.Printf("Checking for timed out requests %s", t)
-				timedOutRequests := repository.GetAllTimedOutRequests(a.conf.RequestTTLInMinutes)
+				timedOutRequests := repository.GetAllTimedOutRequests(a.Conf.RequestTTLInMinutes)
 
 				for i := range timedOutRequests {
 					err := repository.Delete(timedOutRequests[i].RequestID)
@@ -49,7 +49,7 @@ func (a *App) ClearAppRequestData() {
 // Initialize App
 func (a *App) Initialize(environment string) {
 	var err error
-	a.conf, err = config.GetConfiguration(environment)
+	a.Conf, err = config.GetConfiguration(environment)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,9 +76,9 @@ func (a *App) initializeRoutes() {
 
 func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
-	r.Body = http.MaxBytesReader(w, r.Body, a.conf.MaxRequestByteSize)
+	r.Body = http.MaxBytesReader(w, r.Body, a.Conf.MaxRequestByteSize)
 
-	if len(repository.GetAll()) >= a.conf.MaxActiveRequestsCount {
+	if len(repository.GetAll()) >= a.Conf.MaxActiveRequestsCount {
 		respondWithError(w, http.StatusTooManyRequests,
 			errors.New("too many overall requests in flight, try later"))
 		return
@@ -129,7 +129,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = repository.Create(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
-		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP, a.conf.BatchSize)
+		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP, a.Conf.BatchSize)
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError,
