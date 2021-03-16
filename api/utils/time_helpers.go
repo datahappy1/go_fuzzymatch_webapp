@@ -5,9 +5,10 @@ import (
 	"time"
 )
 
-// GetCurrentTimestamp return time.Time
-func GetCurrentTimestamp() time.Time {
-	return time.Now()
+// GetCurrentUTCTimestamp return time.Time
+func GetCurrentUTCTimestamp() time.Time {
+	loc, _ := time.LoadLocation("UTC")
+	return time.Now().In(loc)
 }
 
 // FormatTimestamp return string
@@ -28,7 +29,7 @@ func ConvertDateStringToUnixEpoch(dateString string) int64 {
 
 // GetCurrentDateTimeOffset returns string
 func GetCurrentDateTimeOffset(RequestTTLInMinutes int) string {
-	CurrentDateTime := GetCurrentTimestamp()
+	CurrentDateTime := GetCurrentUTCTimestamp()
 	CurrentDateTimeOffset := CurrentDateTime.Add(time.Duration(-RequestTTLInMinutes) * time.Minute)
 	CurrentDateTimeOffsetFormatted := FormatTimestamp(CurrentDateTimeOffset)
 	return CurrentDateTimeOffsetFormatted

@@ -5,7 +5,7 @@ import (
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 )
 
-var modeTypes = [3]string{"simple", "deepDive", "combined"}
+var modeTypes = []string{"simple", "deepDive", "combined"}
 
 // FuzzyMatchExternalRequest returns struct
 type FuzzyMatchExternalRequest struct {

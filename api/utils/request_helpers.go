@@ -51,7 +51,7 @@ func IsValidUUID(RequestUUID string) bool {
 }
 
 // IsStringInSlice returns bool
-func IsStringInSlice(a string, list [3]string) bool {
+func IsStringInSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
 			return true

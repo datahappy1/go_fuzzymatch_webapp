@@ -28,7 +28,7 @@ func CreateFuzzyMatch(requestID string, stringsToMatch []string, stringsToMatchI
 		StringsToMatch:         stringsToMatch,
 		StringsToMatchIn:       stringsToMatchIn,
 		Mode:                   mode,
-		RequestedOn:            utils.FormatTimestamp(utils.GetCurrentTimestamp()),
+		RequestedOn:            utils.FormatTimestamp(utils.GetCurrentUTCTimestamp()),
 		RequestedFromIP:        requestedFromIP,
 		BatchSize:              batchSize,
 		StringsToMatchLength:   len(stringsToMatch),
