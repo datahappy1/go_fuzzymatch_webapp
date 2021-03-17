@@ -99,11 +99,9 @@ export async function fetch_get_lazy_response_results(requestId) {
 export async function update_results_table_with_fetched_data(requestId) {
     let results = await fetch_get_lazy_response_results(requestId);
 
-    if (results["ReturnedAllRows"] === true) {
-        _updateResultsTable(results["Results"]);
-
-    } else {
-        _updateResultsTable(results["Results"]);
+    _updateResultsTable(results["Results"]);
+    
+    if (results["ReturnedAllRows"] === false) {
         await update_results_table_with_fetched_data(requestId);
     }
 }

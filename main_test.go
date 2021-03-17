@@ -116,53 +116,6 @@ func TestCreateInvalidPostRequestInvalidPayload(t *testing.T) {
 	}
 }
 
-func TestCreateInvalidPostRequestInvalidIP(t *testing.T) {
-
-	payload := []byte(`{"stringsToMatch":"teststring1","stringsToMatchIn":"teststring2", "mode": "simple"}`)
-
-	req, _ := http.NewRequest("POST", "/api/v1/requests/", bytes.NewBuffer(payload))
-	response := executeRequest(req)
-
-	checkResponseCode(t, http.StatusInternalServerError, response.Code)
-
-	FailureResponse := failureResponse{}
-	json.Unmarshal(response.Body.Bytes(), &FailureResponse)
-
-	if FailureResponse.Error != "cannot determine IP address" {
-		t.Errorf("Expected cannot determine IP address error. Got '%s'", FailureResponse.Error)
-	}
-
-}
-
-func TestCreateInvalidPostRequestTooManyRequestsFromSameIP(t *testing.T) {
-
-	payload := []byte(`{"stringsToMatch":"teststring1","stringsToMatchIn":"teststring2", "mode": "simple"}`)
-
-	req1, _ := http.NewRequest("POST", "/api/v1/requests/", bytes.NewBuffer(payload))
-	req1.RemoteAddr = "0.0.0.0:80"
-	response1 := executeRequest(req1)
-
-	checkResponseCode(t, http.StatusOK, response1.Code)
-
-	SuccessResponse := successPostRequestResponse{}
-	json.Unmarshal(response1.Body.Bytes(), &SuccessResponse)
-
-	req2, _ := http.NewRequest("POST", "/api/v1/requests/", bytes.NewBuffer(payload))
-	req2.RemoteAddr = "0.0.0.0:80"
-	response2 := executeRequest(req2)
-
-	checkResponseCode(t, http.StatusTooManyRequests, response2.Code)
-
-	FailureResponse := failureResponse{}
-	json.Unmarshal(response2.Body.Bytes(), &FailureResponse)
-
-	if FailureResponse.Error != "too many requests from IP address, collect request "+SuccessResponse.RequestID+" data first" {
-		t.Errorf("Expected too many requests from IP address in flight error. Got '%s'", FailureResponse.Error)
-	}
-
-	repository.Delete(SuccessResponse.RequestID)
-}
-
 func TestCreateInvalidPostRequestTooManyOverallRequests(t *testing.T) {
 
 	payload := []byte(`{"stringsToMatch":"teststring1","stringsToMatchIn":"teststring2", "mode": "simple"}`)

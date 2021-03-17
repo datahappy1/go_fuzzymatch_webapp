@@ -11,7 +11,6 @@ type FuzzyMatchModel struct {
 	StringsToMatchIn       []string
 	Mode                   string
 	RequestedOn            string
-	RequestedFromIP        string
 	BatchSize              int
 	StringsToMatchLength   int
 	StringsToMatchInLength int
@@ -21,7 +20,7 @@ type FuzzyMatchModel struct {
 
 // CreateFuzzyMatch returns FuzzyMatchModel
 func CreateFuzzyMatch(requestID string, stringsToMatch []string, stringsToMatchIn []string,
-	mode string, requestedFromIP string, batchSize int, returnedRows int) FuzzyMatchModel {
+	mode string, batchSize int, returnedRows int) FuzzyMatchModel {
 
 	return FuzzyMatchModel{
 		RequestID:              requestID,
@@ -29,7 +28,6 @@ func CreateFuzzyMatch(requestID string, stringsToMatch []string, stringsToMatchI
 		StringsToMatchIn:       stringsToMatchIn,
 		Mode:                   mode,
 		RequestedOn:            utils.FormatTimestamp(utils.GetCurrentUTCTimestamp()),
-		RequestedFromIP:        requestedFromIP,
 		BatchSize:              batchSize,
 		StringsToMatchLength:   len(stringsToMatch),
 		StringsToMatchInLength: len(stringsToMatchIn),

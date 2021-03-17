@@ -78,23 +78,9 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, a.Conf.MaxRequestByteSize)
 
-	if len(repository.GetAll()) >= a.Conf.MaxActiveRequestsCount {
+	if repository.CountAll() >= a.Conf.MaxActiveRequestsCount {
 		respondWithError(w, http.StatusTooManyRequests,
 			errors.New("too many overall requests in flight, try later"))
-		return
-	}
-
-	requestedFromIP, err := utils.GetIP(r)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError,
-			errors.New("cannot determine IP address"))
-		return
-	}
-
-	inFlightRequestID := repository.GetByIP(requestedFromIP).RequestID
-	if inFlightRequestID != "" {
-		respondWithError(w, http.StatusTooManyRequests,
-			errors.New(fmt.Sprintf("too many requests from IP address, collect request %s data first", inFlightRequestID)))
 		return
 	}
 
@@ -120,7 +106,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	fuzzyMatchRequest, err := model.CreateFuzzyMatchRequest(
 		utils.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatch),
 		utils.SplitFormStringValueToSliceOfStrings(fuzzyMatchExternalRequest.StringsToMatchIn),
-		fuzzyMatchExternalRequest.Mode, requestedFromIP)
+		fuzzyMatchExternalRequest.Mode)
 
 	if err != nil {
 		respondWithError(w, http.StatusNotAcceptable,
@@ -129,7 +115,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = repository.Create(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
-		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, fuzzyMatchRequest.RequestedFromIP, a.Conf.BatchSize)
+		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, a.Conf.BatchSize)
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError,

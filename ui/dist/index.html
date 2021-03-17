@@ -22,7 +22,7 @@
 
 <body class="bg-dark">
     <!-- Navigation start-->
-    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-dark align-items-end" style="background-color:#5f16dc;">
+    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-dark align-items-end" style="background-color:#000000;">
         <div class="container-fluid">
             <div class="navbar-brand align-self-end">
                 <a class="navbar-brand" href="/">
@@ -93,7 +93,7 @@
                         <select class="form-control form-control" name="mode" id="mode">
                             <option value="simple">simple ( the fast option )</option>
                             <option value="deepDive">deep-dive ( the slower in-depth option )</option>
-                            <option value="combined">combined ( combination of simple and deep-dive mode )</option>
+                            <option value="combined">combined ( combination of simple and deep-dive )</option>
                         </select>
                     </div>
                     <div class="col-sm">
@@ -109,7 +109,7 @@
                             </button>
                         </div>
                         <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="8" cols="50"
-                            placeholder="Comma separated list of strings to evaluate comes in here. Use single quotes to quote strings that contain a comma, for example: &#039;address line, city&#039;"
+                            placeholder="Comma separated list of strings to evaluate comes in here. Use double quotes to quote strings that contain a comma, for example: &#8220;address line, city&#8221;"
                             maxlength="10000"></textarea>
                     </div>
                     <div class="col-sm">
@@ -121,20 +121,25 @@
                             </button>
                         </div>
                         <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="8" cols="50"
-                            placeholder="Comma separated list of strings to match in comes in here. Use single quotes to quote strings that contain a comma, for example: &#039;address line, city&#039;"
+                            placeholder="Comma separated list of strings to match in comes in here. Use double quotes to quote strings that contain a comma, for example: &#8220;address line, city&#8221;"
                             maxlength="10000"></textarea>
                     </div>
                 </div>
                 <div class="row pt-2">
                     <div class="col-sm">
-                        <button class="btn btn-primary btn-lg btn-block" id="submitButton">Match!
-                            <span class="spinner-border spinner-border-sm" id="submitButtonSpinner" role="status"
-                                aria-hidden="true" style="display:none;"></span>
+                        <button class="btn btn-primary btn-lg" type="button" id="submitButton">
+                                Start match!
                         </button>
+                        <button class="btn btn-primary btn-lg" type="button" id="submitButtonSpinner" disabled style="display:none;">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Loading...
+                        </button>
+
                     </div>
                 </div>
                 <!-- Setup end-->
             </div>
+
         </div>
         <!-- Match container end -->
         <!-- Results container start -->
@@ -151,10 +156,7 @@
                 </div>
                 <div class="row pt-2">
                     <div class="col-sm">
-                        <label for="rangeInput" class="form-label" id="labelFormControlRange">Filter for results
-                            above
-                            match
-                            result</label>
+                        <label for="rangeInput" class="form-label" id="labelFormControlRange">Filter for results above match result</label>
                         <output id="amount" name="amount" for="rangeInput">80</output>
                         <input type="range" class="custom-range" id="rangeInput" name="rangeInput" min="0" max="100"
                             value="80" oninput="amount.value=rangeInput.value">

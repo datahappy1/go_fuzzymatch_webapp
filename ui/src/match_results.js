@@ -71,10 +71,10 @@ export function toggleSubmitButtonWhileLoadingResults(action) {
     let submitButtonSpinnerElement = document.getElementById("submitButtonSpinner");
 
     if (action === "show") {
-        submitButtonElement.disabled = false;
+        submitButtonElement.style.display = "block";
         submitButtonSpinnerElement.style.display = "none";
     } else if (action === "hide") {
-        submitButtonElement.disabled = true;
+        submitButtonElement.style.display = "none";
         submitButtonSpinnerElement.style.display = "block";
     }
 }

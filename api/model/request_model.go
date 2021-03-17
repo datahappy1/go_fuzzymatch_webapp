@@ -20,12 +20,10 @@ type FuzzyMatchRequest struct {
 	StringsToMatch   []string
 	StringsToMatchIn []string
 	Mode             string
-	RequestedFromIP  string
 }
 
 // CreateFuzzyMatchRequest returns FuzzyMatchRequest
-func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string, mode string,
-	requestedFromIP string) (*FuzzyMatchRequest, error) {
+func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string, mode string) (*FuzzyMatchRequest, error) {
 
 	if len(stringsToMatch) == 0 {
 		return nil, errors.New("stringsToMatch is invalid")
@@ -43,7 +41,6 @@ func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string,
 		RequestID:        utils.CreateUUID(),
 		StringsToMatch:   stringsToMatch,
 		StringsToMatchIn: stringsToMatchIn,
-		Mode:             mode,
-		RequestedFromIP:  requestedFromIP}
+		Mode:             mode}
 	return &req, nil
 }

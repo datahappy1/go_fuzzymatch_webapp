@@ -8,14 +8,13 @@ import (
 
 // Create returns string
 func Create(RequestID string, StringsToMatch []string, StringsToMatchIn []string,
-	Mode string, RequestedFromIP string, BatchSize int) error {
+	Mode string, BatchSize int) error {
 
 	fuzzyMatchObject := model.CreateFuzzyMatch(
 		RequestID,
 		StringsToMatch,
 		StringsToMatchIn,
 		Mode,
-		RequestedFromIP,
 		BatchSize,
 		0)
 
@@ -57,19 +56,14 @@ func GetByRequestID(requestID string) model.FuzzyMatchModel {
 	return model.FuzzyMatchModel{}
 }
 
-// GetByIP returns FuzzyMatchModel
-func GetByIP(ip string) model.FuzzyMatchModel {
-	for i := range model.RequestsData {
-		if model.RequestsData[i].RequestedFromIP == ip {
-			return model.RequestsData[i]
-		}
-	}
-	return model.FuzzyMatchModel{}
-}
-
 // GetAll returns []model.FuzzyMatchModel
 func GetAll() []model.FuzzyMatchModel {
 	return model.RequestsData
+}
+
+// CountAll returns int
+func CountAll() int {
+	return len(model.RequestsData)
 }
 
 // GetAllTimedOutRequests returns []model.FuzzyMatchModel
