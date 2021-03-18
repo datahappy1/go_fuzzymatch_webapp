@@ -55,9 +55,9 @@ func CountAll() int {
 	return data.CountAllItems()
 }
 
-// GetAllTimedOutRequests returns []model.FuzzyMatchModel
-func GetAllTimedOutRequests(RequestTTLInMinutes int) []model.FuzzyMatchModel {
-	var result []model.FuzzyMatchModel
+// GetAllTimedOutRequestIDs returns []string
+func GetAllTimedOutRequestIDs(RequestTTLInMinutes int) []string {
+	var result []string
 	currentDateTimeOffset := utils.GetCurrentDateTimeOffset(RequestTTLInMinutes)
 	currentDateTimeOffsetUnixEpoch := utils.ConvertDateStringToUnixEpoch(currentDateTimeOffset)
 
@@ -65,7 +65,7 @@ func GetAllTimedOutRequests(RequestTTLInMinutes int) []model.FuzzyMatchModel {
 
 	for i := range storedRequests {
 		if utils.ConvertDateStringToUnixEpoch(storedRequests[i].RequestedOn) <= currentDateTimeOffsetUnixEpoch {
-			result = append(result, storedRequests[i])
+			result = append(result, storedRequests[i].RequestID)
 		}
 	}
 	return result

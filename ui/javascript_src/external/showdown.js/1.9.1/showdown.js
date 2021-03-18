@@ -2174,7 +2174,7 @@
       'zzz':'\ud83d\udca4',
     
       /* special emojis :P */
-      'octocat':  '<img alt=":octocat:" height="20" width="20" align="absmiddle" src="https://assets-cdn.github.com/images/icons/emoji/octocat.png">',
+      'octocat':  '<img alt=":octocat:" height="20" width="20" align="absmiddle" javascript_src="https://assets-cdn.github.com/images/icons/emoji/octocat.png">',
       'showdown': '<span style="font-family: \'Anonymous Pro\', monospace; text-decoration: underline; text-decoration-style: dashed; text-decoration-color: #3e8b8a;text-underline-position: under;">S</span>'
     };
     
@@ -3841,7 +3841,7 @@
           .replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
         //url = showdown.helper.escapeCharacters(url, '*_', false);
         url = url.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-        var result = '<img src="' + url + '" alt="' + altText + '"';
+        var result = '<img javascript_src="' + url + '" alt="' + altText + '"';
     
         if (title && showdown.helper.isString(title)) {
           title = title

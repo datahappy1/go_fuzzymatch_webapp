@@ -3,11 +3,11 @@
 # POST REQUEST
 # *Nix terminal:
 curl --location --request POST 'http://localhost:8080/api/v1/requests/' \
---header 'Content-Type: text/plain' \
+--header 'Content-Type: application/json' \
 --data-raw '{
-  "stringsToMatch": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.",
-	"stringsToMatchIn": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.'\''",
-	"mode": "combined"
+"stringsToMatch": "Ellerker,Conry,\"Konzelmann O'\''Ryan\",Dibdin,Audibert,Merrydew",
+"stringsToMatchIn": "Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett",
+"mode":"combined"
 }'
 
 # Windows cmd ( https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service ):
@@ -17,8 +17,7 @@ curl -i -X POST -H "Content-Type: application/json" -d "{""stringsToMatch"":""El
 
 # GET REQUEST
 # *Nix terminal:
-curl --location --request GET 'http://localhost:8080/api/v1/requests/4027cf00-6ff3-4239-9ec5-2d820b4f93cd/' \
---data-raw ''
+curl --location --request GET 'http://localhost:8080/api/v1/requests/4027cf00-6ff3-4239-9ec5-2d820b4f93cd/'
 
 # Windows cmd:
 curl -X GET http://localhost:8080/api/v1/requests/4027cf00-6ff3-4239-9ec5-2d820b4f93cd/
