@@ -12,10 +12,6 @@ headers = {
   'Content-Type': 'application/json'
 }
 
-headers = {
-    'Content-Type': 'application/json'
-}
-
 post_request_response = requests.request("POST", requests_url, headers=headers, data=payload)
 
 if post_request_response.status_code == 200:

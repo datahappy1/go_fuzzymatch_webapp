@@ -1,6 +1,6 @@
 ***Creating a new request***
 ----
-  You create a new request only to initiate the fuzzy matching process. This new request has TTL set to 1 hour. After that, the request is removed from the application request database.
+  You create a new request only to initiate the fuzzy matching process. This new request has TTL set to 10 minutes. After that, the request is removed from the application request in-memory database.
 
 * **URL** 
   {root_api_url}
@@ -15,8 +15,8 @@
 
 * **Data Params**
 
-  * stringsToMatch `string` ( a comma separated list of strings for matching, use single quotes to quote strings that contain a comma )
-  * stringsToMatchIn `string` ( a comma separated list of strings to match in, use single quotes to quote strings that contain a comma )
+  * stringsToMatch `string` ( a comma separated list of strings for matching, use double quotes to quote strings that contain a comma )
+  * stringsToMatchIn `string` ( a comma separated list of strings to match in, use double quotes to quote strings that contain a comma )
   * mode `string` ( one of : `simple` | `deepDive` | `combined` )
 
 * **Success Response:**
@@ -24,33 +24,48 @@
   On success, the endpoint returns status code 200 and the RequestId.
 
   * **Code:** 200 <br />
-    **Content:** `{ "RequestId" : "aa3c1207-0ee4-4a50-867d-df8da8b8cf1a" }`
+    **Content:** `{ "RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }`
  
 * **Error Response:**
 
   <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
 
   * **Code:** 401 UNAUTHORIZED <br />
-    **Content:** `{ error : "Log in" }`
+    **Content:** `{ error : "too many overall requests in flight, try later" }`
 
   OR
 
   * **Code:** 422 UNPROCESSABLE ENTRY <br />
-    **Content:** `{ error : "Email Invalid" }`
+    **Content:** `{ error : "cannot read request body" }`
+
+  OR
+
+  * **Code:** 422 UNPROCESSABLE ENTRY <br />
+    **Content:** `{ error : "error decoding request data" }`
+  
+  OR
+
+  * **Code:** 422 UNPROCESSABLE ENTRY <br />
+    **Content:** `{ error : "error invalid request" }`
+
+  OR
+
+  * **Code:** 422 UNPROCESSABLE ENTRY <br />
+    **Content:** `{ error : "error cannot persist request {request ID}" }`
 
 * **Sample Call:**
 
 	Windows cmd:
-	`curl -X POST -d "{""stringsToMatch"":""'apple, gmbh','corp'"",""stringsToMatchIn"":""aplle"",""mode"":""combined""}" {root_api_url}`
+  `curl -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\Konzelmann O'Ryan\\,Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" {root_api_url}`
 
 	*Nix terminal:
-	`curl --location --request POST '{root_api_url}' \
-	--header 'Content-Type: text/plain' \
-	--data-raw '{
-		"stringsToMatch": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.",
-			"stringsToMatchIn": "'\''231 Beechwood Street'\'', '\''Helena, MT 59601'\'', '\''866 Brook Court'\'', '\''Harrison Township, MI 48045'\'', '\''40 Bayport Street'\'', '\''Virginia Beach, VA 23451'\'', '\''20 Hanover St.'\''",
-			"mode": "combined"
-	}'`
+  `curl --location --request POST '{root_api_url}' \
+   --header 'Content-Type: application/json' \
+   --data-raw '{
+   "stringsToMatch": "Ellerker,Conry,\"Konzelmann O'\''Ryan\",Dibdin,Audibert,Merrydew",
+   "stringsToMatchIn": "Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett",
+   "mode":"combined"
+   }'`
 
 * **Notes:**
 
@@ -58,7 +73,7 @@
 
 ***Getting results request***
 ----
-  The fuzzy matching process is lazy evaluated using a following GET request. 
+  The fuzzy matching process is lazy evaluated using a following GET request. Keep polling with this GET request until the flag `ReturnedAllRows` evaluates to true. At that point, all results were returned.
 
 * **URL**
 
@@ -78,26 +93,33 @@
 
 * **Success Response:**
   
-  <_What should the status code be on success and is there any returned data? This is useful when people need to to know what their callbacks should expect!_>
-
   * **Code:** 200 <br />
-    **Content:** `{ id : 12 }`
+    **Content:** `{"RequestID":"0f17955c-1fdd-4bfe-8c66-df8a432f1810","Mode":"combined","RequestedOn":"2021-03-18T22:39:02","ReturnedAllRows":true,"Results":[{"StringToMatch":"Ellerker","StringMatched":"Selley","Result":57},{"StringToMatch":"Conry","StringMatched":"Guiton","Result":36},{"StringToMatch":"\\Konzelmann O'Ryan\\","StringMatched":"Tyzack","Result":40},{"StringToMatch":"Dibdin","StringMatched":"Maylin","Result":33},{"StringToMatch":"Audibert","StringMatched":"Guiton","Result":42},{"StringToMatch":"Merrydew","StringMatched":"Ferrelli","Result":50}]}`
  
 * **Error Response:**
 
   <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
 
   * **Code:** 401 UNAUTHORIZED <br />
-    **Content:** `{ error : "Log in" }`
+    **Content:** `{"error":"need a valid UUID for request ID"}`
 
   OR
 
   * **Code:** 422 UNPROCESSABLE ENTRY <br />
-    **Content:** `{ error : "Email Invalid" }`
+    **Content:** `{"error":"request not found"}`
+
+  OR
+
+  * **Code:** 500 UNPROCESSABLE ENTRY <br />
+    **Content:** `{"error":"error cannot process request {request ID}"}`
 
 * **Sample Call:**
 
-  <_Just a sample call to your endpoint in a runnable format ($.ajax call or a curl request) - this makes life easier and more predictable._> 
+  *Nix terminal:
+  `curl --location --request GET '{root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/'`
+
+  Windows cmd:
+  `curl -X GET {root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/`
 
 * **Notes:**
 
