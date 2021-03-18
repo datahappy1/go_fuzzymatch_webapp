@@ -162,7 +162,9 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else {
-		err := repository.Update(requestID, returnedRowsUpperBound)
+		fuzzyMatchObject.ReturnedRows = returnedRowsUpperBound
+
+		err := repository.Update(requestID, fuzzyMatchObject)
 
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError,

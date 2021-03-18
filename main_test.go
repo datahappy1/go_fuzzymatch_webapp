@@ -16,6 +16,8 @@ import (
 
 var a api.App
 
+var shortTimeOutInSeconds = 10
+
 func TestMain(m *testing.M) {
 	a = api.App{}
 
@@ -328,6 +330,7 @@ func TestCreateValidPostRequestTimeout(t *testing.T) {
 	}
 
 	time.Sleep(time.Duration(a.Conf.RequestTTLInMinutes) * time.Minute)
+	time.Sleep(time.Duration(shortTimeOutInSeconds) * time.Second)
 
 	req2, _ := http.NewRequest("GET", "/api/v1/requests/"+SuccessResponse1.RequestID+"/", nil)
 	response2 := executeRequest(req2)

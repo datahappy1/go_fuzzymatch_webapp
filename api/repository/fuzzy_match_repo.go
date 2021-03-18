@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/data"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 )
@@ -18,52 +19,40 @@ func Create(RequestID string, StringsToMatch []string, StringsToMatchIn []string
 		BatchSize,
 		0)
 
-	model.RequestsData = append(model.RequestsData, fuzzyMatchObject)
+	err := data.InsertItem(fuzzyMatchObject)
+	if err != nil {
+		return errors.New("request not inserted to database")
+	}
 	return nil
 }
 
-// Update returns (string, error)
-func Update(requestID string, returnedRows int) error {
-	for i := range model.RequestsData {
-		if model.RequestsData[i].RequestID == requestID {
-			model.RequestsData[i] = model.UpdateFuzzyMatch(model.RequestsData[i], returnedRows)
-			return nil
-		}
+// Update returns error
+func Update(requestID string, matchModel model.FuzzyMatchModel) error {
+	err := data.UpdateItem(requestID, matchModel)
+	if err != nil {
+		return errors.New(err.Error())
 	}
-	return errors.New("request not found, not updated")
+	return nil
 }
 
 // Delete returns error
 func Delete(requestID string) error {
-	for i := range model.RequestsData {
-		if model.RequestsData[i].RequestID == requestID {
-			model.RequestsData[i] = model.RequestsData[len(model.RequestsData)-1]
-			model.RequestsData[len(model.RequestsData)-1] = model.FuzzyMatchModel{}
-			model.RequestsData = model.RequestsData[:len(model.RequestsData)-1]
-			return nil
-		}
+	err := data.DeleteItem(requestID)
+	if err != nil {
+		return errors.New(err.Error())
 	}
-	return errors.New("request not found, not deleted")
+	return nil
 }
 
 // GetByRequestID returns FuzzyMatchModel
 func GetByRequestID(requestID string) model.FuzzyMatchModel {
-	for i := range model.RequestsData {
-		if model.RequestsData[i].RequestID == requestID {
-			return model.RequestsData[i]
-		}
-	}
-	return model.FuzzyMatchModel{}
-}
-
-// GetAll returns []model.FuzzyMatchModel
-func GetAll() []model.FuzzyMatchModel {
-	return model.RequestsData
+	item := data.GetItemByID(requestID)
+	return item
 }
 
 // CountAll returns int
 func CountAll() int {
-	return len(model.RequestsData)
+	return data.CountAllItems()
 }
 
 // GetAllTimedOutRequests returns []model.FuzzyMatchModel
@@ -72,9 +61,11 @@ func GetAllTimedOutRequests(RequestTTLInMinutes int) []model.FuzzyMatchModel {
 	currentDateTimeOffset := utils.GetCurrentDateTimeOffset(RequestTTLInMinutes)
 	currentDateTimeOffsetUnixEpoch := utils.ConvertDateStringToUnixEpoch(currentDateTimeOffset)
 
-	for i := range model.RequestsData {
-		if utils.ConvertDateStringToUnixEpoch(model.RequestsData[i].RequestedOn) <= currentDateTimeOffsetUnixEpoch {
-			result = append(result, model.RequestsData[i])
+	storedRequests := data.GetAllItems()
+
+	for i := range storedRequests {
+		if utils.ConvertDateStringToUnixEpoch(storedRequests[i].RequestedOn) <= currentDateTimeOffsetUnixEpoch {
+			result = append(result, storedRequests[i])
 		}
 	}
 	return result

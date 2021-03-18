@@ -34,13 +34,3 @@ func CreateFuzzyMatch(requestID string, stringsToMatch []string, stringsToMatchI
 		ReturnedRows:           returnedRows,
 		ReturnedAllRows:        false}
 }
-
-// UpdateFuzzyMatch returns FuzzyMatchModel
-func UpdateFuzzyMatch(fuzzyMatch FuzzyMatchModel, returnedRows int) FuzzyMatchModel {
-	updatedFuzzyMatch := fuzzyMatch
-	updatedFuzzyMatch.ReturnedRows = returnedRows
-	return updatedFuzzyMatch
-}
-
-// RequestsData returns []FuzzyMatchModel
-var RequestsData []FuzzyMatchModel
