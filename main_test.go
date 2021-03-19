@@ -265,7 +265,7 @@ func TestCreateInvalidGetRequestInvalidUUID(t *testing.T) {
 	req.RemoteAddr = "0.0.0.0:80"
 	response := executeRequest(req)
 
-	checkResponseCode(t, http.StatusInternalServerError, response.Code)
+	checkResponseCode(t, http.StatusNotAcceptable, response.Code)
 
 	FailureResponse := failureResponse{}
 	json.Unmarshal(response.Body.Bytes(), &FailureResponse)

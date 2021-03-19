@@ -30,27 +30,27 @@
 
   <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
 
-  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 429 StatusTooManyRequests <br />
     **Content:** `{ error : "too many overall requests in flight, try later" }`
 
   OR
 
-  * **Code:** 422 UNPROCESSABLE ENTRY <br />
+  * **Code:** 406 StatusNotAcceptable <br />
     **Content:** `{ error : "cannot read request body" }`
 
   OR
 
-  * **Code:** 422 UNPROCESSABLE ENTRY <br />
+  * **Code:** 422 StatusUnprocessableEntity <br />
     **Content:** `{ error : "error decoding request data" }`
   
   OR
 
-  * **Code:** 422 UNPROCESSABLE ENTRY <br />
+  * **Code:** 422 StatusUnprocessableEntity <br />
     **Content:** `{ error : "error invalid request" }`
 
   OR
 
-  * **Code:** 422 UNPROCESSABLE ENTRY <br />
+  * **Code:** 500 StatusInternalServerError <br />
     **Content:** `{ error : "error cannot persist request {request ID}" }`
 
 * **Sample Call:**
@@ -100,17 +100,17 @@
 
   <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
 
-  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 406 StatusNotAcceptable <br />
     **Content:** `{"error":"need a valid UUID for request ID"}`
 
   OR
 
-  * **Code:** 422 UNPROCESSABLE ENTRY <br />
+  * **Code:** 404 StatusNotFound <br />
     **Content:** `{"error":"request not found"}`
 
   OR
 
-  * **Code:** 500 UNPROCESSABLE ENTRY <br />
+  * **Code:** 500 StatusInternalServerError <br />
     **Content:** `{"error":"error cannot process request {request ID}"}`
 
 * **Sample Call:**

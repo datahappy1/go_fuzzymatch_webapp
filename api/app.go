@@ -98,7 +98,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		if e, ok := err.(*json.SyntaxError); ok {
 			log.Printf("syntax error at byte offset %d", e.Offset)
 		}
-		respondWithError(w, http.StatusInternalServerError,
+		respondWithError(w, http.StatusNotAcceptable,
 			errors.New("error decoding request data"))
 		return
 	}
@@ -136,7 +136,7 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	if val, ok := pathParams["requestID"]; ok {
 		requestID = val
 		if utils.IsValidUUID(val) == false {
-			respondWithError(w, http.StatusInternalServerError,
+			respondWithError(w, http.StatusNotAcceptable,
 				errors.New("need a valid UUID for request ID"))
 			return
 		}
