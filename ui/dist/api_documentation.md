@@ -108,9 +108,9 @@
           ReturnedAllRows: bool,
           Results: [
             {
-              StringToMatch string,
-              StringMatched string,
-              Result int
+              StringToMatch: string,
+              StringMatched: string,
+              Result: int
             }
           ],
         }

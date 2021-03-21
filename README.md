@@ -1,5 +1,8 @@
 # go_fuzzymatch_webapp
-A fuzzymatching App written with Go and Javascript. 
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/datahappy1/go_fuzzymatch_webapp)](https://goreportcard.com/report/github.com/datahappy1/go_fuzzymatch_webapp)
+
+A fuzzymatching web application written with Go and Javascript. 
 
 ![image](https://github.com/datahappy1/go_fuzzymatch_webapp/blob/main/ui/dist/img/gopher_logo_ruler_small.png)
 
@@ -20,4 +23,4 @@ A fuzzymatching App written with Go and Javascript.
 - The application by default runs at http://localhost:8080/
 
 ## Screenshot of the app
-![image](https://github.com/datahappy1/go_fuzzymatch_webapp/blob/main/screenshot.PNG)
+![image](https://github.com/datahappy1/go_fuzzymatch_webapp/blob/main/app_screenshot.PNG)
