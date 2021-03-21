@@ -186,27 +186,27 @@
 
 * **Error Response:**
 
-  * **Code:** 406 StatusNotAcceptable
-  * **Content:** 
-    ```json
-    {"error":"need a valid UUID for request ID"}
-    ```
+    * **Code:** 406 StatusNotAcceptable
+    * **Content:** 
+      ```json
+      {"error":"need a valid UUID for request ID"}
+      ```
 
-  OR
+    OR
 
-  * **Code:** 404 StatusNotFound
-  * **Content:** 
-    ```json
-    {"error":"request not found"}
-    ```
+    * **Code:** 404 StatusNotFound
+    * **Content:** 
+      ```json
+      {"error":"request not found"}
+      ```
 
-  OR
+    OR
 
-  * **Code:** 500 StatusInternalServerError
-  * **Content:** 
-    ```json
-    {"error":"error cannot process request {request ID}"}
-    ```
+    * **Code:** 500 StatusInternalServerError
+    * **Content:** 
+      ```json
+      {"error":"error cannot process request {request ID}"}
+      ```
 
 * **Sample Call:**
 
