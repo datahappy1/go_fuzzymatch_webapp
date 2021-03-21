@@ -33,9 +33,9 @@
 
     * **Code:** 200
     * **Content:** 
-        ```json
-        {"RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }
-        ```
+      ```json
+      {"RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810"}
+      ```
 
 * **Error Response:**
 
@@ -85,7 +85,7 @@
     curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/
     `
 
-	  Linux terminal:
+    Linux terminal:
 
     `
     curl --location --request POST '{root_api_url}' \
@@ -217,7 +217,7 @@
     `
 
     Windows cmd:
-    
+
     `
     curl -X GET {root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/
     `
