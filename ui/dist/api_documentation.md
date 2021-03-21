@@ -26,67 +26,49 @@
 
       ```json
           {
-            RequestID: string
+            "RequestID": "string"
           }
       ```
 
     * **Code:** 200 <br />
-      **Content:** 
-      ```json
-      { "RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }
-      ```
- 
+    *  **Content:** `{"RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }`
+
 * **Error Response:**
 
     * **Code:** 429 StatusTooManyRequests <br />
-      **Content:** 
-      ```json
-      { "error" : "too many overall requests in flight, try later"}
-      ```
+      **Content:** `{"error" : "too many overall requests in flight, try later"}`
 
     OR
 
     * **Code:** 406 StatusNotAcceptable <br />
-      **Content:** 
-      ```json
-      { "error" : "cannot read request body"}
-      ```
+      **Content:**  `{"error" : "cannot read request body"}`
 
     OR
 
     * **Code:** 422 StatusUnprocessableEntity <br />
-      **Content:** 
-      ```json
-      { "error" : "error decoding request data"}
-      ```
+      **Content:** `{"error" : "error decoding request data"}`
   
     OR
 
     * **Code:** 422 StatusUnprocessableEntity <br />
-      **Content:** 
-      ```json
-      { "error" : "error invalid request"}
-      ```
+      **Content:** `{"error" : "error invalid request"}`
 
     OR
 
     * **Code:** 500 StatusInternalServerError <br />
-      **Content:** 
-      ```json
-      { "error" : "error cannot persist request {request ID}"}
-      ```
+      **Content:** `{"error" : "error cannot persist request {request ID}"}`
 
 * **Sample Call:**
 
   	Windows cmd:
 
-    ```bash
+    ```Shell
     curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/
     ```
 
 	  Linux terminal:
 
-    ```bash
+    ```Shell
     curl --location --request POST '{root_api_url}' \
     --header 'Content-Type: application/json' \
     --data-raw '{
@@ -126,15 +108,15 @@
 
     ```json
         {
-          RequestID: string,
-          Mode: string,
-          RequestedOn: string,
-          ReturnedAllRows: bool,
-          Results: [
+          "RequestID": "string",
+          "Mode": "string",
+          "RequestedOn": "string",
+          "ReturnedAllRows": "bool",
+          "Results": [
             {
-              StringToMatch: string,
-              StringMatched: string,
-              Result: int
+              "StringToMatch": "string",
+              "StringMatched": "string",
+              "Result": "int"
             }
           ],
         }
@@ -149,36 +131,27 @@
   * **Error Response:**
 
     * **Code:** 406 StatusNotAcceptable <br />
-      **Content:** 
-      ```json
-      {"error":"need a valid UUID for request ID"}
-      ```
+      **Content:** `{"error":"need a valid UUID for request ID"}`
 
     OR
 
     * **Code:** 404 StatusNotFound <br />
-      **Content:** 
-      ```json
-      {"error":"request not found"}
-      ```
+      **Content:** `{"error":"request not found"}`
 
     OR
 
     * **Code:** 500 StatusInternalServerError <br />
-      **Content:** 
-      ```json
-      {"error":"error cannot process request {request ID}"}
-      ```
+      **Content:** `{"error":"error cannot process request {request ID}"}`
 
 * **Sample Call:**
 
     Linux terminal:
-    ```bash
+    ```Shell
     curl --location --request GET '{root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/'
     ```
 
     Windows cmd:
-    ```bash
+    ```Shell
     curl -X GET {root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/
     ```
 
