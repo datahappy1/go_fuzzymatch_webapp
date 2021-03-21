@@ -48,7 +48,7 @@ function loadStaticPagesHandler() {
 
     }
 
-    prepareApiDocumentationContent().catch();
+    prepareApiDocumentationContent();
 
 }
 
@@ -89,7 +89,8 @@ function startMatchButtonHandler() {
         jumpToAnchor("results");
     }
 
-    createRequestStartFetchingChain().catch();
+    createRequestStartFetchingChain();
+
 }
 
 function filterResultsTableButtonHandler() {

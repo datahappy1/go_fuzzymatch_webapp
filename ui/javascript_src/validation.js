@@ -6,13 +6,13 @@ const _mandatoryInputComponents = [
 function _isValidMandatoryComponent(elementId) {
     let validatedComponent = document.getElementById(elementId);
 
-    return !(validatedComponent.value.length === 0);
+    return (validatedComponent.value.length !== 0);
 }
 
 function _getMissingMandatoryInputs() {
     let missingMandatoryInputComponents = [];
 
-    _mandatoryInputComponents.map(item => {
+    _mandatoryInputComponents.forEach(item => {
         if (_isValidMandatoryComponent(item.componentId) === false) {
             missingMandatoryInputComponents.push(item.componentNameForAlertMessage);
         }
