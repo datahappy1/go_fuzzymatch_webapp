@@ -18,8 +18,9 @@ A fuzzymatching web application written with Go and Javascript.
 - For running local tests, run `go\src\github.com\datahappy1\go_fuzzymatch_webapp>go test`
 
 ## How to run locally the application front-end
-1) Install `Webpack`
-2) For local development, bundle frontend code using Webpack `go\src\github.com\datahappy1\go_fuzzymatch_webapp\ui>npm run build:development`
+1) Install `npm`
+2) Install `Webpack` based on [this tutorial](https://webpack.js.org/guides/installation/)
+3) For local development, bundle frontend code using Webpack `go\src\github.com\datahappy1\go_fuzzymatch_webapp\ui>npm run build:development`
 - For production release, bundle frontend code using Webpack `go\src\github.com\datahappy1\go_fuzzymatch_webapp\ui>npm run build:production`
 - The application by default runs at http://localhost:8080/
 
