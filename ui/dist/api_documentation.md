@@ -25,11 +25,11 @@
     On success, the endpoint returns status code 200 and the RequestId.
     Response structure:
 
-      ```json
-          {
-            "RequestID": "string"
-          }
-      ```
+    ```json
+        {
+          "RequestID": "string"
+        }
+    ```
 
     * **Code:** 200
     * **Content:** 
