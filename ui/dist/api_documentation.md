@@ -15,9 +15,9 @@
 
 * **Data Params**
 
-  * stringsToMatch `string` ( a comma separated list of strings for matching, use double quotes to quote strings that contain a comma )
-  * stringsToMatchIn `string` ( a comma separated list of strings to match in, use double quotes to quote strings that contain a comma )
-  * mode `string` ( one of : `simple` | `deepDive` | `combined` )
+    * stringsToMatch `string` ( a comma separated list of strings for matching, use double quotes to quote strings that contain a comma )
+    * stringsToMatchIn `string` ( a comma separated list of strings to match in, use double quotes to quote strings that contain a comma )
+    * mode `string` ( one of : `simple` | `deepDive` | `combined` )
 
 * **Success Response:**
   
