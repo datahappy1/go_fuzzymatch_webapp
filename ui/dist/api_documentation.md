@@ -31,46 +31,70 @@
       ```
 
     * **Code:** 200 <br />
-      **Content:** `{ "RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }`
+      **Content:** 
+      ```json
+      { "RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }
+      ```
  
 * **Error Response:**
 
     * **Code:** 429 StatusTooManyRequests <br />
-      **Content:** `{ error : "too many overall requests in flight, try later" }`
+      **Content:** 
+      ```json
+      { "error" : "too many overall requests in flight, try later"}
+      ```
 
     OR
 
     * **Code:** 406 StatusNotAcceptable <br />
-      **Content:** `{ error : "cannot read request body" }`
+      **Content:** 
+      ```json
+      { "error" : "cannot read request body"}
+      ```
 
     OR
 
     * **Code:** 422 StatusUnprocessableEntity <br />
-      **Content:** `{ error : "error decoding request data" }`
+      **Content:** 
+      ```json
+      { "error" : "error decoding request data"}
+      ```
   
     OR
 
     * **Code:** 422 StatusUnprocessableEntity <br />
-      **Content:** `{ error : "error invalid request" }`
+      **Content:** 
+      ```json
+      { "error" : "error invalid request"}
+      ```
 
     OR
 
     * **Code:** 500 StatusInternalServerError <br />
-      **Content:** `{ error : "error cannot persist request {request ID}" }`
+      **Content:** 
+      ```json
+      { "error" : "error cannot persist request {request ID}"}
+      ```
 
 * **Sample Call:**
 
   	Windows cmd:
-    `curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/`
+
+    ```bash
+    curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/
+    ```
 
 	  Linux terminal:
-    `curl --location --request POST '{root_api_url}' \
+
+    ```bash
+    curl --location --request POST '{root_api_url}' \
     --header 'Content-Type: application/json' \
     --data-raw '{
     "stringsToMatch": "Ellerker,Conry,\"Konzelmann, O'\''Ryan\",Dibdin,Audibert,Merrydew",
     "stringsToMatchIn": "Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett",
     "mode":"combined"
-    }'`
+    }'
+    ```
 
 * **Notes:**
 
@@ -117,29 +141,45 @@
     ```
 
     * **Code:** 200 <br />
-      **Content:** `{"RequestID":"0f17955c-1fdd-4bfe-8c66-df8a432f1810","Mode":"combined","RequestedOn":"2021-03-18T22:39:02","ReturnedAllRows":true,"Results":[{"StringToMatch":"Ellerker","StringMatched":"Selley","Result":57},{"StringToMatch":"Conry","StringMatched":"Guiton","Result":36},{"StringToMatch":"\\Konzelmann, O'Ryan\\","StringMatched":"Tyzack","Result":40},{"StringToMatch":"Dibdin","StringMatched":"Maylin","Result":33},{"StringToMatch":"Audibert","StringMatched":"Guiton","Result":42},{"StringToMatch":"Merrydew","StringMatched":"Ferrelli","Result":50}]}`
+      **Content:** 
+      ```json
+      {"RequestID":"0f17955c-1fdd-4bfe-8c66-df8a432f1810","Mode":"combined","RequestedOn":"2021-03-18T22:39:02","ReturnedAllRows":true,"Results":[{"StringToMatch":"Ellerker","StringMatched":"Selley","Result":57},{"StringToMatch":"Conry","StringMatched":"Guiton","Result":36},{"StringToMatch":"\\Konzelmann, O'Ryan\\","StringMatched":"Tyzack","Result":40},{"StringToMatch":"Dibdin","StringMatched":"Maylin","Result":33},{"StringToMatch":"Audibert","StringMatched":"Guiton","Result":42},{"StringToMatch":"Merrydew","StringMatched":"Ferrelli","Result":50}]}
+      ```
  
   * **Error Response:**
 
     * **Code:** 406 StatusNotAcceptable <br />
-      **Content:** `{"error":"need a valid UUID for request ID"}`
+      **Content:** 
+      ```json
+      {"error":"need a valid UUID for request ID"}
+      ```
 
     OR
 
     * **Code:** 404 StatusNotFound <br />
-      **Content:** `{"error":"request not found"}`
+      **Content:** 
+      ```json
+      {"error":"request not found"}
+      ```
 
     OR
 
     * **Code:** 500 StatusInternalServerError <br />
-      **Content:** `{"error":"error cannot process request {request ID}"}`
+      **Content:** 
+      ```json
+      {"error":"error cannot process request {request ID}"}
+      ```
 
 * **Sample Call:**
 
     Linux terminal:
-    `curl --location --request GET '{root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/'`
+    ```bash
+    curl --location --request GET '{root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/'
+    ```
 
     Windows cmd:
-    `curl -X GET {root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/`
+    ```bash
+    curl -X GET {root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/
+    ```
 
 * **Notes:**
