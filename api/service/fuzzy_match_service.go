@@ -13,7 +13,7 @@ func CalculateFuzzyMatchingResults(fuzzyMatchObject model.FuzzyMatchModel) (mode
 	var returnedAllRows bool
 	var returnedRowsUpperBound int
 
-	if fuzzyMatchObject.ReturnedRows + fuzzyMatchObject.BatchSize >= fuzzyMatchObject.StringsToMatchLength {
+	if fuzzyMatchObject.ReturnedRows+fuzzyMatchObject.BatchSize >= fuzzyMatchObject.StringsToMatchLength {
 		returnedRowsUpperBound = fuzzyMatchObject.StringsToMatchLength
 		returnedAllRows = true
 	} else {

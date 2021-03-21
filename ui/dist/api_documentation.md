@@ -22,13 +22,18 @@
 * **Success Response:**
   
   On success, the endpoint returns status code 200 and the RequestId.
+  Response structure:
+
+    ```json
+        {
+          RequestID: string
+        }
+    ```
 
   * **Code:** 200 <br />
     **Content:** `{ "RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }`
  
 * **Error Response:**
-
-  <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
 
   * **Code:** 429 StatusTooManyRequests <br />
     **Content:** `{ error : "too many overall requests in flight, try later" }`
@@ -56,20 +61,19 @@
 * **Sample Call:**
 
 	Windows cmd:
-  `curl -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\Konzelmann O'Ryan\\,Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" {root_api_url}`
+  `curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/`
 
 	*Nix terminal:
   `curl --location --request POST '{root_api_url}' \
    --header 'Content-Type: application/json' \
    --data-raw '{
-   "stringsToMatch": "Ellerker,Conry,\"Konzelmann O'\''Ryan\",Dibdin,Audibert,Merrydew",
+   "stringsToMatch": "Ellerker,Conry,\"Konzelmann, O'\''Ryan\",Dibdin,Audibert,Merrydew",
    "stringsToMatchIn": "Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett",
    "mode":"combined"
    }'`
 
 * **Notes:**
 
-  <_This is where all uncertainties, commentary, discussion etc. can go. I recommend timestamping and identifying oneself when leaving comments here._> 
 
 ***Getting results request***
 ----
@@ -92,13 +96,30 @@
    None
 
 * **Success Response:**
-  
+
+    On success, the endpoint returns status code 200 and the response with the fuzzy matching results.
+    Response structure:
+
+    ```json
+        {
+          RequestID: string,
+          Mode: string,
+          RequestedOn: string,
+          ReturnedAllRows: bool,
+          Results: [
+            {
+              StringToMatch string,
+              StringMatched string,
+              Result int
+            }
+          ],
+        }
+    ```
+
   * **Code:** 200 <br />
-    **Content:** `{"RequestID":"0f17955c-1fdd-4bfe-8c66-df8a432f1810","Mode":"combined","RequestedOn":"2021-03-18T22:39:02","ReturnedAllRows":true,"Results":[{"StringToMatch":"Ellerker","StringMatched":"Selley","Result":57},{"StringToMatch":"Conry","StringMatched":"Guiton","Result":36},{"StringToMatch":"\\Konzelmann O'Ryan\\","StringMatched":"Tyzack","Result":40},{"StringToMatch":"Dibdin","StringMatched":"Maylin","Result":33},{"StringToMatch":"Audibert","StringMatched":"Guiton","Result":42},{"StringToMatch":"Merrydew","StringMatched":"Ferrelli","Result":50}]}`
+    **Content:** `{"RequestID":"0f17955c-1fdd-4bfe-8c66-df8a432f1810","Mode":"combined","RequestedOn":"2021-03-18T22:39:02","ReturnedAllRows":true,"Results":[{"StringToMatch":"Ellerker","StringMatched":"Selley","Result":57},{"StringToMatch":"Conry","StringMatched":"Guiton","Result":36},{"StringToMatch":"\\Konzelmann, O'Ryan\\","StringMatched":"Tyzack","Result":40},{"StringToMatch":"Dibdin","StringMatched":"Maylin","Result":33},{"StringToMatch":"Audibert","StringMatched":"Guiton","Result":42},{"StringToMatch":"Merrydew","StringMatched":"Ferrelli","Result":50}]}`
  
 * **Error Response:**
-
-  <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
 
   * **Code:** 406 StatusNotAcceptable <br />
     **Content:** `{"error":"need a valid UUID for request ID"}`
@@ -122,5 +143,3 @@
   `curl -X GET {root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/`
 
 * **Notes:**
-
-  <_This is where all uncertainties, commentary, discussion etc. can go. I recommend timestamping and identifying oneself when leaving comments here._> 

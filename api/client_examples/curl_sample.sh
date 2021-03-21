@@ -5,15 +5,13 @@
 curl --location --request POST 'http://localhost:8080/api/v1/requests/' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-"stringsToMatch": "Ellerker,Conry,\"Konzelmann O'\''Ryan\",Dibdin,Audibert,Merrydew",
+"stringsToMatch": "Ellerker,Conry,\"Konzelmann, O'\''Ryan\",Dibdin,Audibert,Merrydew",
 "stringsToMatchIn": "Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett",
 "mode":"combined"
 }'
 
 # Windows cmd ( https://stackoverflow.com/questions/11834238/curl-post-command-line-on-windows-restful-service ):
-curl -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\Konzelmann O'Ryan\\,Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/
-# or
-curl -i -X POST -H "Content-Type: application/json" -d "{""stringsToMatch"":""Ellerker,Conry,Konzelmann O'Ryan,Dibdin,Audibert,Merrydew"",""stringsToMatchIn"":""Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett"",""mode"":""combined""}" http://localhost:8080/api/v1/requests/
+curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/
 
 # GET REQUEST
 # *Nix terminal:

@@ -4,7 +4,7 @@ import requests
 
 requests_url = "http://localhost:8080/api/v1/requests/"
 
-payload = json.dumps({"stringsToMatch": "Ellerker,Conry,\"Konzelmann O'Ryan\",Dibdin,Audibert,Merrydew",
+payload = json.dumps({"stringsToMatch": "Ellerker,Conry,\"Konzelmann, O'Ryan\",Dibdin,Audibert,Merrydew",
                       "stringsToMatchIn": "Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett",
                       "mode": "combined"})
 

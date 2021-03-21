@@ -93,6 +93,8 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//fmt.Println(string(requestBodyString[:]))
+
 	err = json.Unmarshal(requestBodyString, &fuzzyMatchExternalRequest)
 	if err != nil {
 		if e, ok := err.(*json.SyntaxError); ok {
@@ -119,7 +121,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError,
-			errors.New(fmt.Sprintf("error cannot persist request %s", err)))
+			fmt.Errorf("error cannot persist request %s", err))
 		return
 	}
 
@@ -157,7 +159,7 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError,
-				errors.New(fmt.Sprintf("error cannot process request %s", err)))
+				fmt.Errorf("error cannot process request %s", err))
 			return
 		}
 
@@ -168,7 +170,7 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError,
-				errors.New(fmt.Sprintf("error cannot process request %s", err)))
+				fmt.Errorf("error cannot process request %s", err))
 			return
 		}
 	}

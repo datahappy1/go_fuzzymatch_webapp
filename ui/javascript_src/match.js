@@ -28,6 +28,7 @@ export async function fetch_post_new_request() {
         stringsToMatchIn: inputStringsToMatchIn,
         mode: inputMode
     });
+
     const otherParam = {
         headers: {
             "content-type": "application/json; charset=UTF-8"
