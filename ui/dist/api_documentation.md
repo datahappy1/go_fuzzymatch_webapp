@@ -1,6 +1,7 @@
 ***Creating a new request***
 ----
-    You create a new request only to initiate the fuzzy matching process. This new request has TTL set to 10 minutes. After that, the request is removed from the application request in-memory database.
+
+  You create a new request only to initiate the fuzzy matching process. This new request has TTL set to 10 minutes. After that, the request is removed from the application request in-memory database.
 
 * **URL** 
     {root_api_url}
@@ -62,28 +63,24 @@
 
   	Windows cmd:
 
-    ```Shell
-    curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/
-    ```
+    `curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/`
 
 	  Linux terminal:
 
-    ```Shell
-    curl --location --request POST '{root_api_url}' \
+    `curl --location --request POST '{root_api_url}' \
     --header 'Content-Type: application/json' \
     --data-raw '{
     "stringsToMatch": "Ellerker,Conry,\"Konzelmann, O'\''Ryan\",Dibdin,Audibert,Merrydew",
     "stringsToMatchIn": "Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett",
     "mode":"combined"
-    }'
-    ```
+    }'`
 
 * **Notes:**
 
 
 ***Getting results request***
 ----
-    The fuzzy matching process is lazy evaluated using a following GET request. Keep polling with this GET request until the flag `ReturnedAllRows` evaluates to true. At that point, all results were returned.
+  The fuzzy matching process is lazy evaluated using a following GET request. Keep polling with this GET request until the flag `ReturnedAllRows` evaluates to true. At that point, all results were returned.
 
 * **URL**
 
@@ -128,31 +125,27 @@
       {"RequestID":"0f17955c-1fdd-4bfe-8c66-df8a432f1810","Mode":"combined","RequestedOn":"2021-03-18T22:39:02","ReturnedAllRows":true,"Results":[{"StringToMatch":"Ellerker","StringMatched":"Selley","Result":57},{"StringToMatch":"Conry","StringMatched":"Guiton","Result":36},{"StringToMatch":"\\Konzelmann, O'Ryan\\","StringMatched":"Tyzack","Result":40},{"StringToMatch":"Dibdin","StringMatched":"Maylin","Result":33},{"StringToMatch":"Audibert","StringMatched":"Guiton","Result":42},{"StringToMatch":"Merrydew","StringMatched":"Ferrelli","Result":50}]}
       ```
  
-  * **Error Response:**
+* **Error Response:**
 
-    * **Code:** 406 StatusNotAcceptable
-    * **Content:** `{"error":"need a valid UUID for request ID"}`
+  * **Code:** 406 StatusNotAcceptable
+  * **Content:** `{"error":"need a valid UUID for request ID"}`
 
-    OR
+  OR
 
-    * **Code:** 404 StatusNotFound
-    * **Content:** `{"error":"request not found"}`
+  * **Code:** 404 StatusNotFound
+  * **Content:** `{"error":"request not found"}`
 
-    OR
+  OR
 
-    * **Code:** 500 StatusInternalServerError
-    * **Content:** `{"error":"error cannot process request {request ID}"}`
+  * **Code:** 500 StatusInternalServerError
+  * **Content:** `{"error":"error cannot process request {request ID}"}`
 
 * **Sample Call:**
 
     Linux terminal:
-    ```Shell
-    curl --location --request GET '{root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/'
-    ```
+    `curl --location --request GET '{root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/'`
 
     Windows cmd:
-    ```Shell
-    curl -X GET {root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/
-    ```
+    `curl -X GET {root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/`
 
 * **Notes:**
