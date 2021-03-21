@@ -32,7 +32,10 @@
       ```
 
     * **Code:** 200
-    * **Content:** `{"RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }`
+    * **Content:** 
+        ```json
+        {"RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }
+        ```
 
 * **Error Response:**
 
@@ -122,9 +125,46 @@
     * **Code:** 200
     * **Content:** 
       ```json
-      {"RequestID":"0f17955c-1fdd-4bfe-8c66-df8a432f1810","Mode":"combined","RequestedOn":"2021-03-18T22:39:02","ReturnedAllRows":true,"Results":[{"StringToMatch":"Ellerker","StringMatched":"Selley","Result":57},{"StringToMatch":"Conry","StringMatched":"Guiton","Result":36},{"StringToMatch":"\\Konzelmann, O'Ryan\\","StringMatched":"Tyzack","Result":40},{"StringToMatch":"Dibdin","StringMatched":"Maylin","Result":33},{"StringToMatch":"Audibert","StringMatched":"Guiton","Result":42},{"StringToMatch":"Merrydew","StringMatched":"Ferrelli","Result":50}]}
+      {
+        "RequestID":"0f17955c-1fdd-4bfe-8c66-df8a432f1810",
+        "Mode":"combined",
+        "RequestedOn":"2021-03-18T22:39:02",
+        "ReturnedAllRows":true,
+        "Results":[
+            {
+              "StringToMatch":"Ellerker",
+              "StringMatched":"Selley",
+              "Result":57
+            },
+            {
+              "StringToMatch":"Conry",
+              "StringMatched":"Guiton",
+              "Result":36
+            },
+            {
+              "StringToMatch":"\\Konzelmann, O'Ryan\\",
+              "StringMatched":"Tyzack",
+              "Result":40
+            },
+            {
+              "StringToMatch":"Dibdin",
+              "StringMatched":"Maylin",
+              "Result":33
+            },
+            {
+              "StringToMatch":"Audibert",
+              "StringMatched":"Guiton",
+              "Result":42
+            },
+            {
+              "StringToMatch":"Merrydew",
+              "StringMatched":"Ferrelli",
+              "Result":50
+            }
+        ]
+      }
       ```
- 
+
 * **Error Response:**
 
   * **Code:** 406 StatusNotAcceptable
