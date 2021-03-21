@@ -30,33 +30,33 @@
           }
       ```
 
-    * **Code:** 200 <br />
-    *  **Content:** `{"RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }`
+    * **Code:** 200
+    * **Content:** `{"RequestId" : "0f17955c-1fdd-4bfe-8c66-df8a432f1810" }`
 
 * **Error Response:**
 
-    * **Code:** 429 StatusTooManyRequests <br />
-      **Content:** `{"error" : "too many overall requests in flight, try later"}`
+    * **Code:** 429 StatusTooManyRequests
+    * **Content:** `{"error" : "too many overall requests in flight, try later"}`
 
     OR
 
-    * **Code:** 406 StatusNotAcceptable <br />
-      **Content:**  `{"error" : "cannot read request body"}`
+    * **Code:** 406 StatusNotAcceptable
+    * **Content:**  `{"error" : "cannot read request body"}`
 
     OR
 
-    * **Code:** 422 StatusUnprocessableEntity <br />
-      **Content:** `{"error" : "error decoding request data"}`
+    * **Code:** 422 StatusUnprocessableEntity
+    * **Content:** `{"error" : "error decoding request data"}`
   
     OR
 
-    * **Code:** 422 StatusUnprocessableEntity <br />
-      **Content:** `{"error" : "error invalid request"}`
+    * **Code:** 422 StatusUnprocessableEntity
+    * **Content:** `{"error" : "error invalid request"}`
 
     OR
 
-    * **Code:** 500 StatusInternalServerError <br />
-      **Content:** `{"error" : "error cannot persist request {request ID}"}`
+    * **Code:** 500 StatusInternalServerError
+    * **Content:** `{"error" : "error cannot persist request {request ID}"}`
 
 * **Sample Call:**
 
@@ -122,26 +122,26 @@
         }
     ```
 
-    * **Code:** 200 <br />
-      **Content:** 
+    * **Code:** 200
+    * **Content:** 
       ```json
       {"RequestID":"0f17955c-1fdd-4bfe-8c66-df8a432f1810","Mode":"combined","RequestedOn":"2021-03-18T22:39:02","ReturnedAllRows":true,"Results":[{"StringToMatch":"Ellerker","StringMatched":"Selley","Result":57},{"StringToMatch":"Conry","StringMatched":"Guiton","Result":36},{"StringToMatch":"\\Konzelmann, O'Ryan\\","StringMatched":"Tyzack","Result":40},{"StringToMatch":"Dibdin","StringMatched":"Maylin","Result":33},{"StringToMatch":"Audibert","StringMatched":"Guiton","Result":42},{"StringToMatch":"Merrydew","StringMatched":"Ferrelli","Result":50}]}
       ```
  
   * **Error Response:**
 
-    * **Code:** 406 StatusNotAcceptable <br />
-      **Content:** `{"error":"need a valid UUID for request ID"}`
+    * **Code:** 406 StatusNotAcceptable
+    * **Content:** `{"error":"need a valid UUID for request ID"}`
 
     OR
 
-    * **Code:** 404 StatusNotFound <br />
-      **Content:** `{"error":"request not found"}`
+    * **Code:** 404 StatusNotFound
+    * **Content:** `{"error":"request not found"}`
 
     OR
 
-    * **Code:** 500 StatusInternalServerError <br />
-      **Content:** `{"error":"error cannot process request {request ID}"}`
+    * **Code:** 500 StatusInternalServerError
+    * **Content:** `{"error":"error cannot process request {request ID}"}`
 
 * **Sample Call:**
 
