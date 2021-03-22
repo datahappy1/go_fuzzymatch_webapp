@@ -22,7 +22,8 @@
 
 <body class="bg-dark">
     <!-- Navigation start-->
-    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-dark align-items-end" style="background-color:#000000;">
+    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-dark align-items-end"
+        style="background-color:#000000;">
         <div class="container-fluid">
             <div class="navbar-brand align-self-end">
                 <a class="navbar-brand" href="/">
@@ -128,9 +129,10 @@
                 <div class="row pt-2">
                     <div class="col-sm">
                         <button class="btn btn-primary btn-lg" type="button" id="submitButton">
-                                Start match!
+                            Start match!
                         </button>
-                        <button class="btn btn-primary btn-lg" type="button" id="submitButtonSpinner" disabled style="display:none;">
+                        <button class="btn btn-primary btn-lg" type="button" id="submitButtonSpinner" disabled
+                            style="display:none;">
                             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             Loading...
                         </button>
@@ -156,7 +158,8 @@
                 </div>
                 <div class="row pt-2">
                     <div class="col-sm">
-                        <label for="rangeInput" class="form-label" id="labelFormControlRange">Filter for results above match result</label>
+                        <label for="rangeInput" class="form-label" id="labelFormControlRange">Filter for results above
+                            match result</label>
                         <output id="amount" name="amount" for="rangeInput">80</output>
                         <input type="range" class="custom-range" id="rangeInput" name="rangeInput" min="0" max="100"
                             value="80" oninput="amount.value=rangeInput.value">
@@ -250,12 +253,15 @@
 
                         </p>
                         <p>Known gotchas:</p>
-                            <ul>
-                                <li>
-                                    When running this tool from mobile IOS Safari, make sure to turn-off the keyboard
-                                    accents if you need the double-quotes in your strings.
-                                </li>
-                            </ul>
+                        <ul>
+                            <li>
+                                When running this tool from mobile IOS Safari, make sure to turn-off the keyboard
+                                accents if you need the double-quotes in your strings.
+                            </li>
+                            <li>
+                                Internet Explorer is not supported.
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -298,11 +304,21 @@
     </div>
     <!-- BodyContainer end-->
 
+    <!-- No script -> just render error message paragraph -->
+    <noscript>
+        <p class="text-info">Please enable JavaScript to use this page.</p>
+    </noscript>
+
+    <!-- IE is not supported -> redirect to browser-error.html page -->
+    <script>
+        if (window.navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./) === true) {
+            window.location('/browser-error.html');
+        }
+    </script>
+
+    <!-- Checks passed -> load the bundle.js -->
     <script src="bundle.js"></script>
 
-    <noscript>
-        <p>Please enable JavaScript to use this page.</p>
-    </noscript>
 </body>
 
 </html>

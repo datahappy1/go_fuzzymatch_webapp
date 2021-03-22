@@ -3,7 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/datahappy1/go_fuzzymatch_webapp)](https://goreportcard.com/report/github.com/datahappy1/go_fuzzymatch_webapp)
 [![DeepScan grade](https://deepscan.io/api/teams/13362/projects/16364/branches/348988/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=13362&pid=16364&bid=348988)
 
-A fuzzymatching web application written with Go and Javascript. 
+A fuzzymatching web application written using Go and Javascript. 
 
 ![image](https://github.com/datahappy1/go_fuzzymatch_webapp/blob/main/ui/dist/img/gopher_logo_ruler_small.png)
 
