@@ -20,7 +20,6 @@
 
 </head>
 
-<!--<body class="bg-dark">-->
 <body>
 
 <!-- Navigation start-->
@@ -32,17 +31,6 @@
                 Fuzzster
             </a>
         </div>
-
-        <noscript>
-            <p id="enable-js">Enable JavaScript in your browser.
-                <a href="https://www.tutorialspoint.com/javascript/javascript_enabling.htm" target="_blank">Here is
-                    how.</a></p>
-        </noscript>
-        <div id="IEWarning" style="display:none;">
-            <p id="unsupported-browser">Please use supported browser.
-                <a href="https://caniuse.com/fetch" target="_blank">Here is a list of supported browsers.</a></p>
-        </div>
-
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,13 +59,26 @@
 
 <!-- Body Container start-->
 <div>
-
     <div class="pt-5" id="match">
         <div class="p-3 mt-3 mr-5 ml-5 mb-0">
             <div class="row pt-2">
                 <img src="/img/gopher_logo_ruler_small.png" class="mx-auto d-block" alt="gopher fuzzster logo">
             </div>
         </div>
+
+        <!-- no JS display error message -->
+        <noscript>
+            <p id="enable-js" class="bg-warning text-center">Enable JavaScript in your browser.
+                <a href="https://www.tutorialspoint.com/javascript/javascript_enabling.htm" target="_blank">Here</a> is
+                how.
+            </p>
+        </noscript>
+
+        <!-- unsupported browser display error message -->
+        <p id="IEWarning" style="display:none;" class="bg-warning text-center">Please use supported browser.
+            <a href="https://caniuse.com/fetch" target="_blank">Here</a> is a list of supported browsers.
+        </p>
+
     </div>
     <!-- Match container start -->
     <div class="pt-0" id="match_input">
@@ -323,7 +324,7 @@
 </div>
 <!-- BodyContainer end-->
 
-<!-- IE is not supported -> show message in nav-bar -->
+<!-- IE is not supported -> show alert message -->
 <script>
     if (window.navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./) === true) {
         ie_warning_element = document.getElementById("IEWarning");
