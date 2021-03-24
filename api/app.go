@@ -64,16 +64,6 @@ func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
-func (a *App) initializeRoutes() {
-	api := a.Router.PathPrefix("/api/v1").Subrouter()
-	api.HandleFunc("/requests/{requestID}/", a.getLazy).Methods(http.MethodGet)
-	api.HandleFunc("/requests/", a.post).Methods(http.MethodPost)
-
-	ui := a.Router.PathPrefix("/").Subrouter()
-	fileServerStaticRoot := http.FileServer(http.Dir("./ui/dist/"))
-	ui.PathPrefix("/").Handler(fileServerStaticRoot)
-}
-
 func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, a.Conf.MaxRequestByteSize)
