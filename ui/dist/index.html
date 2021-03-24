@@ -18,306 +18,354 @@
 
     <title>Fuzzster</title>
 
-</head>
-
-<body class="bg-dark">
-    <!-- Navigation start-->
-    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-dark align-items-end"
-        style="background-color:#000000;">
-        <div class="container-fluid">
-            <div class="navbar-brand align-self-end">
-                <a class="navbar-brand" href="/">
-                    Fuzzster
-                </a>
-            </div>
-
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
-                            href="#match">Match</a></li>
-                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
-                            href="#api_docs">API</a></li>
-                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
-                            href="#about">About</a></li>
-                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
-                            href="#contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <!-- Navigation end-->
-    <!-- Body Container start-->
-    <div>
-        <div class="pt-5" id="match">
-            <div class="p-3 mt-3 mr-5 ml-5 mb-0">
-                <div class="row pt-2">
-                    <img src="/img/gopher_logo_ruler_small.png" class="mx-auto d-block" alt="gopher fuzzster logo">
-                </div>
-            </div>
-        </div>
-        <!-- Match container start -->
-        <div class="pt-0" id="match_input">
-            <div class="shadow-sm p-3 mt-0 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
-                <!-- Alerts start-->
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert"
-                            style="display:none;">
-                        </div>
-                        <div class="alert alert-danger" role="alert" id="backendServiceErrorAlert"
-                            style="display:none;">
-                        </div>
-                    </div>
-                </div>
-                <!-- Alerts end-->
-                <!-- Setup start-->
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <h4>Fuzzy matching setup:</h4>
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <blockquote class="blockquote">
-                            If you need to fuzzy match large chunks of data, use the <a href="#api_docs">API</a>
-                        </blockquote>
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <label for="mode">Choose mode:</label>
-                        <select class="form-control form-control" name="mode" id="mode">
-                            <option value="simple">simple ( the fast option )</option>
-                            <option value="deepDive">deep-dive ( the slower in-depth option )</option>
-                            <option value="combined">combined ( combination of simple and deep-dive )</option>
-                        </select>
-                    </div>
-                    <div class="col-sm">
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <div class="d-flex justify-content-between">
-                            <label for="stringsToMatch">Strings to match:</label>
-                            <button type="button" class="close" aria-label="Close" id="clearStringsToMatchTextarea"
-                                title="Clear contents">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="8" cols="50"
-                            placeholder="Comma separated list of strings to evaluate comes in here. Use double quotes to quote strings that contain a comma, for example: &#8220;address line, city&#8221;"
-                            maxlength="10000"></textarea>
-                    </div>
-                    <div class="col-sm">
-                        <div class="d-flex justify-content-between">
-                            <label for="stringsToMatchIn">Strings to match in:</label>
-                            <button type="button" class="close" aria-label="Close" id="clearStringsToMatchInTextarea"
-                                title="Clear contents">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="8" cols="50"
-                            placeholder="Comma separated list of strings to match in comes in here. Use double quotes to quote strings that contain a comma, for example: &#8220;address line, city&#8221;"
-                            maxlength="10000"></textarea>
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <button class="btn btn-primary btn-lg" type="button" id="submitButton">
-                            Start match!
-                        </button>
-                        <button class="btn btn-primary btn-lg" type="button" id="submitButtonSpinner" disabled
-                            style="display:none;">
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            Loading...
-                        </button>
-
-                    </div>
-                </div>
-                <!-- Setup end-->
-            </div>
-
-        </div>
-        <!-- Match container end -->
-        <!-- Results container start -->
-        <div class="pt-5" id="results" style="display:none;">
-            <div class="shadow-sm p-3 mt-5 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
-                <!-- Alerts start-->
-                <div class="alert alert-danger" role="alert" id="copyToClipboardErrorAlert" style="display:none;">
-                </div>
-                <!-- Alerts end-->
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <h4>Match results:</h4>
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <label for="rangeInput" class="form-label" id="labelFormControlRange">Filter for results above
-                            match result</label>
-                        <output id="amount" name="amount" for="rangeInput">80</output>
-                        <input type="range" class="custom-range" id="rangeInput" name="rangeInput" min="0" max="100"
-                            value="80" oninput="amount.value=rangeInput.value">
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                            <button type="button" class="btn btn-outline-primary" id="copyResultsTableToClipboardButton"
-                                data-clipboard-target="#resultsTable">
-                                Copy results to clipboard
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" id="downloadResultsTableAsCsvButton">
-                                Download results as .csv file
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" id="clearResultsTableButton">
-                                Clear results
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <label>Results table:</label>
-                        <table class="table table-sm" id="resultsTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Input String</th>
-                                    <th scope="col">Best Match</th>
-                                    <th scope="col">Match Result</th>
-                                </tr>
-                            </thead>
-                            <tbody id="resultsTableBody">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Results container end-->
-        <!-- API Documentation container start -->
-        <div class="pt-5" id="api_docs">
-            <div class="shadow-sm p-3 mt-5 mr-2 ml-2 mb-5 bg-light rounded min-vh-100" id="apiDocumentationDiv">
-                <!-- Alerts start-->
-                <div class="alert alert-danger" role="alert" id="loadDocumentationErrorAlert" style="display:none;">
-                </div>
-                <!-- Alerts end-->
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <h4>API Documentation:</h4>
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <p class="text-info" id="apiDocumentationURL">{root_api_url}: </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- API Documentation container end -->
-        <!-- About container start -->
-        <div class="pt-5" id="about">
-            <div class="shadow-sm p-3 mt-5 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <h4>About:</h4>
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <p>
-                            This fuzzy matching tool is based on the
-                            <a href="https://en.wikipedia.org/wiki/Levenshtein_distance" target="_blank">Levenshtein
-                                string distance</a> ratio.
-                        </p>
-                        <p>
-                            This tool was build using Go for the backend API part and Javascript with Webpack for
-                            the
-                            frontend client part.
-                        </p>
-                        <p>
-                            Checkout the
-                            <a href="https://github.com/datahappy1/go_fuzzymatch_webapp" target="_blank">Github
-                                repository</a> if you want to find out more on how this tool is build.
-                        </p>
-                        <p>
-                            Checkout this
-                            <a href="https://github.com/datahappy1/go_fuzzymatch#go_fuzzymatch" target="_blank">Github
-                                repository</a> if you want to find out more on the available
-                            matching modes.
-
-                        </p>
-                        <p>Known gotchas:</p>
-                        <ul>
-                            <li>
-                                When running this tool from mobile IOS Safari, make sure to turn-off the keyboard
-                                accents if you need the double-quotes in your strings.
-                            </li>
-                            <li>
-                                Internet Explorer is not supported.
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- About container end -->
-        <!-- Contact container start -->
-        <div class="pt-5" id="contact">
-            <div class="shadow-sm p-3 mt-5 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
-                <div class="row pt-2">
-                    <div class="col-sm">
-                        <h4>Contact:</h4>
-                    </div>
-                </div>
-                <div class="row pt-2">
-                    <div class="col-sm-6">
-                        <div class="card h-200">
-                            <div class="card-body">
-                                <h5 class="card-title">General contact form</h5>
-                                <p class="card-text">In case you have any general questions for the author go
-                                    <a href="https://datahappy.wordpress.com/contact/" target="_blank">here</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="card h-200">
-                            <div class="card-body">
-                                <h5 class="card-title">Raise issues with Fuzzster</h5>
-                                <p class="card-text">In case you need to raise issues with this tool go
-                                    <a href="https://github.com/datahappy1/go_fuzzymatch_webapp/issues"
-                                        target="_blank">here</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Contact container end -->
-    </div>
-    <!-- BodyContainer end-->
-
-    <!-- No script -> just render error message paragraph -->
+    <!-- disabled JS in browser -> show message in nav-bar -->
     <noscript>
-        <p class="text-info">Please enable JavaScript to use this page.</p>
+        <style>
+            figure noscript {
+                top: 0;
+                left: 0;
+                position: absolute;
+            }
+        </style>
     </noscript>
 
-    <!-- IE is not supported -> redirect to browser-error.html page -->
+    <!-- IE is not supported -> show message in nav-bar -->
     <script>
         if (window.navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./) === true) {
-            window.location('/browser-error.html');
+            ie_warning_element = document.getElementById("IEWarning");
+            ie_warning_element.style.display = "block";
         }
     </script>
 
-    <!-- Checks passed -> load the bundle.js -->
-    <script src="bundle.js"></script>
+</head>
+
+<!--<body class="bg-dark">-->
+<body>
+
+<!-- Navigation start-->
+<nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-dark align-items-end"
+     style="background-color:#000000;">
+    <div class="container-fluid">
+        <div class="navbar-brand align-self-end">
+            <a class="navbar-brand" href="/">
+                Fuzzster
+            </a>
+        </div>
+
+        <noscript>
+            <style>
+                #enable-js {
+                    margin: 0;
+                    padding: 12px 15px;
+                    background-color: #FFC107;
+                    color: #000;
+                    text-align: center;
+                    font-family: "Arial";
+                    font-size: 13px;
+                }
+            </style>
+            <p id="enable-js">Enable JavaScript in your browser.
+                <a href="https://www.tutorialspoint.com/javascript/javascript_enabling.htm" target="_blank">Here is
+                    how.</a></p>
+        </noscript>
+        <div id="IEWarning" style="display:none;">
+            <style>
+                #enable-js {
+                    margin: 0;
+                    padding: 12px 15px;
+                    background-color: #FFC107;
+                    color: #000;
+                    text-align: center;
+                    font-family: "Arial";
+                    font-size: 13px;
+                }
+            </style>
+            <p id="unsupported-browser">Please use supported browser.
+                <a href="https://caniuse.com/fetch" target="_blank">Here is a list of supported browsers.</a></p>
+        </div>
+
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
+                                                                                                   href="#match">Match</a>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
+                                                                                                   href="#api_docs">API</a>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
+                                                                                                   href="#about">About</a>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show"><a class="nav-link"
+                                                                                                   href="#contact">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Navigation end-->
+
+<!-- Body Container start-->
+<div>
+
+    <div class="pt-5" id="match">
+        <div class="p-3 mt-3 mr-5 ml-5 mb-0">
+            <div class="row pt-2">
+                <img src="/img/gopher_logo_ruler_small.png" class="mx-auto d-block" alt="gopher fuzzster logo">
+            </div>
+        </div>
+    </div>
+    <!-- Match container start -->
+    <div class="pt-0" id="match_input">
+        <div class="shadow-sm p-3 mt-0 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
+            <!-- Alerts start-->
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <div class="alert alert-danger" role="alert" id="mandatoryFieldsNotFilledAlert"
+                         style="display:none;">
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="backendServiceErrorAlert"
+                         style="display:none;">
+                    </div>
+                </div>
+            </div>
+            <!-- Alerts end-->
+            <!-- Setup start-->
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <h4>Fuzzy matching setup:</h4>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <blockquote class="blockquote">
+                        If you need to fuzzy match large chunks of data, use the <a href="#api_docs">API</a>
+                    </blockquote>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <label for="mode">Choose mode:</label>
+                    <select class="form-control form-control" name="mode" id="mode">
+                        <option value="simple">simple ( the fast option )</option>
+                        <option value="deepDive">deep-dive ( the slower in-depth option )</option>
+                        <option value="combined">combined ( combination of simple and deep-dive )</option>
+                    </select>
+                </div>
+                <div class="col-sm">
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <div class="d-flex justify-content-between">
+                        <label for="stringsToMatch">Strings to match:</label>
+                        <button type="button" class="close" aria-label="Close" id="clearStringsToMatchTextarea"
+                                title="Clear contents">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <textarea class="form-control" id="stringsToMatch" name="stringsToMatch" rows="8" cols="50"
+                              placeholder="Comma separated list of strings to evaluate comes in here. Use double quotes to quote strings that contain a comma, for example: &#8220;address line, city&#8221;"
+                              maxlength="10000"></textarea>
+                </div>
+                <div class="col-sm">
+                    <div class="d-flex justify-content-between">
+                        <label for="stringsToMatchIn">Strings to match in:</label>
+                        <button type="button" class="close" aria-label="Close" id="clearStringsToMatchInTextarea"
+                                title="Clear contents">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <textarea class="form-control" id="stringsToMatchIn" name="stringsToMatchIn" rows="8" cols="50"
+                              placeholder="Comma separated list of strings to match in comes in here. Use double quotes to quote strings that contain a comma, for example: &#8220;address line, city&#8221;"
+                              maxlength="10000"></textarea>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <button class="btn btn-primary btn-lg" type="button" id="submitButton">
+                        Start match!
+                    </button>
+                    <button class="btn btn-primary btn-lg" type="button" id="submitButtonSpinner" disabled
+                            style="display:none;">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Loading...
+                    </button>
+
+                </div>
+            </div>
+            <!-- Setup end-->
+        </div>
+
+    </div>
+    <!-- Match container end -->
+    <!-- Results container start -->
+    <div class="pt-5" id="results" style="display:none;">
+        <div class="shadow-sm p-3 mt-5 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
+            <!-- Alerts start-->
+            <div class="alert alert-danger" role="alert" id="copyToClipboardErrorAlert" style="display:none;">
+            </div>
+            <!-- Alerts end-->
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <h4>Match results:</h4>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <label for="rangeInput" class="form-label" id="labelFormControlRange">Filter for results above
+                        match result</label>
+                    <output id="amount" name="amount" for="rangeInput">80</output>
+                    <input type="range" class="custom-range" id="rangeInput" name="rangeInput" min="0" max="100"
+                           value="80" oninput="amount.value=rangeInput.value">
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn btn-outline-primary" id="copyResultsTableToClipboardButton"
+                                data-clipboard-target="#resultsTable">
+                            Copy results to clipboard
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" id="downloadResultsTableAsCsvButton">
+                            Download results as .csv file
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" id="clearResultsTableButton">
+                            Clear results
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <label>Results table:</label>
+                    <table class="table table-sm" id="resultsTable">
+                        <thead>
+                        <tr>
+                            <th scope="col">Input String</th>
+                            <th scope="col">Best Match</th>
+                            <th scope="col">Match Result</th>
+                        </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Results container end-->
+    <!-- API Documentation container start -->
+    <div class="pt-5" id="api_docs">
+        <div class="shadow-sm p-3 mt-5 mr-2 ml-2 mb-5 bg-light rounded min-vh-100" id="apiDocumentationDiv">
+            <!-- Alerts start-->
+            <div class="alert alert-danger" role="alert" id="loadDocumentationErrorAlert" style="display:none;">
+            </div>
+            <!-- Alerts end-->
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <h4>API Documentation:</h4>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <p class="text-info" id="apiDocumentationURL">{root_api_url}: </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- API Documentation container end -->
+    <!-- About container start -->
+    <div class="pt-5" id="about">
+        <div class="shadow-sm p-3 mt-5 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <h4>About:</h4>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <p>
+                        This fuzzy matching tool is based on the
+                        <a href="https://en.wikipedia.org/wiki/Levenshtein_distance" target="_blank">Levenshtein
+                            string distance</a> ratio.
+                    </p>
+                    <p>
+                        This tool was build using Go for the backend API part and Javascript with Webpack for
+                        the
+                        frontend client part.
+                    </p>
+                    <p>
+                        Checkout the
+                        <a href="https://github.com/datahappy1/go_fuzzymatch_webapp" target="_blank">Github
+                            repository</a> if you want to find out more on how this tool is build.
+                    </p>
+                    <p>
+                        Checkout this
+                        <a href="https://github.com/datahappy1/go_fuzzymatch#go_fuzzymatch" target="_blank">Github
+                            repository</a> if you want to find out more on the available
+                        matching modes.
+
+                    </p>
+                    <p>Known gotchas:</p>
+                    <ul>
+                        <li>
+                            When running this tool from mobile IOS Safari, make sure to turn-off the keyboard
+                            accents if you need the double-quotes in your strings.
+                        </li>
+                        <li>
+                            Internet Explorer is not supported.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About container end -->
+    <!-- Contact container start -->
+    <div class="pt-5" id="contact">
+        <div class="shadow-sm p-3 mt-5 mr-2 ml-2 mb-5 bg-light rounded min-vh-100">
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <h4>Contact:</h4>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm-6">
+                    <div class="card h-200">
+                        <div class="card-body">
+                            <h5 class="card-title">General contact form</h5>
+                            <p class="card-text">In case you have any general questions for the author go
+                                <a href="https://datahappy.wordpress.com/contact/" target="_blank">here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card h-200">
+                        <div class="card-body">
+                            <h5 class="card-title">Raise issues with Fuzzster</h5>
+                            <p class="card-text">In case you need to raise issues with this tool go
+                                <a href="https://github.com/datahappy1/go_fuzzymatch_webapp/issues"
+                                   target="_blank">here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Contact container end -->
+</div>
+<!-- BodyContainer end-->
+
+<!-- load the js bundle -->
+<script src="bundle.js"></script>
 
 </body>
 
