@@ -29,14 +29,6 @@
         </style>
     </noscript>
 
-    <!-- IE is not supported -> show message in nav-bar -->
-    <script>
-        if (window.navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./) === true) {
-            ie_warning_element = document.getElementById("IEWarning");
-            ie_warning_element.style.display = "block";
-        }
-    </script>
-
 </head>
 
 <!--<body class="bg-dark">-->
@@ -363,6 +355,14 @@
     <!-- Contact container end -->
 </div>
 <!-- BodyContainer end-->
+
+<!-- IE is not supported -> show message in nav-bar -->
+<script>
+    if (window.navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./) === true) {
+        ie_warning_element = document.getElementById("IEWarning");
+        ie_warning_element.style.display = "block";
+    }
+</script>
 
 <!-- load the js bundle -->
 <script src="bundle.js"></script>
