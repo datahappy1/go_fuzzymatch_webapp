@@ -17,13 +17,14 @@ import (
 	"time"
 )
 
+// App is struct
 type App struct {
 	Router *mux.Router
 	Conf   config.Configuration
 	DB     data.Database
 }
 
-// InitializeAPI App returns nil
+// InitializeAPI returns nil
 func (a *App) InitializeAPI(environment string) {
 	var err error
 	a.Conf, err = config.GetConfiguration(environment)
@@ -35,7 +36,7 @@ func (a *App) InitializeAPI(environment string) {
 	a.initializeAPIRoutes()
 }
 
-// InitializeStatic App returns nil
+// InitializeStatic returns nil
 func (a *App) InitializeStatic() {
 	a.initializeStaticRoutes()
 }

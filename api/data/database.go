@@ -4,11 +4,12 @@ import (
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 )
 
+// Database is struct
 type Database struct {
 	RequestsData map[string]model.FuzzyMatchModel
 }
 
-// InsertItem returns error
+// InsertItem returns nil
 func (d *Database) InsertItem(fuzzyMatchObject model.FuzzyMatchModel) {
 	d.RequestsData[fuzzyMatchObject.RequestID] = fuzzyMatchObject
 }
