@@ -19,8 +19,12 @@ func main() {
 
 	a := api.App{}
 
+	a.InitializeAPI(env)
+	a.InitializeStatic()
+	a.InitializeDB()
+
 	go a.ClearAppRequestData()
-	a.Initialize(env)
+
 	a.Run(":" + port)
 
 }

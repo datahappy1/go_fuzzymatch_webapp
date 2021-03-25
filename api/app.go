@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/config"
+	"github.com/datahappy1/go_fuzzymatch_webapp/api/data"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/repository"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/service"
@@ -16,10 +17,33 @@ import (
 	"time"
 )
 
-// App returns struct
 type App struct {
 	Router *mux.Router
 	Conf   config.Configuration
+	DB     data.Database
+}
+
+// InitializeAPI App returns nil
+func (a *App) InitializeAPI(environment string) {
+	var err error
+	a.Conf, err = config.GetConfiguration(environment)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	a.Router = mux.NewRouter()
+	a.initializeAPIRoutes()
+}
+
+// InitializeStatic App returns nil
+func (a *App) InitializeStatic() {
+	a.initializeStaticRoutes()
+}
+
+// InitializeDB returns nil
+func (a *App) InitializeDB() {
+	requestDatabase := make(map[string]model.FuzzyMatchModel)
+	a.DB = data.Database{RequestsData: requestDatabase}
 }
 
 // ClearAppRequestData returns nil
@@ -31,10 +55,10 @@ func (a *App) ClearAppRequestData() {
 			select {
 			case t := <-ticker.C:
 				log.Printf("Checking for timed out requests %s", t)
-				timedOutRequestIDs := repository.GetAllTimedOutRequestIDs(a.Conf.RequestTTLInMinutes)
+				timedOutRequestIDs := repository.GetAllTimedOutRequestIDs(a.DB, a.Conf.RequestTTLInMinutes)
 
 				for i := range timedOutRequestIDs {
-					repository.Delete(timedOutRequestIDs[i])
+					repository.Delete(a.DB, timedOutRequestIDs[i])
 					log.Printf("deleted timed out request %s", timedOutRequestIDs[i])
 				}
 			}
@@ -42,20 +66,7 @@ func (a *App) ClearAppRequestData() {
 	}()
 }
 
-// Initialize App
-func (a *App) Initialize(environment string) {
-	var err error
-	a.Conf, err = config.GetConfiguration(environment)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	a.Router = mux.NewRouter()
-	a.initializeRoutes()
-
-}
-
-// Run App
+// Run App returns nil
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
@@ -64,7 +75,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, a.Conf.MaxRequestByteSize)
 
-	if repository.CountAll() >= a.Conf.MaxActiveRequestsCount {
+	if repository.CountAll(a.DB) >= a.Conf.MaxActiveRequestsCount {
 		respondWithError(w, http.StatusTooManyRequests,
 			errors.New("too many overall requests in flight, try later"))
 		return
@@ -102,7 +113,7 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repository.Create(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
+	repository.Create(a.DB, fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
 		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, a.Conf.BatchSize)
 
 	fuzzyMatchRequestResponse := model.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
@@ -124,7 +135,7 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fuzzyMatchObject := repository.GetByRequestID(requestID)
+	fuzzyMatchObject := repository.GetByRequestID(a.DB, requestID)
 
 	if fuzzyMatchObject.RequestID == "" {
 		respondWithError(w, http.StatusNotFound,
@@ -135,13 +146,11 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	fuzzyMatchResults, returnedAllRows, returnedRowsUpperBound := service.CalculateFuzzyMatchingResults(fuzzyMatchObject)
 
 	if returnedAllRows == true {
-		repository.Delete(requestID)
+		repository.Delete(a.DB, requestID)
 
 	} else {
 		fuzzyMatchObject.ReturnedRows = returnedRowsUpperBound
-
-		repository.Update(requestID, fuzzyMatchObject)
-
+		repository.Update(a.DB, fuzzyMatchObject)
 	}
 
 	fuzzyMatchResultsResponse := model.CreateFuzzyMatchResultsResponse(

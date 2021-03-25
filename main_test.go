@@ -21,8 +21,11 @@ var shortTimeOutInSeconds = 10
 func TestMain(m *testing.M) {
 	a = api.App{}
 
+	a.InitializeAPI("testing")
+	a.InitializeDB()
+
 	go a.ClearAppRequestData()
-	a.Initialize("testing")
+
 	code := m.Run()
 
 	os.Exit(code)
@@ -79,7 +82,7 @@ func TestCreateValidPostRequest(t *testing.T) {
 		t.Errorf("Invalid RequestID. Got '%s'", SuccessResponse.RequestID)
 	}
 
-	repository.Delete(SuccessResponse.RequestID)
+	repository.Delete(a.DB, SuccessResponse.RequestID)
 
 }
 
@@ -153,8 +156,8 @@ func TestCreateInvalidPostRequestTooManyOverallRequests(t *testing.T) {
 		t.Errorf("Expected too many overall requests error. Got '%s'", FailureResponse.Error)
 	}
 
-	repository.Delete(SuccessResponse1.RequestID)
-	repository.Delete(SuccessResponse2.RequestID)
+	repository.Delete(a.DB, SuccessResponse1.RequestID)
+	repository.Delete(a.DB, SuccessResponse2.RequestID)
 
 }
 
@@ -212,7 +215,7 @@ func TestCreateValidGetRequest(t *testing.T) {
 		t.Errorf("Invalid Result value, expected 90. Got '%d'", SuccessResultsResponse.Results[0].Result)
 	}
 
-	repository.Delete(SuccessResponse1.RequestID)
+	repository.Delete(a.DB, SuccessResponse1.RequestID)
 
 }
 
@@ -253,7 +256,7 @@ func TestCreateValidGetRequestWithReturnedAllRows(t *testing.T) {
 		t.Errorf("Expected ReturnedAllRows true. Got '%t'", SuccessResultsResponse.ReturnedAllRows)
 	}
 
-	repository.Delete(SuccessRequestResponse.RequestID)
+	repository.Delete(a.DB, SuccessRequestResponse.RequestID)
 
 }
 

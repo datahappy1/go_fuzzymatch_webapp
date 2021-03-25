@@ -7,7 +7,7 @@ import (
 )
 
 // Create returns nil
-func Create(RequestID string, StringsToMatch []string, StringsToMatchIn []string,
+func Create(db data.Database, RequestID string, StringsToMatch []string, StringsToMatchIn []string,
 	Mode string, BatchSize int) {
 
 	fuzzyMatchObject := model.CreateFuzzyMatch(
@@ -18,37 +18,37 @@ func Create(RequestID string, StringsToMatch []string, StringsToMatchIn []string
 		BatchSize,
 		0)
 
-	data.InsertItem(fuzzyMatchObject)
+	db.InsertItem(fuzzyMatchObject)
 }
 
 // Update returns nil
-func Update(requestID string, matchModel model.FuzzyMatchModel) {
-	data.UpdateItem(requestID, matchModel)
+func Update(db data.Database, matchModel model.FuzzyMatchModel) {
+	db.UpdateItem(matchModel)
 }
 
 // Delete returns nil
-func Delete(requestID string) {
-	data.DeleteItem(requestID)
+func Delete(db data.Database, requestID string) {
+	db.DeleteItem(requestID)
 }
 
 // GetByRequestID returns FuzzyMatchModel
-func GetByRequestID(requestID string) model.FuzzyMatchModel {
-	item := data.GetItemByID(requestID)
+func GetByRequestID(db data.Database, requestID string) model.FuzzyMatchModel {
+	item := db.GetItemByID(requestID)
 	return item
 }
 
 // CountAll returns int
-func CountAll() int {
-	return data.CountAllItems()
+func CountAll(db data.Database) int {
+	return db.CountAllItems()
 }
 
 // GetAllTimedOutRequestIDs returns []string
-func GetAllTimedOutRequestIDs(RequestTTLInMinutes int) []string {
+func GetAllTimedOutRequestIDs(db data.Database, RequestTTLInMinutes int) []string {
 	var result []string
 	currentDateTimeOffset := utils.GetCurrentDateTimeOffset(RequestTTLInMinutes)
 	currentDateTimeOffsetUnixEpoch := utils.ConvertDateStringToUnixEpoch(currentDateTimeOffset)
 
-	storedRequests := data.GetAllItems()
+	storedRequests := db.GetAllItems()
 
 	for i := range storedRequests {
 		if utils.ConvertDateStringToUnixEpoch(storedRequests[i].RequestedOn) <= currentDateTimeOffsetUnixEpoch {
