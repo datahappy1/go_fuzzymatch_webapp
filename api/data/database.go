@@ -1,51 +1,35 @@
 package data
 
 import (
-	"errors"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 )
 
-// RequestsData returns []FuzzyMatchModel
-var RequestsData []model.FuzzyMatchModel
+var RequestsData = make(map[string]model.FuzzyMatchModel)
 
 // InsertItem returns error
-func InsertItem(fuzzyMatchObject model.FuzzyMatchModel) error {
-	RequestsData = append(RequestsData, fuzzyMatchObject)
-	return nil
+func InsertItem(fuzzyMatchObject model.FuzzyMatchModel) {
+	RequestsData[fuzzyMatchObject.RequestID] = fuzzyMatchObject
 }
 
-// UpdateItem returns error
-func UpdateItem(requestID string, matchModel model.FuzzyMatchModel) error {
-	for i := range RequestsData {
-		if RequestsData[i].RequestID == requestID {
-			RequestsData[i] = matchModel
-			return nil
-		}
-	}
-	return errors.New("request not found, not updated")
+// UpdateItem returns nil
+func UpdateItem(requestID string, matchModel model.FuzzyMatchModel) {
+	RequestsData[matchModel.RequestID] = matchModel
 }
 
-// DeleteItem returns error
-func DeleteItem(requestID string) error {
-	for i := range RequestsData {
-		if RequestsData[i].RequestID == requestID {
-			RequestsData[i] = RequestsData[len(RequestsData)-1]
-			RequestsData[len(RequestsData)-1] = model.FuzzyMatchModel{}
-			RequestsData = RequestsData[:len(RequestsData)-1]
-			return nil
-		}
-	}
-	return errors.New("request not found, not deleted")
+// DeleteItem returns nil
+func DeleteItem(requestID string) {
+	delete(RequestsData, requestID)
 }
 
 // GetItemByID returns FuzzyMatchModel
 func GetItemByID(requestID string) model.FuzzyMatchModel {
-	for i := range RequestsData {
-		if RequestsData[i].RequestID == requestID {
-			return RequestsData[i]
-		}
+	value, exists := RequestsData[requestID]
+
+	if !exists {
+		return model.FuzzyMatchModel{}
 	}
-	return model.FuzzyMatchModel{}
+
+	return value
 }
 
 // CountAllItems returns int
@@ -53,7 +37,7 @@ func CountAllItems() int {
 	return len(RequestsData)
 }
 
-// GetAllItems returns RequestsData
-func GetAllItems() []model.FuzzyMatchModel {
+// GetAllItems returns map[string]model.FuzzyMatchModel
+func GetAllItems() map[string]model.FuzzyMatchModel {
 	return RequestsData
 }

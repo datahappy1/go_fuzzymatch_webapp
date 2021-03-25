@@ -34,12 +34,8 @@ func (a *App) ClearAppRequestData() {
 				timedOutRequestIDs := repository.GetAllTimedOutRequestIDs(a.Conf.RequestTTLInMinutes)
 
 				for i := range timedOutRequestIDs {
-					err := repository.Delete(timedOutRequestIDs[i])
-					if err != nil {
-						log.Printf("cannot delete request %s", timedOutRequestIDs[i])
-					} else {
-						log.Printf("deleted timed out request %s", timedOutRequestIDs[i])
-					}
+					repository.Delete(timedOutRequestIDs[i])
+					log.Printf("deleted timed out request %s", timedOutRequestIDs[i])
 				}
 			}
 		}
@@ -106,14 +102,8 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repository.Create(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
+	repository.Create(fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
 		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, a.Conf.BatchSize)
-
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError,
-			fmt.Errorf("error cannot persist request %s", err))
-		return
-	}
 
 	fuzzyMatchRequestResponse := model.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
 
@@ -145,24 +135,13 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	fuzzyMatchResults, returnedAllRows, returnedRowsUpperBound := service.CalculateFuzzyMatchingResults(fuzzyMatchObject)
 
 	if returnedAllRows == true {
-		err := repository.Delete(requestID)
-
-		if err != nil {
-			respondWithError(w, http.StatusInternalServerError,
-				fmt.Errorf("error cannot process request %s", err))
-			return
-		}
+		repository.Delete(requestID)
 
 	} else {
 		fuzzyMatchObject.ReturnedRows = returnedRowsUpperBound
 
-		err := repository.Update(requestID, fuzzyMatchObject)
+		repository.Update(requestID, fuzzyMatchObject)
 
-		if err != nil {
-			respondWithError(w, http.StatusInternalServerError,
-				fmt.Errorf("error cannot process request %s", err))
-			return
-		}
 	}
 
 	fuzzyMatchResultsResponse := model.CreateFuzzyMatchResultsResponse(

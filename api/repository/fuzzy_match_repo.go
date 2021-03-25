@@ -1,15 +1,14 @@
 package repository
 
 import (
-	"errors"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/data"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/model"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
 )
 
-// Create returns string
+// Create returns nil
 func Create(RequestID string, StringsToMatch []string, StringsToMatchIn []string,
-	Mode string, BatchSize int) error {
+	Mode string, BatchSize int) {
 
 	fuzzyMatchObject := model.CreateFuzzyMatch(
 		RequestID,
@@ -19,29 +18,17 @@ func Create(RequestID string, StringsToMatch []string, StringsToMatchIn []string
 		BatchSize,
 		0)
 
-	err := data.InsertItem(fuzzyMatchObject)
-	if err != nil {
-		return errors.New("request not inserted to database")
-	}
-	return nil
+	data.InsertItem(fuzzyMatchObject)
 }
 
-// Update returns error
-func Update(requestID string, matchModel model.FuzzyMatchModel) error {
-	err := data.UpdateItem(requestID, matchModel)
-	if err != nil {
-		return errors.New(err.Error())
-	}
-	return nil
+// Update returns nil
+func Update(requestID string, matchModel model.FuzzyMatchModel) {
+	data.UpdateItem(requestID, matchModel)
 }
 
-// Delete returns error
-func Delete(requestID string) error {
-	err := data.DeleteItem(requestID)
-	if err != nil {
-		return errors.New(err.Error())
-	}
-	return nil
+// Delete returns nil
+func Delete(requestID string) {
+	data.DeleteItem(requestID)
 }
 
 // GetByRequestID returns FuzzyMatchModel
