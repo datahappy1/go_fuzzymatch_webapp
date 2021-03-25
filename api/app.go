@@ -43,8 +43,8 @@ func (a *App) InitializeStatic() {
 
 // InitializeDB returns nil
 func (a *App) InitializeDB() {
-	requestDatabase := make(map[string]model.FuzzyMatchModel)
-	a.DB = data.Database{RequestsData: requestDatabase}
+	requestsPseudoTable := data.CreateRequestsPseudoTable()
+	a.DB = data.Database{RequestsPseudoTable: requestsPseudoTable}
 }
 
 // ClearAppRequestData returns nil

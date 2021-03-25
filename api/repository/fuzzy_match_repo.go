@@ -22,8 +22,8 @@ func Create(db data.Database, RequestID string, StringsToMatch []string, Strings
 }
 
 // Update returns nil
-func Update(db data.Database, matchModel model.FuzzyMatchModel) {
-	db.UpdateItem(matchModel)
+func Update(db data.Database, fuzzyMatchObject model.FuzzyMatchModel) {
+	db.UpdateItem(fuzzyMatchObject)
 }
 
 // Delete returns nil

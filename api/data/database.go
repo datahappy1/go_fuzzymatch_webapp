@@ -6,27 +6,32 @@ import (
 
 // Database is struct
 type Database struct {
-	RequestsData map[string]model.FuzzyMatchModel
+	RequestsPseudoTable map[string]model.FuzzyMatchModel
+}
+
+// CreateRequestsPseudoTable returns map[string]model.FuzzyMatchModel
+func CreateRequestsPseudoTable() map[string]model.FuzzyMatchModel {
+	return make(map[string]model.FuzzyMatchModel)
 }
 
 // InsertItem returns nil
 func (d *Database) InsertItem(fuzzyMatchObject model.FuzzyMatchModel) {
-	d.RequestsData[fuzzyMatchObject.RequestID] = fuzzyMatchObject
+	d.RequestsPseudoTable[fuzzyMatchObject.RequestID] = fuzzyMatchObject
 }
 
 // UpdateItem returns nil
 func (d *Database) UpdateItem(fuzzyMatchObject model.FuzzyMatchModel) {
-	d.RequestsData[fuzzyMatchObject.RequestID] = fuzzyMatchObject
+	d.RequestsPseudoTable[fuzzyMatchObject.RequestID] = fuzzyMatchObject
 }
 
 // DeleteItem returns nil
 func (d *Database) DeleteItem(requestID string) {
-	delete(d.RequestsData, requestID)
+	delete(d.RequestsPseudoTable, requestID)
 }
 
 // GetItemByID returns FuzzyMatchModel
 func (d *Database) GetItemByID(requestID string) model.FuzzyMatchModel {
-	value, exists := d.RequestsData[requestID]
+	value, exists := d.RequestsPseudoTable[requestID]
 
 	if !exists {
 		return model.FuzzyMatchModel{}
@@ -37,10 +42,10 @@ func (d *Database) GetItemByID(requestID string) model.FuzzyMatchModel {
 
 // CountAllItems returns int
 func (d *Database) CountAllItems() int {
-	return len(d.RequestsData)
+	return len(d.RequestsPseudoTable)
 }
 
 // GetAllItems returns map[string]model.FuzzyMatchModel
 func (d *Database) GetAllItems() map[string]model.FuzzyMatchModel {
-	return d.RequestsData
+	return d.RequestsPseudoTable
 }
