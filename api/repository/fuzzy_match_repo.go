@@ -7,17 +7,7 @@ import (
 )
 
 // Create returns nil
-func Create(db data.Database, RequestID string, StringsToMatch []string, StringsToMatchIn []string,
-	Mode string, BatchSize int) {
-
-	fuzzyMatchObject := model.CreateFuzzyMatch(
-		RequestID,
-		StringsToMatch,
-		StringsToMatchIn,
-		Mode,
-		BatchSize,
-		0)
-
+func Create(db data.Database, fuzzyMatchObject model.FuzzyMatchModel) {
 	db.InsertItem(fuzzyMatchObject)
 }
 

@@ -114,10 +114,13 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repository.Create(a.DB, fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch,
-		fuzzyMatchRequest.StringsToMatchIn, fuzzyMatchRequest.Mode, a.Conf.BatchSize)
+	fuzzyMatchObject := model.CreateFuzzyMatch(
+		fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch, fuzzyMatchRequest.StringsToMatchIn,
+		fuzzyMatchRequest.Mode, a.Conf.BatchSize, 0)
 
-	fuzzyMatchRequestResponse := model.CreateFuzzyMatchResponse(fuzzyMatchRequest.RequestID)
+	repository.Create(a.DB, fuzzyMatchObject)
+
+	fuzzyMatchRequestResponse := model.CreateFuzzyMatchResponse(fuzzyMatchObject.RequestID)
 
 	respondWithJSON(w, http.StatusOK, fuzzyMatchRequestResponse)
 }
