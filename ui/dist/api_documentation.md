@@ -4,7 +4,7 @@
   You create a new request only to initiate the fuzzy matching process. This new request has TTL set to 10 minutes. After that, the request is removed from the application request in-memory database.
 
 * **URL** 
-    {root_api_url}
+    `<<root_api_url>>`
 
 * **Method:**
   
@@ -22,7 +22,7 @@
 
 * **Success Response:**
   
-    On success, the endpoint returns status code 200 and the RequestId.
+    On success, the endpoint returns status code 200 and the Request ID.
     Response structure:
 
     ```json
@@ -82,13 +82,13 @@
   	Windows cmd:
 
     `
-    curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" http://localhost:8080/api/v1/requests/
+    curl -g -H "Content-type: application/json ; charset=UTF-8" -X POST -d "{\"stringsToMatch\":\"Ellerker,Conry,\\\"Konzelmann, O'Ryan\\\",Dibdin,Audibert,Merrydew\",\"stringsToMatchIn\":\"Mingotti,Tyzack,Maylin,Guiton,Selley,Ferrelli,Rutley,Owthwaite,Liggett\",\"mode\":\"combined\"}" <<root_api_url>>
     `
 
     Linux terminal:
 
     `
-    curl --location --request POST '{root_api_url}' \
+    curl --location --request POST '<<root_api_url>>' \
     --header 'Content-Type: application/json' \
     --data-raw '{
     "stringsToMatch": "Ellerker,Conry,\"Konzelmann, O'\''Ryan\",Dibdin,Audibert,Merrydew",
@@ -102,11 +102,11 @@
 
 ***Getting results request***
 ----
-  The fuzzy matching process is lazy evaluated using a following GET request. Keep polling with this GET request until the flag `ReturnedAllRows` evaluates to true. At that point, all results were returned.
+  The fuzzy matching process is lazy evaluated using the following GET request. Keep polling with this GET request until the flag `ReturnedAllRows` evaluates to true. At that point, all results were returned.
 
 * **URL**
 
-    {root_api_url}/{requestID}/
+    `<<root_api_url>>/<<requestID>>/`
 
 * **Method:**
   
@@ -213,13 +213,13 @@
     Linux terminal:
 
     `
-    curl --location --request GET '{root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/'
+    curl --location --request GET '<<root_api_url>>/0f17955c-1fdd-4bfe-8c66-df8a432f1810/'
     `
 
     Windows cmd:
 
     `
-    curl -X GET {root_api_url}/0f17955c-1fdd-4bfe-8c66-df8a432f1810/
+    curl -X GET <<root_api_url>>/0f17955c-1fdd-4bfe-8c66-df8a432f1810/
     `
 
 * **Notes:**
