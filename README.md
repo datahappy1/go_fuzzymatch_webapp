@@ -5,8 +5,6 @@
 
 A fuzzymatching web application written using Go and Javascript. 
 
-![image](https://github.com/datahappy1/go_fuzzymatch_webapp/blob/main/ui/dist/img/gopher_logo_ruler_small.png)
-
 ## How to run locally the application back-end
 1) Install `Golang 1.15+`
 2) set environment variable name `environment` to `development` in your IDE
