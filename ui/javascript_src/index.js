@@ -1,14 +1,14 @@
 import {
-    DOMUpdateOnBackendServiceError,
-    DOMUpdateOnCopyToClipboardError,
-    DOMUpdateOnInputError,
-    DOMUpdateOnLoadDocumentationError,
+    updateOnBackendServiceError,
+    updateOnCopyToClipboardError,
+    updateOnInputError,
+    updateOnLoadDocumentationError,
     hidePreviousMatchErrorsAlerts,
     hidePreviousMatchResultsErrorsAlerts,
     hidePreviousLoadDocumentationErrorsAlerts
 } from "./errors.js";
-import { highlightActiveMenuItem } from './menu.js';
-import { getInputValidationErrors } from './validation.js';
+import {highlightActiveMenuItem} from './menu.js';
+import {getInputValidationErrors} from './validation.js';
 import {
     convertMarkdownToHtml,
     fetch_api_documentation_markdown,
@@ -23,11 +23,11 @@ import {
     clearResultsTable,
     copyResultsTableToClipboard,
     downloadResultsTableAsCsv,
-    getRangeInputSliderValue,
     jumpToAnchor,
     showResultsDiv,
     toggleSubmitButtonWhileLoadingResults
 } from "./match_results.js";
+import {filterResultsTable} from "./match_results";
 
 
 function loadStaticPagesHandler() {
@@ -38,7 +38,7 @@ function loadStaticPagesHandler() {
         try {
             ApiDocumentationMarkdownContent = await fetch_api_documentation_markdown().then();
         } catch (e) {
-            DOMUpdateOnLoadDocumentationError(JSON.stringify(e));
+            updateOnLoadDocumentationError(JSON.stringify(e));
             return;
         }
 
@@ -48,7 +48,7 @@ function loadStaticPagesHandler() {
 
     }
 
-    prepareApiDocumentationContent();
+    prepareApiDocumentationContent().then();
 
 }
 
@@ -60,7 +60,7 @@ function startMatchButtonHandler() {
 
         let inputValidationErrors = getInputValidationErrors();
         if (inputValidationErrors.length > 0) {
-            DOMUpdateOnInputError(inputValidationErrors);
+            updateOnInputError(inputValidationErrors);
             return;
         }
 
@@ -69,7 +69,7 @@ function startMatchButtonHandler() {
             const objectId = await fetch_post_new_request();
             requestId = objectId["RequestID"];
         } catch (e) {
-            DOMUpdateOnBackendServiceError(JSON.stringify(e));
+            updateOnBackendServiceError(JSON.stringify(e));
             toggleSubmitButtonWhileLoadingResults("show");
             return;
         }
@@ -81,7 +81,7 @@ function startMatchButtonHandler() {
         try {
             await update_results_table_with_fetched_data(requestId);
         } catch (e) {
-            DOMUpdateOnBackendServiceError(JSON.stringify(e));
+            updateOnBackendServiceError(JSON.stringify(e));
             toggleSubmitButtonWhileLoadingResults("show");
             return;
         }
@@ -89,29 +89,12 @@ function startMatchButtonHandler() {
         jumpToAnchor("results");
     }
 
-    createRequestStartFetchingChain();
+    createRequestStartFetchingChain().then();
 
 }
 
 function filterResultsTableButtonHandler() {
-    let inputValue, table, tr, td, i, cellValue;
-
-    inputValue = getRangeInputSliderValue();
-
-    table = document.getElementById("resultsTable");
-    tr = table.getElementsByTagName("tr");
-
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[2];
-        if (td) {
-            cellValue = td.textContent || td.innerText;
-            if (+cellValue >= +inputValue) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
+    filterResultsTable();
 }
 
 function copyResultsToClipboardButtonHandler() {
@@ -119,7 +102,7 @@ function copyResultsToClipboardButtonHandler() {
     try {
         copyResultsTableToClipboard();
     } catch (e) {
-        DOMUpdateOnCopyToClipboardError(JSON.stringify(e));
+        updateOnCopyToClipboardError(JSON.stringify(e));
     }
 }
 

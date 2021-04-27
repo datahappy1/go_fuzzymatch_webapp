@@ -32,22 +32,22 @@ function _updateCopyToClipboardAlert(components) {
     copyToClipboardDivComponent.innerHTML = `Copy to clipboard error: ${components}`;
 }
 
-export function DOMUpdateOnBackendServiceError(message) {
+export function updateOnBackendServiceError(message) {
     _updateBackendServiceErrorAlert(message);
     _alertSwitcher("show", "backendServiceErrorAlert")
 }
 
-export function DOMUpdateOnLoadDocumentationError(message) {
+export function updateOnLoadDocumentationError(message) {
     _updateLoadDocumentationErrorAlert(message);
     _alertSwitcher("show", "loadDocumentationErrorAlert")
 }
 
-export function DOMUpdateOnInputError(message) {
+export function updateOnInputError(message) {
     _updateMissingMandatoryComponentsAlert(message);
     _alertSwitcher("show", "mandatoryFieldsNotFilledAlert")
 }
 
-export function DOMUpdateOnCopyToClipboardError(message) {
+export function updateOnCopyToClipboardError(message) {
     _updateCopyToClipboardAlert(message);
     _alertSwitcher("show", "copyToClipboardErrorAlert")
 }

@@ -1,6 +1,6 @@
 import * as ShowdownJS from "./external/showdown.js/1.9.1/showdown.js";
 
-import { ApiDocumentationMarkdownFileLocation, BaseApiRequestsUrl } from './config.js';
+import {ApiDocumentationMarkdownFileLocation, BaseApiRequestsUrl} from './config.js';
 
 export function convertMarkdownToHtml(inputText) {
     let converter = new ShowdownJS.Converter();
@@ -14,15 +14,14 @@ export function updateApiDocumentationDiv(content) {
 
     let apiDocumentationDivElement = document.getElementById("apiDocumentationDiv");
 
-    apiDocumentationDivElement.innerHTML +=  content;
+    apiDocumentationDivElement.innerHTML += content;
 }
 
 export async function fetch_api_documentation_markdown() {
     let fetchResult = null;
     try {
         fetchResult = await fetch(ApiDocumentationMarkdownFileLocation);
-    }
-    catch (e) {
+    } catch (e) {
         throw {
             type: 'Error',
             message: e.message,
