@@ -15,6 +15,12 @@ function _downloadCSV(csv, filename) {
     downloadLink.click();
 }
 
+function _getRangeInputSliderValue() {
+    let sliderElement = document.getElementById("rangeInput");
+
+    return sliderElement.value
+}
+
 export function downloadResultsTableAsCsv(filename) {
     let csv = [];
     let rows = document.querySelectorAll("table tr");
@@ -48,10 +54,25 @@ export function copyResultsTableToClipboard() {
     });
 }
 
-export function getRangeInputSliderValue() {
-    let sliderElement = document.getElementById("rangeInput");
+export function filterResultsTable() {
+    let inputValue, table, tr, td, i, cellValue;
 
-    return sliderElement.value
+    inputValue = _getRangeInputSliderValue();
+
+    table = document.getElementById("resultsTable");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[2];
+        if (td) {
+            cellValue = td.textContent || td.innerText;
+            if (+cellValue >= +inputValue) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
 }
 
 export function clearResultsTable() {

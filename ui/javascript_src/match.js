@@ -1,4 +1,4 @@
-import { BaseApiRequestsUrl } from './config.js';
+import {BaseApiRequestsUrl} from './config.js';
 
 function _updateResultsTable(results) {
     let htmlResultsTable = '';
@@ -41,8 +41,7 @@ export async function fetch_post_new_request() {
 
     try {
         fetchResult = await fetch(url, otherParam);
-    }
-    catch (e) {
+    } catch (e) {
         throw {
             type: 'Error',
             message: e.message,
@@ -75,8 +74,7 @@ export async function fetch_get_lazy_response_results(requestId) {
 
     try {
         fetchResult = await fetch(url, otherParam);
-    }
-    catch (e) {
+    } catch (e) {
         throw {
             type: 'Error',
             message: e.message,
@@ -101,7 +99,7 @@ export async function update_results_table_with_fetched_data(requestId) {
     let results = await fetch_get_lazy_response_results(requestId);
 
     _updateResultsTable(results["Results"]);
-    
+
     if (results["ReturnedAllRows"] === false) {
         await update_results_table_with_fetched_data(requestId);
     }
