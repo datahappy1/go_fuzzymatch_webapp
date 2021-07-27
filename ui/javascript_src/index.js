@@ -16,8 +16,8 @@ import {
 } from './api_documentation.js';
 import {
     clearStringsTextarea,
-    fetch_post_new_request,
-    update_results_table_with_fetched_data
+    fetchPostNewRequest,
+    updateResultsTableWithFetchedData
 } from "./match.js";
 import {
     clearResultsTable,
@@ -66,7 +66,7 @@ function startMatchButtonHandler() {
 
         let requestId = null;
         try {
-            const objectId = await fetch_post_new_request();
+            const objectId = await fetchPostNewRequest();
             requestId = objectId["RequestID"];
         } catch (e) {
             updateOnBackendServiceError(JSON.stringify(e));
@@ -79,7 +79,7 @@ function startMatchButtonHandler() {
         showResultsDiv();
 
         try {
-            await update_results_table_with_fetched_data(requestId);
+            await updateResultsTableWithFetchedData(requestId);
         } catch (e) {
             updateOnBackendServiceError(JSON.stringify(e));
             toggleSubmitButtonWhileLoadingResults("show");

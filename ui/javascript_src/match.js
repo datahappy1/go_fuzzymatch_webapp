@@ -17,7 +17,7 @@ function _updateResultsTable(results) {
     container.innerHTML += htmlResultsTable;
 }
 
-export async function fetch_post_new_request() {
+export async function fetchPostNewRequest() {
 
     const inputStringsToMatch = document.getElementById("stringsToMatch").value;
     const inputStringsToMatchIn = document.getElementById("stringsToMatchIn").value;
@@ -62,7 +62,7 @@ export async function fetch_post_new_request() {
     };
 }
 
-export async function fetch_get_lazy_response_results(requestId) {
+export async function fetchGetLazyResponseResults(requestId) {
     const otherParam = {
         headers: {
             "content-type": "application/json; charset=UTF-8"
@@ -95,13 +95,13 @@ export async function fetch_get_lazy_response_results(requestId) {
     };
 }
 
-export async function update_results_table_with_fetched_data(requestId) {
-    let results = await fetch_get_lazy_response_results(requestId);
+export async function updateResultsTableWithFetchedData(requestId) {
+    let results = await fetchGetLazyResponseResults(requestId);
 
     _updateResultsTable(results["Results"]);
 
     if (results["ReturnedAllRows"] === false) {
-        await update_results_table_with_fetched_data(requestId);
+        await updateResultsTableWithFetchedData(requestId);
     }
 }
 
