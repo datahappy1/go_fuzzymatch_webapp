@@ -17,11 +17,15 @@ import (
 	"time"
 )
 
+type repo struct {
+	DB data.Database
+}
+
 // App is struct
 type App struct {
 	Router *mux.Router
 	Conf   config.Configuration
-	DB     data.Database
+	Repo   repo
 }
 
 // InitializeAPI returns nil
@@ -44,7 +48,7 @@ func (a *App) InitializeStatic() {
 // InitializeDB returns nil
 func (a *App) InitializeDB() {
 	requestsPseudoTable := data.CreateRequestsPseudoTable()
-	a.DB = data.Database{RequestsPseudoTable: requestsPseudoTable}
+	a.Repo.DB = data.Database{RequestsPseudoTable: requestsPseudoTable}
 }
 
 // ClearAppRequestData returns nil
@@ -56,10 +60,10 @@ func (a *App) ClearAppRequestData() {
 			select {
 			case t := <-ticker.C:
 				log.Printf("Checking for timed out requests %s", t)
-				timedOutRequestIDs := repository.GetAllTimedOutRequestIDs(a.DB, a.Conf.RequestTTLInMinutes)
+				timedOutRequestIDs := repository.GetAllTimedOutRequestIDs(a.Repo.DB, a.Conf.RequestTTLInMinutes)
 
 				for i := range timedOutRequestIDs {
-					repository.Delete(a.DB, timedOutRequestIDs[i])
+					repository.Delete(a.Repo.DB, timedOutRequestIDs[i])
 					log.Printf("deleted timed out request %s", timedOutRequestIDs[i])
 				}
 			}
@@ -73,10 +77,9 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) post(w http.ResponseWriter, r *http.Request) {
-
 	r.Body = http.MaxBytesReader(w, r.Body, a.Conf.MaxRequestByteSize)
 
-	if repository.CountAll(a.DB) >= a.Conf.MaxActiveRequestsCount {
+	if repository.CountAll(a.Repo.DB) >= a.Conf.MaxActiveRequestsCount {
 		respondWithError(w, http.StatusTooManyRequests,
 			errors.New("too many overall requests in flight, try later"))
 		return
@@ -92,7 +95,6 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//fmt.Println(string(requestBodyString[:]))
-
 	err = json.Unmarshal(requestBodyString, &fuzzyMatchExternalRequest)
 	if err != nil {
 		if e, ok := err.(*json.SyntaxError); ok {
@@ -114,11 +116,15 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fuzzyMatchObject := model.CreateFuzzyMatch(
+	fuzzyMatchObject, err := model.CreateFuzzyMatch(
 		fuzzyMatchRequest.RequestID, fuzzyMatchRequest.StringsToMatch, fuzzyMatchRequest.StringsToMatchIn,
 		fuzzyMatchRequest.Mode, a.Conf.BatchSize, 0)
+	if err != nil {
+		respondWithError(w, http.StatusNotAcceptable, err)
+		return
+	}
 
-	repository.Create(a.DB, fuzzyMatchObject)
+	repository.Create(a.Repo.DB, fuzzyMatchObject)
 
 	fuzzyMatchRequestResponse := model.CreateFuzzyMatchResponse(fuzzyMatchObject.RequestID)
 
@@ -126,7 +132,6 @@ func (a *App) post(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
-
 	pathParams := mux.Vars(r)
 
 	requestID := ""
@@ -139,7 +144,7 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fuzzyMatchObject := repository.GetByRequestID(a.DB, requestID)
+	fuzzyMatchObject := repository.GetByRequestID(a.Repo.DB, requestID)
 
 	if fuzzyMatchObject.RequestID == "" {
 		respondWithError(w, http.StatusNotFound,
@@ -150,15 +155,15 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	fuzzyMatchResults, returnedAllRows, returnedRowsUpperBound := service.CalculateFuzzyMatchingResults(fuzzyMatchObject)
 
 	if returnedAllRows == true {
-		repository.Delete(a.DB, requestID)
+		repository.Delete(a.Repo.DB, requestID)
 
 	} else {
 		fuzzyMatchObject.ReturnedRows = returnedRowsUpperBound
-		repository.Update(a.DB, fuzzyMatchObject)
+		repository.Update(a.Repo.DB, fuzzyMatchObject)
 	}
 
 	fuzzyMatchResultsResponse := model.CreateFuzzyMatchResultsResponse(
-		requestID, fuzzyMatchObject.Mode, fuzzyMatchObject.RequestedOn, returnedAllRows, fuzzyMatchResults,
+		requestID, fuzzyMatchObject.Mode.String(), fuzzyMatchObject.RequestedOn, returnedAllRows, fuzzyMatchResults,
 	)
 
 	respondWithJSON(w, http.StatusOK, fuzzyMatchResultsResponse)

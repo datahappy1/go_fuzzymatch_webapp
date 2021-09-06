@@ -30,7 +30,7 @@ func CalculateFuzzyMatchingResults(fuzzyMatchObject model.FuzzyMatchModel) (mode
 				Result: fm.FuzzyMatch(
 					fuzzyMatchObject.StringsToMatch[stringToMatch],
 					fuzzyMatchObject.StringsToMatchIn[stringToMatchIn],
-					fuzzyMatchObject.Mode)}
+					fuzzyMatchObject.Mode.String())}
 
 			auxiliaryMatchResults = append(auxiliaryMatchResults, auxiliaryMatchResult)
 		}

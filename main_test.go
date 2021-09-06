@@ -82,7 +82,7 @@ func TestCreateValidPostRequest(t *testing.T) {
 		t.Errorf("Invalid RequestID. Got '%s'", SuccessResponse.RequestID)
 	}
 
-	repository.Delete(a.DB, SuccessResponse.RequestID)
+	repository.Delete(a.Repo.DB, SuccessResponse.RequestID)
 
 }
 
@@ -156,8 +156,8 @@ func TestCreateInvalidPostRequestTooManyOverallRequests(t *testing.T) {
 		t.Errorf("Expected too many overall requests error. Got '%s'", FailureResponse.Error)
 	}
 
-	repository.Delete(a.DB, SuccessResponse1.RequestID)
-	repository.Delete(a.DB, SuccessResponse2.RequestID)
+	repository.Delete(a.Repo.DB, SuccessResponse1.RequestID)
+	repository.Delete(a.Repo.DB, SuccessResponse2.RequestID)
 
 }
 
@@ -215,7 +215,7 @@ func TestCreateValidGetRequest(t *testing.T) {
 		t.Errorf("Invalid Result value, expected 90. Got '%d'", SuccessResultsResponse.Results[0].Result)
 	}
 
-	repository.Delete(a.DB, SuccessResponse1.RequestID)
+	repository.Delete(a.Repo.DB, SuccessResponse1.RequestID)
 
 }
 
@@ -256,7 +256,7 @@ func TestCreateValidGetRequestWithReturnedAllRows(t *testing.T) {
 		t.Errorf("Expected ReturnedAllRows true. Got '%t'", SuccessResultsResponse.ReturnedAllRows)
 	}
 
-	repository.Delete(a.DB, SuccessRequestResponse.RequestID)
+	repository.Delete(a.Repo.DB, SuccessRequestResponse.RequestID)
 
 }
 
