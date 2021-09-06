@@ -39,12 +39,11 @@ type FuzzyMatchResultsResponse struct {
 
 // CreateFuzzyMatchResultsResponse returns FuzzyMatchResultsResponse
 func CreateFuzzyMatchResultsResponse(
-	requestID, mode, requestedOn string,
-	returnedAllRows bool,
+	requestID string, mode Mode, requestedOn string, returnedAllRows bool,
 	results FuzzyMatchResults) FuzzyMatchResultsResponse {
 	return FuzzyMatchResultsResponse{
 		RequestID:       requestID,
-		Mode:            mode,
+		Mode:            mode.String(),
 		RequestedOn:     requestedOn,
 		ReturnedAllRows: returnedAllRows,
 		Results:         results,

@@ -3,9 +3,8 @@ package model
 import (
 	"errors"
 	"github.com/datahappy1/go_fuzzymatch_webapp/api/utils"
+	"strings"
 )
-
-var modeTypes = []string{"simple", "deepDive", "combined"}
 
 // FuzzyMatchExternalRequest returns struct
 type FuzzyMatchExternalRequest struct {
@@ -33,7 +32,8 @@ func CreateFuzzyMatchRequest(stringsToMatch []string, stringsToMatchIn []string,
 		return nil, errors.New("stringsToMatchIn is invalid")
 	}
 
-	if mode == "" || utils.IsStringInSlice(mode, modeTypes) == false {
+	capitalizedMode := strings.Title(strings.ToLower(mode))
+	if _, ok := StringToModeMap[capitalizedMode]; !ok {
 		return nil, errors.New("mode is invalid")
 	}
 

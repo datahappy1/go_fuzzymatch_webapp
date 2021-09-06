@@ -163,7 +163,7 @@ func (a *App) getLazy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fuzzyMatchResultsResponse := model.CreateFuzzyMatchResultsResponse(
-		requestID, fuzzyMatchObject.Mode.String(), fuzzyMatchObject.RequestedOn, returnedAllRows, fuzzyMatchResults,
+		requestID, fuzzyMatchObject.Mode, fuzzyMatchObject.RequestedOn, returnedAllRows, fuzzyMatchResults,
 	)
 
 	respondWithJSON(w, http.StatusOK, fuzzyMatchResultsResponse)
